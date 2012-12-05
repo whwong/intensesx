@@ -194,9 +194,25 @@ lldWm8731Ioctl(struct hldAudioDevice *pAudioDev, UINT32 pCmd, UINT32 pParam)
             }
             break;
 
+        case AC_SET_SAMPLE:
+            return lldWm8731SetSampleRate(&pAudioDev->config, pParam);
+            break;
+
+        case AC_SET_BITS:
+            return lldWm8731SetBits(&pAudioDev->config, pParam);
+            break;
+
+        case AC_SET_CHANNELS:
+            if (pParam != 2)
+                return ERR_NOT_SUPPORTED;
+            else
+                return SUCCESS;
+            break;
+
         default:
             DEBUG("Unknown IOCTL command for %s device", lldWM8731Name);
     }
+    return SUCCESS;
 }
 
 /**
@@ -217,10 +233,12 @@ void lldWm8731IntHandler()
     switch(currentDevice->config.mode)
     {
         case AM_NONE:
+            SPI4BUF = 0;
             break;
         case AM_KMIXER:
             break;
         case AM_ONECHANNEL:
+            SPI4BUF = audio1chGetSample();
             break;
         case AM_SINE:
             SPI4BUF = audioSineGetSample();
@@ -245,10 +263,64 @@ static retcode lldWm8731SetEnabledBlocks(UINT32 pEnabledFlags)
     return WmMasterWrite(WM8731_REG_PDOWN_CTRL, (UINT16)tmpVal);
 }
 
+static retcode lldWm8731SetBits(struct hldAudioConfig *pCfg, UINT32 pBits)
+{
+    // DSP_MODE|LRP|MS
+    UINT8 tmpVal = 0x53;
+    pCfg->bits = pBits;
+    switch(pBits)
+    {
+        case 16:
+            break;
+        case 20:
+            tmpVal |= 0x40;
+            break;
+        case 24:
+            tmpVal |= 0x80;
+            break;
+        case 32:
+            tmpVal |= 0xC0;
+            break;
+
+        default:
+            return ERR_NOT_SUPPORTED;
+    }
+
+    return WmMasterWrite(WM8731_REG_DIGITAL_IF, tmpVal);
+}
+
+static retcode lldWm8731SetSampleRate(struct hldAudioConfig *pCfg, UINT32 pSampleRate)
+{
+    // Normal mode|!BOSR
+    UINT8 tmpVal = 0x02;
+    pCfg->sampleRate = pSampleRate;
+    
+    switch (pSampleRate)
+    {
+        case 8000:
+            tmpVal |= (0x03 << 2);
+            break;
+        case 32000:
+            tmpVal |= (0x06 << 2);
+            break;
+        case 48000:
+            // Leave 00 at bits 2:5
+            break;
+        case 96000:
+            tmpVal |= (0x07 << 2);
+            break;
+        default:
+            return ERR_NOT_SUPPORTED;
+    }
+
+    return WmMasterWrite(WM8731_REG_SAMPLING_CTRL, tmpVal);
+}
+
 // Low level wm8731 interface
 static retcode lldWm8731Init(struct hldAudioConfig *pCfg)
 {
     retcode fail = SUCCESS;
+    retcode sup = SUCCESS;
 
     CloseI2C2();
     OpenI2C2(I2C_EN | I2C_IDLE_CON | I2C_7BIT_ADD | I2C_STR_EN,
@@ -273,58 +345,34 @@ static retcode lldWm8731Init(struct hldAudioConfig *pCfg)
      // !DACMU|(DEEMP=48KHz);
     fail |= WmMasterWrite(WM8731_REG_DIGITAL_PATH, 0x06);
 
-    UINT8 tmpVal = 0x00;
-    lldWm8731SetEnabledBlocks(pCfg->enable);
-
-    // DSP_MODE|LRP|MS
-    tmpVal = 0x53;
-    switch(pCfg->bits)
+    fail |= lldWm8731SetEnabledBlocks(pCfg->enable);
+    
+    sup = lldWm8731SetBits(pCfg, pCfg->bits);
+    if (sup == ERR_NOT_SUPPORTED)
     {
-        case 16:
-            break;
-        case 20:
-            tmpVal |= 0x40;
-            break;
-        case 24:
-            tmpVal |= 0x80;
-            break;
-        case 32:
-            tmpVal |= 0xC0;
-            break;
-
-        // 16 is default value and this 00 on 3:2 bits so we do nothing
-        default:
-            pCfg->bits = 16;
-            WARNING("Selected data format not supported. "
+        pCfg->bits = 16;
+        WARNING("Selected data format not supported. "
                     "Driver data format set to 16 bits");
     }
-
-    fail |= WmMasterWrite(WM8731_REG_DIGITAL_IF, tmpVal);
-
-    // Normal mode|!BOSR
-    tmpVal = 0x02;
-    switch (pCfg->sampleRate)
+    else
+        fail |= sup;
+    
+    sup = lldWm8731SetSampleRate(pCfg, pCfg->sampleRate);
+    if (sup == ERR_NOT_SUPPORTED)
     {
-        case 8000:
-            tmpVal |= (0x03 << 2);
-            break;
-        case 32000:
-            tmpVal |= (0x06 << 2);
-            break;
-        case 48000:
-            // Leave 00 at bits 2:5
-            break;
-        case 96000:
-            tmpVal |= (0x07 << 2);
-            break;
-        default:
-            pCfg->sampleRate = 48000;
-            WARNING("Selected sample rate not supported. "
+        pCfg->sampleRate = 16;
+        WARNING("Selected sample rate not supported. "
                     "Driver sample rate set to 48000Hz");
-            
     }
+    else
+        fail |= sup;
 
-    fail |= WmMasterWrite(WM8731_REG_SAMPLING_CTRL, tmpVal);
+    if (pCfg->channels != 2)
+    {
+        pCfg->channels = 2;
+        WARNING("Selected channels number is not supported. "
+                    "Driver channels set to 2");
+    }
 
     return fail;
 }

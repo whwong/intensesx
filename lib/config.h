@@ -7,11 +7,11 @@
 #ifndef _LIBRARY_CONFIG_H_
 #define _LIBRARY_CONFIG_H_
 
-#define NDEBUG
+//#define NDEBUG
 
 #if !defined(NDEBUG)
 #define LOG_ENABLED
-#define LOG_DEBUG
+//#define LOG_DEBUG
 #define ASSERT_LOGING
 #endif
 
@@ -26,5 +26,7 @@
 // 4. void consoleUnregisterCmd(struct consoleCmdHandler *pHandler);
 #define USE_SERIAL_CONSOLE
 
+// Use one channel audio output
+#define USE_ONE_CHANNEL_AUDIO
 
 #endif

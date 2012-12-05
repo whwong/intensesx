@@ -238,7 +238,6 @@ static void prvTestTask1( void *pvParameters )
     while(msgListenerGet(list, &m, NULL, 0, 0))
     {
         diskstatus ds;
-        LOG("\t\t\tmsg");
         switch(m.message)
         {
             case MSG_DISKREMOVED:
@@ -247,7 +246,6 @@ static void prvTestTask1( void *pvParameters )
                 break;
 
             case MSG_DISKINSERTED:
-                LOG("dupa");
                 ds = disk->open(disk);
                 LOG("Disk status: %x", ds);
                 break;
@@ -504,7 +502,7 @@ int main(void) {
     boardInit();
 
     xTaskCreate( prvTestTask1, ( const signed char * const ) "Ts1",
-            512, NULL, tskIDLE_PRIORITY, NULL );
+            1024, NULL, tskIDLE_PRIORITY, NULL );
     xTaskCreate( prvTestTask2, ( const signed char * const ) "Ts2",
             configMINIMAL_STACK_SIZE+50, NULL, tskIDLE_PRIORITY, NULL );
     /* Finally start the scheduler. */

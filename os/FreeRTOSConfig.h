@@ -78,7 +78,7 @@
 #define configMINIMAL_STACK_SIZE		( 190 )
 #define configISR_STACK_SIZE			( 400 )
 #define configTOTAL_HEAP_SIZE			( ( size_t ) 16383*2 )
-#define configMAX_TASK_NAME_LEN			( 10 )
+#define configMAX_TASK_NAME_LEN			( 4 )
 #define configUSE_TRACE_FACILITY		0
 #define configUSE_16_BIT_TICKS			0
 #define configIDLE_SHOULD_YIELD			1
@@ -86,7 +86,7 @@
 #define configUSE_TIMERS                        1
 #define configTIMER_TASK_PRIORITY               3
 #define configTIMER_QUEUE_LENGTH                5
-#define configTIMER_TASK_STACK_DEPTH            (configMINIMAL_STACK_SIZE+512)
+#define configTIMER_TASK_STACK_DEPTH            (configMINIMAL_STACK_SIZE+50)
 #define configUSE_RECURSIVE_MUTEXES             1
 #define configCHECK_FOR_STACK_OVERFLOW          2
 #define configQUEUE_REGISTRY_SIZE		10
