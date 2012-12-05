@@ -97,13 +97,20 @@ static xTimerHandle hTimer;
 /* Exchange a byte between PIC and MMC via SPI  (Platform dependent) */
 #define xmit_spi(dat) 	xchg_spi(dat)
 #define rcvr_spi()      xchg_spi(0xFF)
-//#define rcvr_spi_m(p) SPI2BUF = 0xFF; while ((!SPISTATbits.SPIRBF) & (!(SOCKPORT & SOCKINS))); *(p) = (BYTE)SPI2BUF;
-#define rcvr_spi_m(p)   SPIBUF = 0xFF; while ((!SPISTATbits.SPIRBF) & (!(SOCKPORT & SOCKINS))); *(p) = (BYTE)SPIBUF;
+
+#define rcvr_spi_m(p) \
+{ \
+    volatile UINT32 n = 100000000; \
+    SPIBUF = 0xFF; \
+    while ((!SPISTATbits.SPIRBF) && (--n)); \
+    *(p) = (BYTE)SPIBUF; \
+}
 
 static BYTE xchg_spi (BYTE dat)
 {
+    volatile UINT32 n = 100000000;
     SPIBUF = dat;
-    while ((!SPISTATbits.SPIRBF) & (!(SOCKPORT & SOCKINS)));
+    while ((!SPISTATbits.SPIRBF) && (--n));
     return (BYTE) SPIBUF;
 }
 
@@ -467,7 +474,6 @@ static diskstatus lldPic32SDMMCOpen(struct hldDiskDevice *pDiskDev)
     {
         // Init end - success
         Stat &= ~STA_NOINIT; /* Clear STA_NOINIT */
-    LOG("Stat &= ~STA_NOINIT");
         FCLK_FAST();
         pDiskDev->head.state |= HLD_DEVICE_STATE_RUNNING;
 

@@ -33,6 +33,8 @@ retcode lldWm8731Attach(struct hldAudioConfig *pCfg);
 
 static retcode lldWm8731Open(struct hldAudioDevice *pAudioDev);
 static retcode lldWm8731Close(struct hldAudioDevice *pAudioDev);
+static retcode lldWm8731SetBits(struct hldAudioConfig *pCfg, UINT32 pBits);
+static retcode lldWm8731SetSampleRate(struct hldAudioConfig *pCfg, UINT32 pSampleRate);
 
 static retcode
 lldWm8731Ioctl(struct hldAudioDevice *pAudioDev, UINT32 pCmd, UINT32 pParam);

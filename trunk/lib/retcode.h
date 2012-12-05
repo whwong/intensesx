@@ -31,6 +31,7 @@ typedef enum
     ERR_ALREADY_STARTED = -204,
     ERR_BUS = -205,
     ERR = -206, // Unknown or module specyfic error
+    ERR_NOT_SUPPORTED = -207,
             
     // Retcodes for FatFS file system
     RES_OK = 0,         /* 0: Successful */

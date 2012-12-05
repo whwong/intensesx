@@ -24,6 +24,9 @@ enum hldAudioMode
 #define AC_GET_VOLUME       0x02
 #define AC_DISABLE          0x03
 #define AC_ENABLE           0x04
+#define AC_SET_SAMPLE       0x05
+#define AC_SET_BITS         0x06
+#define AC_SET_CHANNELS         0x07
 
 // IOCTL Params
 #define AUDIO_LINEIN    0x01

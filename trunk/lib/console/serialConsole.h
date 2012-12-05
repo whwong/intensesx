@@ -18,7 +18,7 @@
 #include "lib/list.h"
 #include "os/semphr.h"
 
-#define CONSOLE_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE+100)
+#define CONSOLE_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE+512)
 #define CONSOLE_TASK_MSG_QUEUE_SIZE 20
 #define CONSOLE_LINE_MAX_LEN 100
 #define CONSOLE_COMMAND_MAX_LEN 100

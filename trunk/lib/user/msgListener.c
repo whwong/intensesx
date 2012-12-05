@@ -34,7 +34,6 @@ struct msgListener *msgListenerCreate(UINT16 pQueueSize)
 
     if (ml->msgQueue != 0)
     {
-        vQueueAddToRegistry(ml->msgQueue, "List");
         msgAddListener(ml);
     }
     else
