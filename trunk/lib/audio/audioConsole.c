@@ -14,7 +14,7 @@ static void audioConsoleSetv(UINT8 argc, const char *argv[])
     if (argc == 2 && (strcmp(argv[1], "-h") == 0))
     {
         LOG("\tThis command sets audio driver volume level");
-        LOG("\tusage: 'asetv devid volume'");
+        LOG("\tusage: 'asetv devid volume soft'");
     }
     else if (argc == 3 || argc == 4)
     {
