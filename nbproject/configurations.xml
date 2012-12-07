@@ -56,12 +56,19 @@
     </logicalFolder>
     <logicalFolder name="lib" displayName="lib" projectFiles="true">
       <logicalFolder name="f6" displayName="audio" projectFiles="true">
+        <logicalFolder name="f1" displayName="decoders" projectFiles="true">
+          <itemPath>lib/audio/decoders/wave.c</itemPath>
+          <itemPath>lib/audio/decoders/wave.h</itemPath>
+          <itemPath>lib/audio/decoders/decoder.h</itemPath>
+        </logicalFolder>
         <itemPath>lib/audio/audioSineOutput.c</itemPath>
         <itemPath>lib/audio/audioSineOutput.h</itemPath>
         <itemPath>lib/audio/audioSinLUT.c</itemPath>
         <itemPath>lib/audio/audioSinLUT.h</itemPath>
         <itemPath>lib/audio/audioConsole.c</itemPath>
         <itemPath>lib/audio/audioConsole.h</itemPath>
+        <itemPath>lib/audio/audio1ch.h</itemPath>
+        <itemPath>lib/audio/audio1ch.c</itemPath>
       </logicalFolder>
       <logicalFolder name="f5" displayName="console" projectFiles="true">
         <itemPath>lib/console/serialConsole.c</itemPath>
@@ -215,11 +222,11 @@
         <property key="preprocessor-macros" value=""/>
         <property key="exclude-floating-point-library" value="false"/>
         <property key="list-file" value=""/>
-        <property key="list-assembly" value="false"/>
         <property key="list-source" value="true"/>
+        <property key="list-assembly" value="false"/>
+        <property key="warning-level" value=""/>
         <property key="extra-include-directories-for-preprocessor"
                   value="E:\Projekty\Inz\IntenseS.X\os\port\MPLAB\PIC32MX\"/>
-        <property key="warning-level" value=""/>
         <property key="list-section-info" value="false"/>
         <property key="omit-forms" value="false"/>
         <property key="list-symbols" value="false"/>
@@ -305,9 +312,9 @@
         <property key="UART4" value="true"/>
         <property key="UART3" value="true"/>
         <property key="UART2" value="true"/>
-        <property key="programoptions.preserveprogramrange.end" value="0x1d0001ff"/>
-        <property key="UART1" value="true"/>
         <property key="Freeze All Other Peripherals" value="true"/>
+        <property key="UART1" value="true"/>
+        <property key="programoptions.preserveprogramrange.end" value="0x1d0001ff"/>
       </ICD3PlatformTool>
     </conf>
   </confs>

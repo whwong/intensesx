@@ -238,7 +238,7 @@ void lldWm8731IntHandler()
         case AM_KMIXER:
             break;
         case AM_ONECHANNEL:
-            SPI4BUF = audio1chGetSample();
+            //SPI4BUF = audio1chGetSample();
             break;
         case AM_SINE:
             SPI4BUF = audioSineGetSample();
@@ -351,6 +351,7 @@ static retcode lldWm8731Init(struct hldAudioConfig *pCfg)
     if (sup == ERR_NOT_SUPPORTED)
     {
         pCfg->bits = 16;
+        fail |= lldWm8731SetBits(pCfg, pCfg->sampleRate);
         WARNING("Selected data format not supported. "
                     "Driver data format set to 16 bits");
     }
@@ -361,6 +362,7 @@ static retcode lldWm8731Init(struct hldAudioConfig *pCfg)
     if (sup == ERR_NOT_SUPPORTED)
     {
         pCfg->sampleRate = 16;
+        fail |= lldWm8731SetSampleRate(pCfg, pCfg->sampleRate);
         WARNING("Selected sample rate not supported. "
                     "Driver sample rate set to 48000Hz");
     }

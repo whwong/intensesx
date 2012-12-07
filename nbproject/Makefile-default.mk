@@ -40,11 +40,11 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/app/main.o ${OBJECTDIR}/boards/PIC32MX7MMB/board.o ${OBJECTDIR}/hal/hld/hld.o ${OBJECTDIR}/hal/lld/platforms/microchip/gpio.o ${OBJECTDIR}/hal/lld/platforms/microchip/ili9163.o ${OBJECTDIR}/hal/lld/platforms/microchip/hx8347.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UART.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UARTIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADC.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADCIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IR.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRTimerIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731ISR.o ${OBJECTDIR}/hal/lld/resistiveTouch.o ${OBJECTDIR}/lib/audio/audioSineOutput.o ${OBJECTDIR}/lib/audio/audioSinLUT.o ${OBJECTDIR}/lib/audio/audioConsole.o ${OBJECTDIR}/lib/console/serialConsole.o ${OBJECTDIR}/lib/graphics/graphics.o ${OBJECTDIR}/lib/graphics/primitives.o ${OBJECTDIR}/lib/graphics/tests.o ${OBJECTDIR}/lib/gui/window.o ${OBJECTDIR}/lib/input/inputEvent.o ${OBJECTDIR}/lib/input/inputTask.o ${OBJECTDIR}/lib/ir/nec.o ${OBJECTDIR}/lib/user/msgListener.o ${OBJECTDIR}/lib/user/msgDispatcher.o ${OBJECTDIR}/lib/log.o ${OBJECTDIR}/lib/digitalFilter.o ${OBJECTDIR}/lib/time.o ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port.o ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port_asm.o ${OBJECTDIR}/os/croutine.o ${OBJECTDIR}/os/heap_2.o ${OBJECTDIR}/os/list.o ${OBJECTDIR}/os/queue.o ${OBJECTDIR}/os/tasks.o ${OBJECTDIR}/os/timers.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o ${OBJECTDIR}/lib/fatfs/option/syscall.o ${OBJECTDIR}/lib/fatfs/option/unicode.o ${OBJECTDIR}/lib/fatfs/diskio.o ${OBJECTDIR}/lib/fatfs/ff.o ${OBJECTDIR}/lib/fatfs/fatfsConsole.o
-POSSIBLE_DEPFILES=${OBJECTDIR}/app/main.o.d ${OBJECTDIR}/boards/PIC32MX7MMB/board.o.d ${OBJECTDIR}/hal/hld/hld.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/gpio.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/ili9163.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/hx8347.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UART.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UARTIsr.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADC.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADCIsr.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IR.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRIsr.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRTimerIsr.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731ISR.o.d ${OBJECTDIR}/hal/lld/resistiveTouch.o.d ${OBJECTDIR}/lib/audio/audioSineOutput.o.d ${OBJECTDIR}/lib/audio/audioSinLUT.o.d ${OBJECTDIR}/lib/audio/audioConsole.o.d ${OBJECTDIR}/lib/console/serialConsole.o.d ${OBJECTDIR}/lib/graphics/graphics.o.d ${OBJECTDIR}/lib/graphics/primitives.o.d ${OBJECTDIR}/lib/graphics/tests.o.d ${OBJECTDIR}/lib/gui/window.o.d ${OBJECTDIR}/lib/input/inputEvent.o.d ${OBJECTDIR}/lib/input/inputTask.o.d ${OBJECTDIR}/lib/ir/nec.o.d ${OBJECTDIR}/lib/user/msgListener.o.d ${OBJECTDIR}/lib/user/msgDispatcher.o.d ${OBJECTDIR}/lib/log.o.d ${OBJECTDIR}/lib/digitalFilter.o.d ${OBJECTDIR}/lib/time.o.d ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port.o.d ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port_asm.o.d ${OBJECTDIR}/os/croutine.o.d ${OBJECTDIR}/os/heap_2.o.d ${OBJECTDIR}/os/list.o.d ${OBJECTDIR}/os/queue.o.d ${OBJECTDIR}/os/tasks.o.d ${OBJECTDIR}/os/timers.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d ${OBJECTDIR}/lib/fatfs/option/syscall.o.d ${OBJECTDIR}/lib/fatfs/option/unicode.o.d ${OBJECTDIR}/lib/fatfs/diskio.o.d ${OBJECTDIR}/lib/fatfs/ff.o.d ${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/app/main.o ${OBJECTDIR}/boards/PIC32MX7MMB/board.o ${OBJECTDIR}/hal/hld/hld.o ${OBJECTDIR}/hal/lld/platforms/microchip/gpio.o ${OBJECTDIR}/hal/lld/platforms/microchip/ili9163.o ${OBJECTDIR}/hal/lld/platforms/microchip/hx8347.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UART.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UARTIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADC.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADCIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IR.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRTimerIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731ISR.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o ${OBJECTDIR}/hal/lld/resistiveTouch.o ${OBJECTDIR}/lib/audio/audioSineOutput.o ${OBJECTDIR}/lib/audio/audioSinLUT.o ${OBJECTDIR}/lib/audio/audioConsole.o ${OBJECTDIR}/lib/console/serialConsole.o ${OBJECTDIR}/lib/fatfs/option/syscall.o ${OBJECTDIR}/lib/fatfs/option/unicode.o ${OBJECTDIR}/lib/fatfs/diskio.o ${OBJECTDIR}/lib/fatfs/ff.o ${OBJECTDIR}/lib/fatfs/fatfsConsole.o ${OBJECTDIR}/lib/graphics/graphics.o ${OBJECTDIR}/lib/graphics/primitives.o ${OBJECTDIR}/lib/graphics/tests.o ${OBJECTDIR}/lib/gui/window.o ${OBJECTDIR}/lib/input/inputEvent.o ${OBJECTDIR}/lib/input/inputTask.o ${OBJECTDIR}/lib/ir/nec.o ${OBJECTDIR}/lib/user/msgListener.o ${OBJECTDIR}/lib/user/msgDispatcher.o ${OBJECTDIR}/lib/log.o ${OBJECTDIR}/lib/digitalFilter.o ${OBJECTDIR}/lib/time.o ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port.o ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port_asm.o ${OBJECTDIR}/os/croutine.o ${OBJECTDIR}/os/heap_2.o ${OBJECTDIR}/os/list.o ${OBJECTDIR}/os/queue.o ${OBJECTDIR}/os/tasks.o ${OBJECTDIR}/os/timers.o ${OBJECTDIR}/lib/audio/audio1ch.o ${OBJECTDIR}/lib/audio/decoders/wave.o
+POSSIBLE_DEPFILES=${OBJECTDIR}/app/main.o.d ${OBJECTDIR}/boards/PIC32MX7MMB/board.o.d ${OBJECTDIR}/hal/hld/hld.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/gpio.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/ili9163.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/hx8347.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UART.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UARTIsr.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADC.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADCIsr.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IR.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRIsr.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRTimerIsr.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731ISR.o.d ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d ${OBJECTDIR}/hal/lld/resistiveTouch.o.d ${OBJECTDIR}/lib/audio/audioSineOutput.o.d ${OBJECTDIR}/lib/audio/audioSinLUT.o.d ${OBJECTDIR}/lib/audio/audioConsole.o.d ${OBJECTDIR}/lib/console/serialConsole.o.d ${OBJECTDIR}/lib/fatfs/option/syscall.o.d ${OBJECTDIR}/lib/fatfs/option/unicode.o.d ${OBJECTDIR}/lib/fatfs/diskio.o.d ${OBJECTDIR}/lib/fatfs/ff.o.d ${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d ${OBJECTDIR}/lib/graphics/graphics.o.d ${OBJECTDIR}/lib/graphics/primitives.o.d ${OBJECTDIR}/lib/graphics/tests.o.d ${OBJECTDIR}/lib/gui/window.o.d ${OBJECTDIR}/lib/input/inputEvent.o.d ${OBJECTDIR}/lib/input/inputTask.o.d ${OBJECTDIR}/lib/ir/nec.o.d ${OBJECTDIR}/lib/user/msgListener.o.d ${OBJECTDIR}/lib/user/msgDispatcher.o.d ${OBJECTDIR}/lib/log.o.d ${OBJECTDIR}/lib/digitalFilter.o.d ${OBJECTDIR}/lib/time.o.d ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port.o.d ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port_asm.o.d ${OBJECTDIR}/os/croutine.o.d ${OBJECTDIR}/os/heap_2.o.d ${OBJECTDIR}/os/list.o.d ${OBJECTDIR}/os/queue.o.d ${OBJECTDIR}/os/tasks.o.d ${OBJECTDIR}/os/timers.o.d ${OBJECTDIR}/lib/audio/audio1ch.o.d ${OBJECTDIR}/lib/audio/decoders/wave.o.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/app/main.o ${OBJECTDIR}/boards/PIC32MX7MMB/board.o ${OBJECTDIR}/hal/hld/hld.o ${OBJECTDIR}/hal/lld/platforms/microchip/gpio.o ${OBJECTDIR}/hal/lld/platforms/microchip/ili9163.o ${OBJECTDIR}/hal/lld/platforms/microchip/hx8347.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UART.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UARTIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADC.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADCIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IR.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRTimerIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731ISR.o ${OBJECTDIR}/hal/lld/resistiveTouch.o ${OBJECTDIR}/lib/audio/audioSineOutput.o ${OBJECTDIR}/lib/audio/audioSinLUT.o ${OBJECTDIR}/lib/audio/audioConsole.o ${OBJECTDIR}/lib/console/serialConsole.o ${OBJECTDIR}/lib/graphics/graphics.o ${OBJECTDIR}/lib/graphics/primitives.o ${OBJECTDIR}/lib/graphics/tests.o ${OBJECTDIR}/lib/gui/window.o ${OBJECTDIR}/lib/input/inputEvent.o ${OBJECTDIR}/lib/input/inputTask.o ${OBJECTDIR}/lib/ir/nec.o ${OBJECTDIR}/lib/user/msgListener.o ${OBJECTDIR}/lib/user/msgDispatcher.o ${OBJECTDIR}/lib/log.o ${OBJECTDIR}/lib/digitalFilter.o ${OBJECTDIR}/lib/time.o ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port.o ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port_asm.o ${OBJECTDIR}/os/croutine.o ${OBJECTDIR}/os/heap_2.o ${OBJECTDIR}/os/list.o ${OBJECTDIR}/os/queue.o ${OBJECTDIR}/os/tasks.o ${OBJECTDIR}/os/timers.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o ${OBJECTDIR}/lib/fatfs/option/syscall.o ${OBJECTDIR}/lib/fatfs/option/unicode.o ${OBJECTDIR}/lib/fatfs/diskio.o ${OBJECTDIR}/lib/fatfs/ff.o ${OBJECTDIR}/lib/fatfs/fatfsConsole.o
+OBJECTFILES=${OBJECTDIR}/app/main.o ${OBJECTDIR}/boards/PIC32MX7MMB/board.o ${OBJECTDIR}/hal/hld/hld.o ${OBJECTDIR}/hal/lld/platforms/microchip/gpio.o ${OBJECTDIR}/hal/lld/platforms/microchip/ili9163.o ${OBJECTDIR}/hal/lld/platforms/microchip/hx8347.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UART.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32UARTIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADC.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32ADCIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IR.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32IRTimerIsr.o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731ISR.o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o ${OBJECTDIR}/hal/lld/resistiveTouch.o ${OBJECTDIR}/lib/audio/audioSineOutput.o ${OBJECTDIR}/lib/audio/audioSinLUT.o ${OBJECTDIR}/lib/audio/audioConsole.o ${OBJECTDIR}/lib/console/serialConsole.o ${OBJECTDIR}/lib/fatfs/option/syscall.o ${OBJECTDIR}/lib/fatfs/option/unicode.o ${OBJECTDIR}/lib/fatfs/diskio.o ${OBJECTDIR}/lib/fatfs/ff.o ${OBJECTDIR}/lib/fatfs/fatfsConsole.o ${OBJECTDIR}/lib/graphics/graphics.o ${OBJECTDIR}/lib/graphics/primitives.o ${OBJECTDIR}/lib/graphics/tests.o ${OBJECTDIR}/lib/gui/window.o ${OBJECTDIR}/lib/input/inputEvent.o ${OBJECTDIR}/lib/input/inputTask.o ${OBJECTDIR}/lib/ir/nec.o ${OBJECTDIR}/lib/user/msgListener.o ${OBJECTDIR}/lib/user/msgDispatcher.o ${OBJECTDIR}/lib/log.o ${OBJECTDIR}/lib/digitalFilter.o ${OBJECTDIR}/lib/time.o ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port.o ${OBJECTDIR}/os/port/MPLAB/PIC32MX/port_asm.o ${OBJECTDIR}/os/croutine.o ${OBJECTDIR}/os/heap_2.o ${OBJECTDIR}/os/list.o ${OBJECTDIR}/os/queue.o ${OBJECTDIR}/os/tasks.o ${OBJECTDIR}/os/timers.o ${OBJECTDIR}/lib/audio/audio1ch.o ${OBJECTDIR}/lib/audio/decoders/wave.o
 
 
 CFLAGS=
@@ -217,6 +217,11 @@ ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o: hal/lld/platforms/microchip/w
 	@${RM} ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o.d" -o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o hal/lld/platforms/microchip/wm8731.c  
 	
+${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o: hal/lld/platforms/microchip/pic32SDMMC.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/hal/lld/platforms/microchip 
+	@${RM} ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d" -o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o hal/lld/platforms/microchip/pic32SDMMC.c  
+	
 ${OBJECTDIR}/hal/lld/resistiveTouch.o: hal/lld/resistiveTouch.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/hal/lld 
 	@${RM} ${OBJECTDIR}/hal/lld/resistiveTouch.o.d 
@@ -241,6 +246,31 @@ ${OBJECTDIR}/lib/console/serialConsole.o: lib/console/serialConsole.c  nbproject
 	@${MKDIR} ${OBJECTDIR}/lib/console 
 	@${RM} ${OBJECTDIR}/lib/console/serialConsole.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/lib/console/serialConsole.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/console/serialConsole.o.d" -o ${OBJECTDIR}/lib/console/serialConsole.o lib/console/serialConsole.c  
+	
+${OBJECTDIR}/lib/fatfs/option/syscall.o: lib/fatfs/option/syscall.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs/option 
+	@${RM} ${OBJECTDIR}/lib/fatfs/option/syscall.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/option/syscall.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/option/syscall.o.d" -o ${OBJECTDIR}/lib/fatfs/option/syscall.o lib/fatfs/option/syscall.c  
+	
+${OBJECTDIR}/lib/fatfs/option/unicode.o: lib/fatfs/option/unicode.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs/option 
+	@${RM} ${OBJECTDIR}/lib/fatfs/option/unicode.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/option/unicode.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/option/unicode.o.d" -o ${OBJECTDIR}/lib/fatfs/option/unicode.o lib/fatfs/option/unicode.c  
+	
+${OBJECTDIR}/lib/fatfs/diskio.o: lib/fatfs/diskio.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
+	@${RM} ${OBJECTDIR}/lib/fatfs/diskio.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/diskio.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/diskio.o.d" -o ${OBJECTDIR}/lib/fatfs/diskio.o lib/fatfs/diskio.c  
+	
+${OBJECTDIR}/lib/fatfs/ff.o: lib/fatfs/ff.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
+	@${RM} ${OBJECTDIR}/lib/fatfs/ff.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/ff.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/ff.o.d" -o ${OBJECTDIR}/lib/fatfs/ff.o lib/fatfs/ff.c  
+	
+${OBJECTDIR}/lib/fatfs/fatfsConsole.o: lib/fatfs/fatfsConsole.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
+	@${RM} ${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d" -o ${OBJECTDIR}/lib/fatfs/fatfsConsole.o lib/fatfs/fatfsConsole.c  
 	
 ${OBJECTDIR}/lib/graphics/graphics.o: lib/graphics/graphics.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/lib/graphics 
@@ -337,35 +367,15 @@ ${OBJECTDIR}/os/timers.o: os/timers.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/os/timers.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/os/timers.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/os/timers.o.d" -o ${OBJECTDIR}/os/timers.o os/timers.c  
 	
-${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o: hal/lld/platforms/microchip/pic32SDMMC.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/hal/lld/platforms/microchip 
-	@${RM} ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d" -o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o hal/lld/platforms/microchip/pic32SDMMC.c  
+${OBJECTDIR}/lib/audio/audio1ch.o: lib/audio/audio1ch.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/audio 
+	@${RM} ${OBJECTDIR}/lib/audio/audio1ch.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/audio/audio1ch.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/audio/audio1ch.o.d" -o ${OBJECTDIR}/lib/audio/audio1ch.o lib/audio/audio1ch.c  
 	
-${OBJECTDIR}/lib/fatfs/option/syscall.o: lib/fatfs/option/syscall.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs/option 
-	@${RM} ${OBJECTDIR}/lib/fatfs/option/syscall.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/option/syscall.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/option/syscall.o.d" -o ${OBJECTDIR}/lib/fatfs/option/syscall.o lib/fatfs/option/syscall.c  
-	
-${OBJECTDIR}/lib/fatfs/option/unicode.o: lib/fatfs/option/unicode.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs/option 
-	@${RM} ${OBJECTDIR}/lib/fatfs/option/unicode.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/option/unicode.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/option/unicode.o.d" -o ${OBJECTDIR}/lib/fatfs/option/unicode.o lib/fatfs/option/unicode.c  
-	
-${OBJECTDIR}/lib/fatfs/diskio.o: lib/fatfs/diskio.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
-	@${RM} ${OBJECTDIR}/lib/fatfs/diskio.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/diskio.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/diskio.o.d" -o ${OBJECTDIR}/lib/fatfs/diskio.o lib/fatfs/diskio.c  
-	
-${OBJECTDIR}/lib/fatfs/ff.o: lib/fatfs/ff.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
-	@${RM} ${OBJECTDIR}/lib/fatfs/ff.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/ff.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/ff.o.d" -o ${OBJECTDIR}/lib/fatfs/ff.o lib/fatfs/ff.c  
-	
-${OBJECTDIR}/lib/fatfs/fatfsConsole.o: lib/fatfs/fatfsConsole.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
-	@${RM} ${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d" -o ${OBJECTDIR}/lib/fatfs/fatfsConsole.o lib/fatfs/fatfsConsole.c  
+${OBJECTDIR}/lib/audio/decoders/wave.o: lib/audio/decoders/wave.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/audio/decoders 
+	@${RM} ${OBJECTDIR}/lib/audio/decoders/wave.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/audio/decoders/wave.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE) -g -D__DEBUG -D__MPLAB_DEBUGGER_ICD3=1 -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/audio/decoders/wave.o.d" -o ${OBJECTDIR}/lib/audio/decoders/wave.o lib/audio/decoders/wave.c  
 	
 else
 ${OBJECTDIR}/app/main.o: app/main.c  nbproject/Makefile-${CND_CONF}.mk
@@ -418,6 +428,11 @@ ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o: hal/lld/platforms/microchip/w
 	@${RM} ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o.d" -o ${OBJECTDIR}/hal/lld/platforms/microchip/wm8731.o hal/lld/platforms/microchip/wm8731.c  
 	
+${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o: hal/lld/platforms/microchip/pic32SDMMC.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/hal/lld/platforms/microchip 
+	@${RM} ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d" -o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o hal/lld/platforms/microchip/pic32SDMMC.c  
+	
 ${OBJECTDIR}/hal/lld/resistiveTouch.o: hal/lld/resistiveTouch.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/hal/lld 
 	@${RM} ${OBJECTDIR}/hal/lld/resistiveTouch.o.d 
@@ -442,6 +457,31 @@ ${OBJECTDIR}/lib/console/serialConsole.o: lib/console/serialConsole.c  nbproject
 	@${MKDIR} ${OBJECTDIR}/lib/console 
 	@${RM} ${OBJECTDIR}/lib/console/serialConsole.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/lib/console/serialConsole.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/console/serialConsole.o.d" -o ${OBJECTDIR}/lib/console/serialConsole.o lib/console/serialConsole.c  
+	
+${OBJECTDIR}/lib/fatfs/option/syscall.o: lib/fatfs/option/syscall.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs/option 
+	@${RM} ${OBJECTDIR}/lib/fatfs/option/syscall.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/option/syscall.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/option/syscall.o.d" -o ${OBJECTDIR}/lib/fatfs/option/syscall.o lib/fatfs/option/syscall.c  
+	
+${OBJECTDIR}/lib/fatfs/option/unicode.o: lib/fatfs/option/unicode.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs/option 
+	@${RM} ${OBJECTDIR}/lib/fatfs/option/unicode.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/option/unicode.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/option/unicode.o.d" -o ${OBJECTDIR}/lib/fatfs/option/unicode.o lib/fatfs/option/unicode.c  
+	
+${OBJECTDIR}/lib/fatfs/diskio.o: lib/fatfs/diskio.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
+	@${RM} ${OBJECTDIR}/lib/fatfs/diskio.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/diskio.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/diskio.o.d" -o ${OBJECTDIR}/lib/fatfs/diskio.o lib/fatfs/diskio.c  
+	
+${OBJECTDIR}/lib/fatfs/ff.o: lib/fatfs/ff.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
+	@${RM} ${OBJECTDIR}/lib/fatfs/ff.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/ff.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/ff.o.d" -o ${OBJECTDIR}/lib/fatfs/ff.o lib/fatfs/ff.c  
+	
+${OBJECTDIR}/lib/fatfs/fatfsConsole.o: lib/fatfs/fatfsConsole.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
+	@${RM} ${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d" -o ${OBJECTDIR}/lib/fatfs/fatfsConsole.o lib/fatfs/fatfsConsole.c  
 	
 ${OBJECTDIR}/lib/graphics/graphics.o: lib/graphics/graphics.c  nbproject/Makefile-${CND_CONF}.mk
 	@${MKDIR} ${OBJECTDIR}/lib/graphics 
@@ -538,35 +578,15 @@ ${OBJECTDIR}/os/timers.o: os/timers.c  nbproject/Makefile-${CND_CONF}.mk
 	@${RM} ${OBJECTDIR}/os/timers.o.d 
 	@${FIXDEPS} "${OBJECTDIR}/os/timers.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/os/timers.o.d" -o ${OBJECTDIR}/os/timers.o os/timers.c  
 	
-${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o: hal/lld/platforms/microchip/pic32SDMMC.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/hal/lld/platforms/microchip 
-	@${RM} ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o.d" -o ${OBJECTDIR}/hal/lld/platforms/microchip/pic32SDMMC.o hal/lld/platforms/microchip/pic32SDMMC.c  
+${OBJECTDIR}/lib/audio/audio1ch.o: lib/audio/audio1ch.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/audio 
+	@${RM} ${OBJECTDIR}/lib/audio/audio1ch.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/audio/audio1ch.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/audio/audio1ch.o.d" -o ${OBJECTDIR}/lib/audio/audio1ch.o lib/audio/audio1ch.c  
 	
-${OBJECTDIR}/lib/fatfs/option/syscall.o: lib/fatfs/option/syscall.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs/option 
-	@${RM} ${OBJECTDIR}/lib/fatfs/option/syscall.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/option/syscall.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/option/syscall.o.d" -o ${OBJECTDIR}/lib/fatfs/option/syscall.o lib/fatfs/option/syscall.c  
-	
-${OBJECTDIR}/lib/fatfs/option/unicode.o: lib/fatfs/option/unicode.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs/option 
-	@${RM} ${OBJECTDIR}/lib/fatfs/option/unicode.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/option/unicode.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/option/unicode.o.d" -o ${OBJECTDIR}/lib/fatfs/option/unicode.o lib/fatfs/option/unicode.c  
-	
-${OBJECTDIR}/lib/fatfs/diskio.o: lib/fatfs/diskio.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
-	@${RM} ${OBJECTDIR}/lib/fatfs/diskio.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/diskio.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/diskio.o.d" -o ${OBJECTDIR}/lib/fatfs/diskio.o lib/fatfs/diskio.c  
-	
-${OBJECTDIR}/lib/fatfs/ff.o: lib/fatfs/ff.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
-	@${RM} ${OBJECTDIR}/lib/fatfs/ff.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/ff.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/ff.o.d" -o ${OBJECTDIR}/lib/fatfs/ff.o lib/fatfs/ff.c  
-	
-${OBJECTDIR}/lib/fatfs/fatfsConsole.o: lib/fatfs/fatfsConsole.c  nbproject/Makefile-${CND_CONF}.mk
-	@${MKDIR} ${OBJECTDIR}/lib/fatfs 
-	@${RM} ${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d 
-	@${FIXDEPS} "${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/fatfs/fatfsConsole.o.d" -o ${OBJECTDIR}/lib/fatfs/fatfsConsole.o lib/fatfs/fatfsConsole.c  
+${OBJECTDIR}/lib/audio/decoders/wave.o: lib/audio/decoders/wave.c  nbproject/Makefile-${CND_CONF}.mk
+	@${MKDIR} ${OBJECTDIR}/lib/audio/decoders 
+	@${RM} ${OBJECTDIR}/lib/audio/decoders/wave.o.d 
+	@${FIXDEPS} "${OBJECTDIR}/lib/audio/decoders/wave.o.d" $(SILENT) -c ${MP_CC} $(MP_EXTRA_CC_PRE)  -g -x c -c -mprocessor=$(MP_PROCESSOR_OPTION) -I"E:/Projekty/Inz/IntenseS.X/os/port/MPLAB/PIC32MX" -I"E:/Projekty/Inz/IntenseS.X/os" -I"E:/Projekty/Inz/IntenseS.X/boards/PIC32MX7MMB" -I"E:/Projekty/Inz/IntenseS.X" -O1 -MMD -MF "${OBJECTDIR}/lib/audio/decoders/wave.o.d" -o ${OBJECTDIR}/lib/audio/decoders/wave.o lib/audio/decoders/wave.c  
 	
 endif
 

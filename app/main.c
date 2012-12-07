@@ -34,6 +34,7 @@
 
 #include "lib/audio/audioConsole.h"
 #include "lib/fatfs/fatfsConsole.h"
+#include "lib/audio/audio1ch.h"
 
 int main(void);
 
@@ -229,6 +230,8 @@ static void prvTestTask1( void *pvParameters )
     fatfsConsoleRegisterCmds();
     audioSineConfig(&audioConfig);
     audioSineSetFreq(500);
+
+    audio1chPlaySound("asaf.wav", 0);
     
     struct msgListener *list;
     struct msg m;
