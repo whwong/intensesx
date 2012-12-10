@@ -76,8 +76,8 @@
 #define configPERIPHERAL_CLOCK_HZ		( ( unsigned long ) 80000000UL )
 #define configMAX_PRIORITIES			( ( unsigned portBASE_TYPE ) 5 )
 #define configMINIMAL_STACK_SIZE		( 190 )
-#define configISR_STACK_SIZE			( 400 )
-#define configTOTAL_HEAP_SIZE			( ( size_t ) 16383*2 )
+#define configISR_STACK_SIZE			( 800 )
+#define configTOTAL_HEAP_SIZE			( ( size_t ) 16383*3 )
 #define configMAX_TASK_NAME_LEN			( 4 )
 #define configUSE_TRACE_FACILITY		0
 #define configUSE_16_BIT_TICKS			0

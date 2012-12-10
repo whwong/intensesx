@@ -8,13 +8,14 @@
  */
 
 #include "audioConsole.h"
+#include "audio1ch.h"
 
 static void audioConsoleSetv(UINT8 argc, const char *argv[])
 {
     if (argc == 2 && (strcmp(argv[1], "-h") == 0))
     {
         LOG("\tThis command sets audio driver volume level");
-        LOG("\tusage: 'asetv devid volume soft'");
+        LOG("\tusage: 'asetv devid volume'");
     }
     else if (argc == 3 || argc == 4)
     {
@@ -56,10 +57,54 @@ static void audioConsoleSetv(UINT8 argc, const char *argv[])
     }
 }
 
+static void audioConsolePlay(UINT8 argc, const char *argv[])
+{
+    if (argc == 2 && (strcmp(argv[1], "-h") == 0))
+    {
+        LOG("\tThis command can play audio file");
+        LOG("\tusage: 'aplay filename'");
+    }
+    else if (argc == 2)
+    {
+        retcode ret = audio1chPlaySound(argv[1], SND_ASYNC);
+
+        if (ret == SUCCESS)
+            LOG("audio1chPlaySound: Playing...");
+        else
+            LOG("audio1chPlaySound: Error");
+    }
+    else
+    {
+        LOG("\tThis command can play audio file");
+        LOG("\tusage: 'aplay filename'");
+    }
+}
+
+static void audioConsoleStop(UINT8 argc, const char *argv[])
+{
+    if (argc == 2 && (strcmp(argv[1], "-h") == 0))
+    {
+        LOG("\tThis command stop playing audio file");
+        LOG("\tusage: 'astop'");
+    }
+    else if (argc == 1)
+    {
+        audio1chStopSound(NULL);
+        LOG("Sound stopped...");
+    }
+    else
+    {
+        LOG("\tThis command stop playing audio file");
+        LOG("\tusage: 'astop'");
+    }
+}
+
 /**
  * Execute just after console init
  */
 void audioConsoleRegisterCmds()
 {
     consoleRegisterCmd("asetv", &audioConsoleSetv);
+    consoleRegisterCmd("aplay", &audioConsolePlay);
+    consoleRegisterCmd("astop", &audioConsoleStop);
 }

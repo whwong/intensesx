@@ -13,13 +13,14 @@
 
 #if defined(USE_ONE_CHANNEL_AUDIO)
 
-#define SND_PLAY_TASK_PRIORITY tskIDLE_PRIORITY+2
+#define SND_PLAY_TASK_PRIORITY DEFAULT_USER_TASK_PRIORITY
 
 #define SND_ASYNC   0x00000000
 #define SND_SYNC    0x00000001
 
-retcode audio1chPlaySound(char *pFileName, UINT32 pFlags);
-UINT32 audio1chGetSample();
+retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags);
+UINT32 audio1chGetSample(signed portBASE_TYPE *pHigherPriorityTaskWoken);
+void audio1chLoadBuff();
 void audio1chStopSound(struct audioFile *pAudioFile);
 
 #else

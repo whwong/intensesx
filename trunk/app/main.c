@@ -149,7 +149,7 @@ static void prvTestTask1( void *pvParameters )
     audioConfig.bits = 16;
     audioConfig.channels = 2;
     audioConfig.enable = AUDIO_LINEOUT;
-    audioConfig.mode = AM_SINE;
+    audioConfig.mode = AM_ONECHANNEL;
     audioConfig.sampleRate = 48000;
     audioConfig.intPriority = configKERNEL_INTERRUPT_PRIORITY + 3;
     
@@ -159,9 +159,11 @@ static void prvTestTask1( void *pvParameters )
         audio = hldDeviceGetById(HLD_DEVICE_TYPE_AUDIO, 0);
         if (audio != NULL)
         {
+            // In production software need to try a few times and check that
+            // device started properly
             audio->open(audio);
             audio->ioctl(audio, AC_ENABLE, AUDIO_OUTAMP);
-            audio->ioctl(audio, AC_SET_VOLUME, 80);
+            audio->ioctl(audio, AC_SET_VOLUME, 50);
         }
     }
 
@@ -174,8 +176,8 @@ static void prvTestTask1( void *pvParameters )
             LOG("Disk status: %x", ds);
         }
     }
-
     INT32 fr = f_mount(0, &fat);
+/* Benchmark
     FIL f;
     UINT numread;
     LOG("f_mount: %d", fr);
@@ -213,7 +215,7 @@ static void prvTestTask1( void *pvParameters )
 
     fr = f_close(&f);
     LOG("f_close: %x", fr);
-
+*/
     msgDispatcherInit();
     if (inputTaskInit(&intenseKeymap[0], INTENSE_KEYMAP_SIZE) == SUCCESS)
     {
