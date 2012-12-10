@@ -33,6 +33,7 @@ typedef enum
     ERR = -206, // Unknown or module specyfic error
     ERR_NOT_SUPPORTED = -207,
     ERR_FILE = -208,
+    ERR_DEVICE_NOT_STARTED = -209,
             
     // Retcodes for FatFS file system
     RES_OK = 0,         /* 0: Successful */

@@ -204,9 +204,10 @@ void lldPic32IRIntHandler()
     
     higherPriorityTaskWoken = FALSE;
 
-    static UINT32 toggleFlag = 1;
-    toggleFlag = (toggleFlag == 0) ? 1 : 0;
-    LED1 = toggleFlag;
+    // Uncomment if you need to pass ir signal to some gpio
+    //static UINT32 toggleFlag = 1;
+    //toggleFlag = (toggleFlag == 0) ? 1 : 0;
+    //LED1 = toggleFlag;
 
     // Get pulse len from IC buffer
     lastPulseLen = mIC2ReadCapture();

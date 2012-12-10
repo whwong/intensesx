@@ -111,6 +111,7 @@ static retcode lldWm8731Open(struct hldAudioDevice *pAudioDev)
     if (ret = lldWm8731Init(&pAudioDev->config) != SUCCESS)
     {
         vSemaphoreDelete(audioMutex);
+        audioMutex = NULL;
         ERROR("Bus error in %s device driver", lldWM8731Name);
         return ret;
     }
@@ -156,6 +157,7 @@ static retcode lldWm8731Close(struct hldAudioDevice *pAudioDev)
             HLD_DEVICE_STATE_TURNED_ON);
 
     vSemaphoreDelete(audioMutex);
+    audioMutex = NULL;
 
     DONE("%s device closed", lldWM8731Name);
     return SUCCESS;
@@ -164,6 +166,11 @@ static retcode lldWm8731Close(struct hldAudioDevice *pAudioDev)
 static retcode
 lldWm8731Ioctl(struct hldAudioDevice *pAudioDev, UINT32 pCmd, UINT32 pParam)
 {
+    assert(pAudioDev != NULL);
+
+    if (!(pAudioDev->head.state & HLD_DEVICE_STATE_RUNNING))
+        return ERR_DEVICE_NOT_STARTED;
+    
     switch(pCmd)
     {
         case AC_SET_VOLUME:
@@ -225,6 +232,7 @@ void lldWm8731IntHandler()
     static portBASE_TYPE higherPriorityTaskWoken;
     higherPriorityTaskWoken = FALSE;
     static UINT32 i;
+    static union audioWm16bitSample smp;
 
     // 1. clear interrupt flag
     SpiChnClrTxIntFlag(4);
@@ -235,11 +243,22 @@ void lldWm8731IntHandler()
         case AM_NONE:
             SPI4BUF = 0;
             break;
+
         case AM_KMIXER:
             break;
+
         case AM_ONECHANNEL:
-            //SPI4BUF = audio1chGetSample();
+            smp.left = audio1chGetSample(&higherPriorityTaskWoken);
+            if (currentDevice->config.channels == 2)
+                smp.right = audio1chGetSample(&higherPriorityTaskWoken);
+            else
+                smp.right = smp.left;
+
+            SPI4BUF = smp.sample;
+
+            //audio1chLoadBuff();
             break;
+
         case AM_SINE:
             SPI4BUF = audioSineGetSample();
             break;
@@ -267,6 +286,9 @@ static retcode lldWm8731SetBits(struct hldAudioConfig *pCfg, UINT32 pBits)
 {
     // DSP_MODE|LRP|MS
     UINT8 tmpVal = 0x53;
+ 
+    assert(pCfg != NULL);
+
     pCfg->bits = pBits;
     switch(pBits)
     {
@@ -274,12 +296,15 @@ static retcode lldWm8731SetBits(struct hldAudioConfig *pCfg, UINT32 pBits)
             break;
         case 20:
             tmpVal |= 0x40;
+            return ERR_NOT_SUPPORTED; // Not yet
             break;
         case 24:
             tmpVal |= 0x80;
+            return ERR_NOT_SUPPORTED; // Not yet
             break;
         case 32:
             tmpVal |= 0xC0;
+            return ERR_NOT_SUPPORTED; // Not yet
             break;
 
         default:
@@ -292,7 +317,10 @@ static retcode lldWm8731SetBits(struct hldAudioConfig *pCfg, UINT32 pBits)
 static retcode lldWm8731SetSampleRate(struct hldAudioConfig *pCfg, UINT32 pSampleRate)
 {
     // Normal mode|!BOSR
-    UINT8 tmpVal = 0x02;
+    UINT8 tmpVal = 0x40;
+
+    assert(pCfg != NULL);
+
     pCfg->sampleRate = pSampleRate;
     
     switch (pSampleRate)
@@ -321,6 +349,8 @@ static retcode lldWm8731Init(struct hldAudioConfig *pCfg)
 {
     retcode fail = SUCCESS;
     retcode sup = SUCCESS;
+    
+    assert(pCfg != NULL);
 
     CloseI2C2();
     OpenI2C2(I2C_EN | I2C_IDLE_CON | I2C_7BIT_ADD | I2C_STR_EN,
@@ -382,15 +412,27 @@ static retcode lldWm8731Init(struct hldAudioConfig *pCfg)
 static void Wm8731DisableOutAmp(void)
 {
     // ACTIVE; turn off
-    WmMasterWrite(WM8731_REG_ACTIVE_CTRL, 0x00);
-    LOG("ioctl: wm8731 OUT_AMP disabled");
+    retcode ret = WmMasterWrite(WM8731_REG_ACTIVE_CTRL, 0x00);
+
+    if (ret == SUCCESS)
+        LOG("ioctl: wm8731 OUT_AMP disabled");
+    else if (ret == ERR_DEVICE_NOT_STARTED)
+        ERROR("ioctl: wm8731 OUT_AMP disable, Device not started");
+    else
+        ERROR("ioctl: wm8731 OUT_AMP disable, Bus error");
 }
 
 static void Wm8731EnableOutAmp(void)
 {
     // ACTIVE; turn on
-    WmMasterWrite(WM8731_REG_ACTIVE_CTRL, 0x01);
-    LOG("ioctl: wm8731 OUT_AMP enabled");
+    retcode ret = WmMasterWrite(WM8731_REG_ACTIVE_CTRL, 0x01);
+
+    if (ret == SUCCESS)
+        LOG("ioctl: wm8731 OUT_AMP enabled");
+    else if (ret == ERR_DEVICE_NOT_STARTED)
+        ERROR("ioctl: wm8731 OUT_AMP enable, Device not started");
+    else
+        ERROR("ioctl: wm8731 OUT_AMP enable, Bus error");
 }
 
 /**
@@ -401,23 +443,32 @@ static void Wm8731Volume(UINT8 pLevel, UINT8 pZCEN)
 {
     UINT16 tmpVal = (pZCEN != 0) ? 0x1AF : 0x12F;
     // LRHPBOTH|LZCEN| 00-2F = Mute, 7F max
-    WmMasterWrite(WM8731_REG_LHPHONE_OUT, tmpVal + (pLevel*80/100));
-    LOG("ioctl: wm8731 OUT_AMP volume changed to: %d, soft: %d", pLevel, pZCEN);
+    retcode ret = WmMasterWrite(WM8731_REG_LHPHONE_OUT, tmpVal + (pLevel*80/100));
+
+    if (ret == SUCCESS)
+        LOG("ioctl: wm8731 OUT_AMP volume changed to: %d, soft: %d", pLevel, pZCEN);
+    else if (ret == ERR_DEVICE_NOT_STARTED)
+        ERROR("ioctl: wm8731 OUT_AMP volume, Device not started");
+    else
+        ERROR("ioctl: wm8731 OUT_AMP volume, Bus error");
 }
 
 /**
- * Write register to WM8731
+ * Write register to WM8731, try one time
  * @param pRegAdd Register address
  * @param pCmd Data to write
  * @return Return code
  * @retval SUCCESS If everything goes right
  * @retval ERR_BUS When bus error occured
  */
-static retcode WmMasterWrite(UINT8 pRegAdd, UINT16 pCmd)
+static retcode WmMasterWriteTry(UINT8 pRegAdd, UINT16 pCmd)
 {
     UINT8 buff[4]; // store the words here
     UINT16 wmWord;
     retcode fail = SUCCESS;
+
+    if (audioMutex == NULL)
+        return ERR_DEVICE_NOT_STARTED;
 
     while (xSemaphoreTake(audioMutex, portMAX_DELAY) != pdTRUE);
     // reg address is 7 bits, command is 9 bits
@@ -453,6 +504,30 @@ static retcode WmMasterWrite(UINT8 pRegAdd, UINT16 pCmd)
         IdleI2C2(); // Wait to complete
     }
     xSemaphoreGive(audioMutex);
+
+    return fail;
+}
+
+/**
+ * Write register to WM8731, try 5 times
+ * @param pRegAdd Register address
+ * @param pCmd Data to write
+ * @return Return code
+ * @retval SUCCESS If everything goes right
+ * @retval ERR_BUS When bus error occured
+ */
+static retcode WmMasterWrite(UINT8 pRegAdd, UINT16 pCmd)
+{
+    retcode fail;
+    UINT32 tries;
+
+    // Try some times (5) when ERR_BUS
+    for (tries = 5; tries > 0; tries--)
+    {
+        fail = WmMasterWriteTry(pRegAdd, pCmd);
+        if ((fail == SUCCESS) || (fail == ERR_DEVICE_NOT_STARTED))
+            break;
+    }
 
     return fail;
 }

@@ -29,6 +29,17 @@
 
 #define WM8731_I2C_CLOCK            100000  // standard I2C bus frequency
 
+union audioWm16bitSample
+{
+    INT32 sample;
+
+    struct
+    {
+        INT16 left;
+        INT16 right;
+    };
+};
+
 retcode lldWm8731Attach(struct hldAudioConfig *pCfg);
 
 static retcode lldWm8731Open(struct hldAudioDevice *pAudioDev);
