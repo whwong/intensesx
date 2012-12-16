@@ -18,25 +18,52 @@
 #define AUDIO_LOG(...)
 #endif
 
-// Dobule buffer
+// Dobule audio buffer
+// Input buffer - always buffer[cb] - playing buffer
+// Output bufer - always buffer[cb-1] - loading buffer
 static UINT8 *buffer[2];
-static UINT8 *fileBuffer;
-static UINT32 fileBufSamples;
-
+// Current index in current buffer
 static UINT32 bufIdx = 0;
-static UINT32 osamples;
-static UINT32 isamples;
-static UINT32 sampleRate;
-static UINT8 bits;
-static UINT8 channels;
-static UINT8 cb;
+// Number of samples (bytes) in output buffer
+static UINT32 osamples = 0;
+// Number of samples (bytes) in input buffer
+static UINT32 isamples = 0;
+// Currently playing audio file sample rate
+static UINT32 sampleRate = 0;
+// Currently playing audio file bits per one sample on one channel
+static UINT8 bits = 0;
+// Currently playing audio file number of channels
+static UINT8 channels = 0;
+// Current buffer index (1 or 0 possible)
+static UINT8 cb = 0;
+// Is sound is playing (1) or paused (0)
 static UINT8 playing = 0;
-static xTaskHandle playingTask;
-static xSemaphoreHandle audio1chMutex = NULL;
-
+// Handle to the playing task
+static xTaskHandle playingTask = NULL;
+// Semaphore to synchronize data loading from file to output buffer
+static xSemaphoreHandle audio1chSem = NULL;
+// Mutex to mutualy exclisive audio playing and stopping routines
+static xSemaphoreHandle audio1chPlayMutex = NULL;
+// Device used for playing
 static struct hldAudioDevice *currentDevice = NULL;
+// Currently playing audio file handle
 static struct audioFile *currentAudioFile = NULL;
+// Ending flag. Any task can set it to 1, then playing task will end end set it
+// back to 0
+// static UINT8 endingFlag;
+// 1 If playing task is running, 0 if not
+// static UINT8 playingTaskRunning = 0;
+// Currently playing sound flsgs
+static UINT32 currentAudioFlags = 0;
 
+/**
+ * Checks that specified filename extension is equal to pExt
+ * @param pFn File name to compare
+ * @param pExt Extension to compare
+ * @return Boolean value like:
+ * @retval TRUE - extesions is equal
+ * @retval FALSE - extension is different
+ */
 static BOOL checkExtension(const char *pFn, const char *pExt)
 {
     UINT32 i, dotpos;
@@ -58,54 +85,76 @@ static BOOL checkExtension(const char *pFn, const char *pExt)
         return FALSE;
 }
 
+/**
+ * Playing task function
+ * @param pvParameter Task parameter in this case this is always equal
+ * to currentAudioFile
+ */
 static void audioSoundProc(void *pvParameter)
 {
-    struct audioFile *audioFileHandle;
     retcode ret;
     UINT32 rd = 0;
-    audioFileHandle = (struct audioFile *)pvParameter;
-    static UINT32 lasttime = 0;
+
     while(1)
     {
-        //while(1) vTaskDelay(100);
-
-        //while (xSemaphoreTake(audio1chMutex, portMAX_DELAY) != pdTRUE);
-
-        while(fileBufSamples > 0)
+        if ((audio1chSem == NULL) || (audio1chPlayMutex == NULL))
         {
-            audio1chLoadBuff();
-            vTaskDelay(1);
+            audio1chStopSound();
+            break;
         }
 
-        if (audioFileHandle->type == DECODER_WAVE)
+        xSemaphoreTake(audio1chSem, portMAX_DELAY);
+
+        if (currentAudioFlags & SND_CLOSING)
         {
-            if (fileBufSamples == 0)
+            audio1chStopSound();
+            break;
+        }
+
+        if (currentAudioFile->type == DECODER_WAVE)
+        {
+            if (osamples == 0)
             {
-                lasttime = xTaskGetTickCount();
-                //LOG(".");
-                ret = audioWaveLoadBuffer((struct audioWaveFile *)audioFileHandle, fileBuffer, &rd);
-                //LOG("r: %d", rd);
+                ret = audioWaveLoadBuffer((struct audioWaveFile *)currentAudioFile,
+                        buffer[1-cb], &rd);
+
                 if ((rd == 0) || (ret != SUCCESS))
                 {
-                    //LOG("Err: %d, %d", ret, rd);
-                    vTaskDelete(playingTask);
+                    audio1chStopSound();
+                    break;
                 }
-                fileBufSamples = rd;
+                osamples = rd;
                 playing = 1;
-                audio1chLoadBuff();
             }
         }
         else
         {
             // Unsupported ;(
-            vTaskDelete(playingTask);
+            audio1chStopSound();
+            break;
         }
+    }
+
+    // To be absolutelly sure that we never get out this function when it is
+    // task routine
+    if ((playingTask != NULL) && ((currentAudioFlags & SND_SYNC) == 0))
+    {
+        playingTask = NULL;
+        vTaskDelete(NULL);
     }
 }
 
+/**
+ * Configure audio devices to play given sound file
+ * @param pAudioFileHandle Sound file
+ * @return Result code
+ * @retval ERR_NOT_SUPPORTED - not supported format
+ * @retval SUCCESS - successfully configured
+ */
 static retcode audio1chConfig(struct audioFile *pAudioFileHandle)
 {
     retcode ret = SUCCESS;
+    
     //adjust device driver
     sampleRate = pAudioFileHandle->sampleRate;
     channels = pAudioFileHandle->channels;
@@ -133,29 +182,51 @@ static retcode audio1chConfig(struct audioFile *pAudioFileHandle)
     return SUCCESS;
 }
 
+/**
+ * Play file by specified filename
+ * @param pFileName Specify filename of sound to play. Decoder is selected
+ * based on file extension.
+ * @param pFlags Playing flags:
+ * SND_SYNC - Synchronous play. Wait until sound will end.
+ * SND_ASYNC - Asynchronous play. Play sound in another task.
+ * @return Result code
+ */
 retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags)
 {
-    LED0 = 1;
     INT32 ret;
     FIL *f;
-    struct audioFile *audioFileHandle;
 
     assert(pFileName != NULL);
 
-    LOG("audio1chPlaySound");
+    if (audio1chPlayMutex == NULL)
+        audio1chPlayMutex = xSemaphoreCreateMutex();
 
-    audio1chStopSound(NULL);
+    if (audio1chPlayMutex == NULL)
+    {
+        AUDIO_LOG("Error while creating playing mutex");
+        audio1chStopSound();
+        return ERR_MUTEX;
+    }
+
+    audio1chStopSound();
+    currentAudioFlags = pFlags;
+
+    xSemaphoreTake(audio1chPlayMutex, portMAX_DELAY);
 
     // Alloc FatFS file handle
     f = pvPortMalloc(sizeof(FIL));
     if (f == NULL)
+    {
+        xSemaphoreGive(audio1chPlayMutex);
         return ERR_NO_MEMMORY;
+    }
 
     // Open FatFS file
     ret = f_open(f, pFileName, FA_OPEN_EXISTING | FA_READ);
     if (ret != FR_OK)
     {
-        AUDIO_LOG("File open error");
+        AUDIO_LOG("File open error #%d", ret);
+        xSemaphoreGive(audio1chPlayMutex);
         return ERR_FILE;
     }
 
@@ -163,20 +234,21 @@ retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags)
     if (checkExtension(pFileName, "wav"))
     {
         AUDIO_LOG("WAVE file. Parsing header...");
-        audioFileHandle = (struct audioFile*)audioWaveReadHeaders(f);
+        currentAudioFile = (struct audioFile*)audioWaveReadHeaders(f);
 
-        if (audioFileHandle == NULL)
+        if (currentAudioFile == NULL)
         {
             AUDIO_LOG("Error while parsing header");
             f_close(f);
             vPortFree(f);
+            xSemaphoreGive(audio1chPlayMutex);
             return ERR_FILE;
         }
 
         AUDIO_LOG("WAVE Header parsed");
         AUDIO_LOG("Configurating devices...");
 
-        ret = audio1chConfig(audioFileHandle);
+        ret = audio1chConfig(currentAudioFile);
         if (ret != SUCCESS)
         {
             if (ret == ERR_NOT_SUPPORTED)
@@ -184,29 +256,29 @@ retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags)
             else
                 AUDIO_LOG("Audio device not started");
 
-            audio1chStopSound(audioFileHandle);
+            xSemaphoreGive(audio1chPlayMutex);
+            audio1chStopSound();
             return ret;
         }
 
-        vSemaphoreCreateBinary(audio1chMutex);
-        if (audio1chMutex == NULL)
+        vSemaphoreCreateBinary(audio1chSem);
+        if (audio1chSem == NULL)
         {
-            AUDIO_LOG("Error while creating mutex");
-            audio1chStopSound(audioFileHandle);
+            AUDIO_LOG("Error while creating loading semaphore");
+            xSemaphoreGive(audio1chPlayMutex);
+            audio1chStopSound();
             return ERR_MUTEX;
         }
 
         // Alloc buffer memmory
-        buffer[0] = pvPortMalloc(audioFileHandle->neededBufLen);
-        buffer[1] = pvPortMalloc(audioFileHandle->neededBufLen);
-        fileBuffer = pvPortMalloc(audioFileHandle->neededBufLen);
+        buffer[0] = pvPortMalloc(currentAudioFile->neededBufLen);
+        buffer[1] = pvPortMalloc(currentAudioFile->neededBufLen);
 
-        LOG("fb: %p", fileBuffer);
-
-        if ((buffer[0] == NULL) || (buffer[1] == NULL) || (fileBuffer == NULL))
+        if ((buffer[0] == NULL) || (buffer[1] == NULL))
         {
             AUDIO_LOG("Buffers allocation error");
-            audio1chStopSound(audioFileHandle);
+            xSemaphoreGive(audio1chPlayMutex);
+            audio1chStopSound();
             return ERR_NO_MEMMORY;
         }
     }
@@ -214,104 +286,116 @@ retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags)
     {
         AUDIO_LOG("FLAC files will be supported ASAP");
         f_close(f);
+        xSemaphoreGive(audio1chPlayMutex);
+        return ERR_NOT_SUPPORTED;
+    }
+    else
+    {
+        AUDIO_LOG("Can not open %s file. Not supported extension", pFileName);
+        f_close(f);
+        xSemaphoreGive(audio1chPlayMutex);
         return ERR_NOT_SUPPORTED;
     }
 
     // Check playing mode
     if (pFlags & SND_SYNC)
     {
+        xSemaphoreGive(audio1chPlayMutex);
         // Play sync start playing loop
-        // TODO: do this loop :)
         AUDIO_LOG("SND_SYNC Selected");
-        audio1chStopSound(audioFileHandle);
-        return ERR_NOT_SUPPORTED;
+        audioSoundProc((void *)currentAudioFile);
+        return SUCCESS;
     }
     else
     {
         // Play async - create task for playing
         AUDIO_LOG("SND_ASYNC Selected");
         ret = xTaskCreate( audioSoundProc, ( const signed char * const ) "1ch",
-            1024, (void *)audioFileHandle, SND_PLAY_TASK_PRIORITY, &playingTask);
+            2048, (void *)currentAudioFile, SND_PLAY_TASK_PRIORITY, &playingTask);
 
         if (ret != pdPASS)
         {
             AUDIO_LOG("Playing task creation error");
-            audio1chStopSound(audioFileHandle);
+            audio1chStopSound();
             return ERR_NO_MEMMORY;
         }
 
         AUDIO_LOG("Playing task created");
     }
 
-    currentAudioFile = audioFileHandle;
+    xSemaphoreGive(audio1chPlayMutex);
     return SUCCESS;
 }
 
 /**
- * Stop playing specyfied file
- * @param pAudioFile Audio file handle to stop play. Stop current if NULL
+ * Stop currently playing sound
  */
-void audio1chStopSound(struct audioFile *pAudioFile)
+void audio1chStopSound()
 {
-    struct audioFile *af = pAudioFile;
-    if (af == NULL)
-    {
-        af = currentAudioFile;
-        LOG("currentAudioFile");
-    } else
-        LOG("pAudioFile");
+    if (audio1chPlayMutex == NULL)
+        audio1chPlayMutex = xSemaphoreCreateMutex();
 
-    if (af == NULL)
+    if (audio1chPlayMutex == NULL)
     {
-        LOG("NULL total");
+        AUDIO_LOG("Error while creating playing mutex");
+        audio1chStopSound();
         return;
     }
 
-    if (playingTask != NULL)
-    {
-        vTaskDelete(playingTask);
-        playingTask = NULL;
-    }
+    xSemaphoreTake(audio1chPlayMutex, portMAX_DELAY);
 
-    if (audio1chMutex != NULL)
+    if (currentAudioFile != NULL)
     {
-        vSemaphoreDelete(audio1chMutex);
-        audio1chMutex = NULL;
-    }
+        currentAudioFlags |= SND_CLOSING;
+        f_close(currentAudioFile->fileHandle);
 
-    playing = 0;
-    osamples = 0;
-    isamples = 0;
-    cb = 0;
-    f_close(af->fileHandle);
-    vPortFree(buffer[0]);
-    vPortFree(buffer[1]);
-    vPortFree(fileBuffer);
-    vPortFree(af->fileHandle);
-    vPortFree(af);
-    af = NULL;
-    pAudioFile = NULL;
-    currentAudioFile = NULL;
+        if (audio1chSem != NULL)
+            xSemaphoreGive(audio1chSem);
+
+        if ((playingTask != NULL) && (xTaskGetCurrentTaskHandle() != playingTask) &&
+                ((currentAudioFlags & SND_SYNC) == 0))
+        {
+            AUDIO_LOG("Deleting playing task (%p) from another task...", playingTask);
+            vTaskDelete(playingTask);
+            playingTask = NULL;
+        }
+
+        AUDIO_LOG("Deleting semaphore...");
+        if (audio1chSem != NULL)
+        {
+            vSemaphoreDelete(audio1chSem);
+            audio1chSem = NULL;
+        }
+
+        AUDIO_LOG("Freeing memory...");
+        playing = 0;
+        osamples = 0;
+        isamples = 0;
+        cb = 0;
+        vPortFree(buffer[0]);
+        vPortFree(buffer[1]);
+        vPortFree(currentAudioFile->fileHandle);
+        vPortFree(currentAudioFile);
+        currentAudioFile = NULL;
+    }
+    
+    xSemaphoreGive(audio1chPlayMutex);
 }
 
+/**
+ * Get one sample from playing buffer. One sample means one sample for one channel.
+ * If file have more than one channel you will need to get another sample for each
+ * channel. Execute only from ISR.
+ * @param pHigherPriorityTaskWoken Standard ISR freeRTOS parameter
+ * @return Sample in format specified by file format
+ */
 UINT32 audio1chGetSample(signed portBASE_TYPE *pHigherPriorityTaskWoken)
 {
-    static UINT32 sample=0;
-
- /*   if (audio1chMutex != NULL)
-    {
-       if (xQueueIsQueueFullFromISR(audio1chMutex) == pdFALSE)
-            xSemaphoreGiveFromISR(audio1chMutex, pHigherPriorityTaskWoken);
-    }
-            return 0;*/
-    static UINT32 toggleFlag = 1;
-    toggleFlag = (toggleFlag == 0) ? 1 : 0;
-    //LED1 = toggleFlag;
+    static UINT32 sample = 0;
 
     if ((isamples != 0) && (playing == 1))
     {
-        LED1 = 0;
-        // 4. load the new samples from the current buffer
+        // Load new sample from the current buffer
         switch(bits)
         {
             case 8:
@@ -329,85 +413,50 @@ UINT32 audio1chGetSample(signed portBASE_TYPE *pHigherPriorityTaskWoken)
                 isamples = isamples - 2;
         }
 
-        // 6. check if current buffer emptied
-        if (isamples == 0)
+        // Check if current buffer emptied
+        if ((isamples == 0) && (osamples != 0))
         {
-            // swap input/output buffers
+            // Swap input/output buffers
             cb = 1 - cb;
-            // restart counting input samples
+            // Restart counting input samples
             isamples = osamples;
             bufIdx = 0;
             osamples = 0;
 
-            // Zmiana buforów bo odtwarzajacy sie skonczyl
-            // mozna zaladowac dane do output z bufora pliku
-            // ale nie będziemy tego robic tutaj
+            // Let's load new data to output buffer
+            if (audio1chSem != NULL)
+                xSemaphoreGiveFromISR(audio1chSem, pHigherPriorityTaskWoken);
         }
+        else if (isamples == 0)
+        {
+            sample = 0;
+        }
+    }
+    else if ((playing == 1) && (osamples != 0))
+    {
+        // swap input/output buffers
+        cb = 1 - cb;
+        // restart counting input samples
+        isamples = osamples;
+        bufIdx = 0;
+        osamples = 0;
+
+        // Let's load new data to output buffer
+        if (audio1chSem != NULL)
+            xSemaphoreGiveFromISR(audio1chSem, pHigherPriorityTaskWoken);
     }
     else
     {
-        //static UINT32 toggleFlag = 1;
-        //toggleFlag = (toggleFlag == 0) ? 1 : 0;
-        LED1 = 1;
         sample = 0;
     }
-
-    //else if (playing == 0)
-    //    sample = 0;
 
     return sample;
 }
 
-void audio1chLoadBuff()
+void audio1chPause(BOOL pPause)
 {
-    UINT32 i;
-
-    
-
-    if ((fileBufSamples > 0) && (osamples == 0))
-    {
-        LED0 = 0;
-        // move all samples available into the current RAM buffer
-        //memcpy( (void*)audioBuf[1-ACfg.cb][OCount],
-        for(i = 0; fileBufSamples > 0; i++, fileBufSamples--)
-        {
-            buffer[1 - cb][osamples] = fileBuffer[i];
-            osamples++;
-        }
-
-        // Cala zawartosc bufora pliku zostala zaladowana do bufora odtwarzania
-        // mozna ju WYZWOLIC task ladujacy
-     /*   if (audio1chMutex != NULL)
-        {
-           if (xQueueIsQueueFullFromISR(audio1chMutex) == pdFALSE)
-                xSemaphoreGiveFromISR(audio1chMutex, pHigherPriorityTaskWoken);
-        }  */
-
-        if (isamples == 0)
-        {
-            LED0 = 0;
-            // swap input/output buffers
-            cb = 1 - cb;
-            // restart counting input samples
-            isamples = osamples;
-            bufIdx = 0;
-            osamples = 0;
-
-            // Jezeli bufor odtwarzania byl wyczerpany to zaraz po zaladowaniu
-            // sampli do bufora drugiego, zmieniamy bufor i rozpoczynamy odtwarzanie
-        }
-
-        LED0 = 1;
-    }
-    /*else
-    {
-        if (audio1chMutex != NULL)
-        {
-           if (xQueueIsQueueFullFromISR(audio1chMutex) == pdFALSE)
-                xSemaphoreGiveFromISR(audio1chMutex, pHigherPriorityTaskWoken);
-        }
-    }*/
-
+    if (currentAudioFile != NULL)
+        playing = 1-pPause;
 }
 
 #endif

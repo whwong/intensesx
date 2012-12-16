@@ -125,7 +125,7 @@ static retcode lldWm8731Open(struct hldAudioDevice *pAudioDev)
     SpiChnClrTxIntFlag(4);
 
     INTSetVectorPriority(INT_VECTOR_SPI(4), pAudioDev->config.intPriority);
-    INTSetVectorSubPriority(INT_VECTOR_SPI(4), INT_SUB_PRIORITY_LEVEL_1);
+    INTSetVectorSubPriority(INT_VECTOR_SPI(4), INT_SUB_PRIORITY_LEVEL_2);
     INTEnable(INT_SOURCE_SPI_TX(4), INT_ENABLED);
 
     // force the 1st txfer

@@ -57,26 +57,61 @@ static void audioConsoleSetv(UINT8 argc, const char *argv[])
     }
 }
 
+static void audioConsolePause(UINT8 argc, const char *argv[])
+{
+    if (argc == 2 && (strcmp(argv[1], "-h") == 0))
+    {
+        LOG("\tThis command can play audio file");
+        LOG("\tusage: 'aplay paused_state'");
+        LOG("\tpaused_state: 1 - pause, 0 - resume");
+    }
+    else if (argc == 2)
+    {
+        audio1chPause(atoi(argv[1]));
+    }
+    else
+    {
+        LOG("\tThis command can play audio file");
+        LOG("\tusage: 'aplay paused_state'");
+        LOG("\tpaused_state: 1 - pause, 0 - resume");
+    }
+}
+
 static void audioConsolePlay(UINT8 argc, const char *argv[])
 {
     if (argc == 2 && (strcmp(argv[1], "-h") == 0))
     {
         LOG("\tThis command can play audio file");
-        LOG("\tusage: 'aplay filename'");
+        LOG("\tusage: 'aplay filename flags'");
     }
-    else if (argc == 2)
+    else if (argc == 2 || argc == 3)
     {
-        retcode ret = audio1chPlaySound(argv[1], SND_ASYNC);
+        // Default parameters, need to flags always be qual to 0
+        UINT32 flags = SND_ASYNC;
+
+        if (argc == 3)
+        {
+            UINT8 i;
+            for (i = 0; i < strlen(argv[2]); i++)
+            {
+                // And then if some flag is specified modify flags by binary
+                // adding unstandard flags.
+                if (argv[2][i] == 's')
+                    flags |= SND_SYNC;
+            }
+        }
+
+        retcode ret = audio1chPlaySound(argv[1], flags);
 
         if (ret == SUCCESS)
-            LOG("audio1chPlaySound: Playing...");
+            DONE("audio1chPlaySound");
         else
-            LOG("audio1chPlaySound: Error");
+            ERROR("audio1chPlaySound");
     }
     else
     {
         LOG("\tThis command can play audio file");
-        LOG("\tusage: 'aplay filename'");
+        LOG("\tusage: 'aplay filename flags'");
     }
 }
 
@@ -106,5 +141,6 @@ void audioConsoleRegisterCmds()
 {
     consoleRegisterCmd("asetv", &audioConsoleSetv);
     consoleRegisterCmd("aplay", &audioConsolePlay);
+    consoleRegisterCmd("apause", &audioConsolePause);
     consoleRegisterCmd("astop", &audioConsoleStop);
 }

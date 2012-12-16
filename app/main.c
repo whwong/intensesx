@@ -64,6 +64,7 @@ static void prvTestTask1( void *pvParameters )
     struct hldAudioDevice *audio;
     struct hldAudioConfig audioConfig;
     struct hldDiskDevice *disk;
+    UINT32 volume = 50;
 
     if (inputEventInit(200) != SUCCESS)
     {
@@ -151,7 +152,7 @@ static void prvTestTask1( void *pvParameters )
     audioConfig.enable = AUDIO_LINEOUT;
     audioConfig.mode = AM_ONECHANNEL;
     audioConfig.sampleRate = 48000;
-    audioConfig.intPriority = configKERNEL_INTERRUPT_PRIORITY + 3;
+    audioConfig.intPriority = configKERNEL_INTERRUPT_PRIORITY + 2;
     
     
     if (lldWm8731Attach(&audioConfig) == SUCCESS)
@@ -163,7 +164,7 @@ static void prvTestTask1( void *pvParameters )
             // device started properly
             audio->open(audio);
             audio->ioctl(audio, AC_ENABLE, AUDIO_OUTAMP);
-            audio->ioctl(audio, AC_SET_VOLUME, 50);
+            audio->ioctl(audio, AC_SET_VOLUME, volume);
         }
     }
 
@@ -233,7 +234,7 @@ static void prvTestTask1( void *pvParameters )
     audioSineConfig(&audioConfig);
     audioSineSetFreq(500);
 
-    audio1chPlaySound("asaf.wav", 0);
+    audio1chPlaySound("asaf2.wav", 0);
     
     struct msgListener *list;
     struct msg m;
@@ -264,6 +265,37 @@ static void prvTestTask1( void *pvParameters )
                     y += 5;
                 else if (m.param1 == V_KEY_DOWN)
                     y -= 5;
+
+                if (m.param1 == V_KEY_1)
+                    audio1chPlaySound("asaf2.wav", SND_ASYNC);
+                else if (m.param1 == V_KEY_2)
+                    audio1chPlaySound("satellit.wav", SND_ASYNC);
+                else if (m.param1 == V_KEY_3)
+                    audio1chPlaySound("k.wav", SND_SYNC);
+                else if (m.param1 == V_KEY_STOP)
+                    audio1chStopSound();
+                else if (m.param1 == V_KEY_PLAY)
+                    audio1chPause(0);
+                else if (m.param1 == V_KEY_PAUSE)
+                    audio1chPause(1);
+                else if (m.param1 == V_KEY_V_UP)
+                {
+                    if (volume < 100)
+                    {
+                        volume++;
+                    }
+                    
+                    audio->ioctl(audio, AC_SET_VOLUME_SOFT, volume);
+                }
+                else if (m.param1 == V_KEY_V_DOWN)
+                {
+                    if (volume > 0)
+                    {
+                        volume--;
+                    }
+                    
+                    audio->ioctl(audio, AC_SET_VOLUME_SOFT, volume);
+                }
 
                 lcd->setColor(lcd, 0, 255, 255, 255);
                 graphDrawLine(x,y,ox,oy);
