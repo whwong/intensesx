@@ -76,7 +76,9 @@
 #define configPERIPHERAL_CLOCK_HZ		( ( unsigned long ) 80000000UL )
 #define configMAX_PRIORITIES			( ( unsigned portBASE_TYPE ) 5 )
 #define configMINIMAL_STACK_SIZE		( 190 )
-#define configISR_STACK_SIZE			( 800 )
+// Probably we should to set it to much lower value
+// It need to be tested with 512 and 768
+#define configISR_STACK_SIZE			( 1024 )
 #define configTOTAL_HEAP_SIZE			( ( size_t ) 16383*3 )
 #define configMAX_TASK_NAME_LEN			( 4 )
 #define configUSE_TRACE_FACILITY		0
@@ -114,7 +116,7 @@ kept at 1. */
 /* The maximum interrupt priority from which FreeRTOS.org API functions can
 be called.  Only API functions that end in ...FromISR() can be used within
 interrupts. */
-#define configMAX_SYSCALL_INTERRUPT_PRIORITY	0x03
+#define configMAX_SYSCALL_INTERRUPT_PRIORITY	0x04
 
 
 #endif /* FREERTOS_CONFIG_H */

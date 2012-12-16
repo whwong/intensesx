@@ -17,11 +17,12 @@
 
 #define SND_ASYNC   0x00000000
 #define SND_SYNC    0x00000001
+#define SND_CLOSING 0x00000004
 
 retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags);
 UINT32 audio1chGetSample(signed portBASE_TYPE *pHigherPriorityTaskWoken);
-void audio1chLoadBuff();
-void audio1chStopSound(struct audioFile *pAudioFile);
+void audio1chStopSound();
+void audio1chPause(BOOL pPause);
 
 #else
 #define audio1chGetSample(...) 0

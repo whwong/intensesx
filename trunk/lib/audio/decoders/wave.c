@@ -28,7 +28,7 @@ struct audioWaveFile *audioWaveReadHeaders(FIL *pFile)
     struct audioWaveChunkFormat formatChunk;
 
     // Load file header
-    fr = f_read(pFile, &chunkHead, sizeof(struct audioWaveChunk), &rd);
+    fr = f_read(pFile, &chunkHead, sizeof(struct audioWaveChunk), (UINT*)&rd);
     if ((fr != FR_OK) || (rd != sizeof(struct audioWaveChunk)))
         return NULL;
 
@@ -40,7 +40,7 @@ struct audioWaveFile *audioWaveReadHeaders(FIL *pFile)
     }
 
     // Seek for format chunk
-    fr = f_read(pFile, &subchunkHead, sizeof(struct audioWaveSubchunk), &rd);
+    fr = f_read(pFile, &subchunkHead, sizeof(struct audioWaveSubchunk), (UINT*)&rd);
     if ((fr != FR_OK) || (rd != sizeof(struct audioWaveSubchunk)))
         return NULL;
 
@@ -51,12 +51,12 @@ struct audioWaveFile *audioWaveReadHeaders(FIL *pFile)
     }
 
     // Load format chunk
-    fr = f_read(pFile, &formatChunk, sizeof(struct audioWaveChunkFormat), &rd);
+    fr = f_read(pFile, &formatChunk, sizeof(struct audioWaveChunkFormat), (UINT*)&rd);
     if ((fr != FR_OK) || (rd != sizeof(struct audioWaveChunkFormat)))
         return NULL;
 
     // Seek for data chunk
-    fr = f_read(pFile, &subchunkHead, sizeof(struct audioWaveSubchunk), &rd);
+    fr = f_read(pFile, &subchunkHead, sizeof(struct audioWaveSubchunk), (UINT*)&rd);
     if ((fr != FR_OK) || (rd != sizeof(struct audioWaveSubchunk)))
         return NULL;
 

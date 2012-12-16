@@ -13,7 +13,12 @@
 #include "task.h"
 
 #define INPUT_TASK_PRIORITY 1
+#if defined(LOG_DEBUG)
+#define INPUT_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE+320)
+#else
 #define INPUT_TASK_STACK_SIZE (configMINIMAL_STACK_SIZE+70)
+#endif
+
 #define INPUT_TASK_MAX_SCAN_TIME 10
 #define INPUT_FIRST_REPEAT 250
 

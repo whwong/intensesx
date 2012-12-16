@@ -30,7 +30,12 @@ const struct inputKeyMap intenseKeymap[] =
     {0x20dfc23d,V_KEY_MENU},
     {0x20dfda25,V_KEY_EXIT},
     {0x20df14eb,V_KEY_BACK},
-    {0x20df55aa,V_KEY_INFO}
+    {0x20df55aa,V_KEY_INFO},
+    {0x20df0df2,V_KEY_PLAY},
+    {0x20df5da2,V_KEY_PAUSE},
+    {0x20df8d72,V_KEY_STOP},
+    {0x20dfc03f,V_KEY_V_DOWN},
+    {0x20df40bf,V_KEY_V_UP},
 };
 
 #define INTENSE_KEYMAP_SIZE (sizeof(intenseKeymap)/sizeof(struct inputKeyMap))

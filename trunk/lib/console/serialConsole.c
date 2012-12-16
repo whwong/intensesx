@@ -17,7 +17,7 @@ static UINT8 cidx = 0;
 static UINT8 argvidx = 0;
 
 /** Define this to see some debug information about serial console */
-#define SERIAL_CONSOLE_DEBUG
+//#define SERIAL_CONSOLE_DEBUG
 #if defined(SERIAL_CONSOLE_DEBUG)
 #define DEBUG_CONSOLE LOG
 #else
