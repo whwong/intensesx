@@ -36,6 +36,9 @@
 #include "lib/fatfs/fatfsConsole.h"
 #include "lib/audio/audio1ch.h"
 
+#include "rsc/fonts/fonts.h"
+#include "rsc/winstyle/winstyle.h"
+
 int main(void);
 
 struct hldUartDevice *gUartDevice;
@@ -52,6 +55,7 @@ static char fatBenchmarkBuf[512] = "Tutaj zapisujemy dokladnie 64 znaki. Testuje
 static void prvTestTask1( void *pvParameters )
 {
     UINT32 c=0, t;
+    UINT16 cw = 0;
     struct hldLcdDevice *lcd;
     struct hldUartConfig uartConfig;
     struct hldUartDevice *uart;
@@ -239,6 +243,12 @@ static void prvTestTask1( void *pvParameters )
     struct msgListener *list;
     struct msg m;
     INT32 x = 100,y = 100, ox=100, oy=100;
+    INT32 charx = 10;
+    INT32 charxh = 10;
+    INT32 charxha = 10;
+
+    // GUI Init
+    guiSetDefaultFont(&g_DroidSans15);
     
     list = msgListenerCreate(200);
     while(msgListenerGet(list, &m, NULL, 0, 0))
@@ -354,6 +364,16 @@ static void prvTestTask1( void *pvParameters )
 
                 ox = x;
                 oy = y;
+                break;
+
+            case MSG_CHAR:
+                lcd->setColor(lcd, 0, 255, 255, 255);
+                graphDrawChar(charx, 10, &cw, m.param1, &g_DroidSans15);
+                charx += cw;
+                graphDrawChar(charxh, 50, &cw, m.param1, &g_DroidSans22);
+                charxh += cw;
+                graphDrawChar(charxha, 100, &cw, m.param1, &g_DroidSans29);
+                charxha += cw;
                 break;
         }
     }

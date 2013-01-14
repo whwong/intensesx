@@ -124,7 +124,7 @@ static void sendKeyMessage(UINT32 pMsg, UINT32 scan_code, UINT16 repeat_count)
         if (keymap[i].scan_code == scan_code)
         {
             param2 = repeat_count | (scan_code << 16);
-            msgPost(windowGetFocused(), pMsg, keymap[i].vkey, param2);
+            msgPost(guiWindowGetFocused(), pMsg, keymap[i].vkey, param2);
         }
     }
 }
@@ -212,7 +212,7 @@ static void inputTask(void *pvParameters)
                             // press button 1 down (touch the screen in this case)
                             // and move with speed = 0 because we just touched
                             // screen
-                            msgPost(windowGetFocused(), MSG_POINTERDOWN, 0x0001,
+                            msgPost(guiWindowGetFocused(), MSG_POINTERDOWN, 0x0001,
                                     ((tevn->positionY << 16) | tevn->positionX));
                             break;
 
@@ -234,7 +234,7 @@ static void inputTask(void *pvParameters)
 
                             // 1st param is only speed because we just release
                             // touch from screen so we set btn 1 as released
-                            msgPost(windowGetFocused(), MSG_POINTERUP,
+                            msgPost(guiWindowGetFocused(), MSG_POINTERUP,
                                     ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16)),
                                     ((tevn->positionY << 16) | tevn->positionX));
                             break;
@@ -254,7 +254,7 @@ static void inputTask(void *pvParameters)
                             // 1st param is spd & 0x0001 because if we are
                             // touching screen we have to had btn1 pressed
                             // btn1 is equal to touch screen
-                            msgPost(windowGetFocused(), MSG_POINTERMOVE,
+                            msgPost(guiWindowGetFocused(), MSG_POINTERMOVE,
                                     ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | 0x0001),
                                     ((tevn->positionY << 16) | tevn->positionX));
                             break;
@@ -269,7 +269,7 @@ static void inputTask(void *pvParameters)
 
                     if (revn->action == EVENT_CHAR_GET)
                     {
-                        msgPost(windowGetFocused(), MSG_CHAR, cevn->character,
+                        msgPost(guiWindowGetFocused(), MSG_CHAR, cevn->character,
                                 (0 | (cevn->character << 16)));
                     }
 

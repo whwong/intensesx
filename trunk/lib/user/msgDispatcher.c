@@ -9,6 +9,7 @@
 #include "lib/log.h"
 #include "message.h"
 #include "semphr.h"
+#include "lib/gui/window.h"
 
 static struct msgDispatcher dispatcher;
 static xSemaphoreHandle dispatcherMutex = NULL;
@@ -83,7 +84,7 @@ void msgDelListener(struct msgListener* pListener)
  * @param pParam1 Parameter 1
  * @param pParam2 Parameter 2
  */
-void msgPost(struct window *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2)
+void msgPost(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2)
 {
     struct msg m;
     struct msgListener *l;
@@ -110,6 +111,42 @@ void msgPost(struct window *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam
         msgListenerPost(l, &m);
     }
     xSemaphoreGive(dispatcherMutex);
+
+    DEBUG("Message dispatched: 0x%08x, p1: 0x%x, p2: 0x%x to %d listeners",
+            pMessage, pParam1, pParam2, listenersCount);
+}
+
+/**
+ * Send sync message to all listeners. In difference to msgPost this
+ * function do not queue message and dispatch it by message listeners
+ * but just call windowProc from given window pointer
+ *
+ * @param pWnd Pointer to window to which the message is directed.
+ * @param pMessage Message code
+ * @param pParam1 Parameter 1
+ * @param pParam2 Parameter 2
+ */
+void msgSend(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2)
+{
+    struct msg m;
+
+    while (xSemaphoreTake(dispatcherMutex, portMAX_DELAY) != pdTRUE);
+    if (pMessage >= MSG_POINTERFIRST && pMessage <= MSG_POINTERLAST)
+    {
+        dispatcher.curPointerPosX = pParam1 & 0xFFFF;
+        dispatcher.curPointerPosY = (pParam1 >> 16) & 0xFFFF;
+    }
+
+    m.wnd = pWnd;
+    m.message = pMessage;
+    m.param1 = pParam1;
+    m.param2 = pParam2;
+    m.ptX = dispatcher.curPointerPosX;
+    m.ptY = dispatcher.curPointerPosY;
+    m.timestamp = xTaskGetTickCount();
+    xSemaphoreGive(dispatcherMutex);
+
+    pWnd->windowProc(pWnd, &m, pParam1, pParam2);
 
     DEBUG("Message dispatched: 0x%08x, p1: 0x%x, p2: 0x%x to %d listeners",
             pMessage, pParam1, pParam2, listenersCount);

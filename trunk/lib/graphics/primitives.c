@@ -8,19 +8,19 @@
 
 retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
 {
-    INT16   deltaX, deltaY;
-    INT16   error, stepErrorLT, stepErrorGE;
-    INT16   stepX, stepY;
-    INT16   steep;
-    INT16   temp;
-    INT16   style, type;
+    INT16 deltaX, deltaY;
+    INT16 error, stepErrorLT, stepErrorGE;
+    INT16 stepX, stepY;
+    INT16 steep;
+    INT16 temp;
+    INT16 style, type;
 
     if (graphLcdDev == NULL)
         return DEVICE_NOT_SET;
-    
-    if(pX1 == pX2)
+
+    if (pX1 == pX2)
     {
-        if(pY1 > pY2)
+        if (pY1 > pY2)
         {
             temp = pY1;
             pY1 = pY2;
@@ -29,7 +29,7 @@ retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
 
         style = 0;
         type = 1;
-        for(temp = pY1; temp < pY2 + 1; temp++)
+        for (temp = pY1; temp < pY2 + 1; temp++)
         {
             graphLcdDev->drawPixel(graphLcdDev, pX1, temp);
         }
@@ -37,9 +37,9 @@ retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
         return (1);
     }
 
-    if(pY1 == pY2)
+    if (pY1 == pY2)
     {
-        if(pX1 > pX2)
+        if (pX1 > pX2)
         {
             temp = pX1;
             pX1 = pX2;
@@ -48,7 +48,7 @@ retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
 
         style = 0;
         type = 1;
-        for(temp = pX1; temp < pX2 + 1; temp++)
+        for (temp = pX1; temp < pX2 + 1; temp++)
         {
             graphLcdDev->drawPixel(graphLcdDev, temp, pY1);
         }
@@ -58,7 +58,7 @@ retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
 
     stepX = 0;
     deltaX = pX2 - pX1;
-    if(deltaX < 0)
+    if (deltaX < 0)
     {
         deltaX = -deltaX;
         --stepX;
@@ -70,7 +70,7 @@ retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
 
     stepY = 0;
     deltaY = pY2 - pY1;
-    if(deltaY < 0)
+    if (deltaY < 0)
     {
         deltaY = -deltaY;
         --stepY;
@@ -81,7 +81,7 @@ retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
     }
 
     steep = 0;
-    if(deltaX < deltaY)
+    if (deltaX < deltaY)
     {
         ++steep;
         temp = deltaX;
@@ -112,9 +112,9 @@ retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
     style = 0;
     type = 1;
 
-    while(--deltaX >= 0)
+    while (--deltaX >= 0)
     {
-        if(error >= 0)
+        if (error >= 0)
         {
             pY1 += stepY;
             error -= stepErrorGE;
@@ -124,7 +124,7 @@ retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
         error += stepErrorLT;
 
 
-        if(steep)
+        if (steep)
         {
             graphLcdDev->drawPixel(graphLcdDev, pY1, pX1);
         }
@@ -152,7 +152,7 @@ retcode graphDrawCircle(UINT16 pX, UINT16 pY, UINT16 pRadius)
     if (graphLcdDev == NULL)
         return DEVICE_NOT_SET;
 
-    INT16 r = (INT16)pRadius;
+    INT16 r = (INT16) pRadius;
     INT16 x = -r, y = 0, err = 2 - 2 * r; /* II. Quadrant */
     do
     {
@@ -166,10 +166,347 @@ retcode graphDrawCircle(UINT16 pX, UINT16 pY, UINT16 pRadius)
             err += ++x * 2 + 1; /* e_xy+e_x > 0 */
         if (r <= y)
             err += ++y * 2 + 1; /* e_xy+e_y < 0 */
-        
-    } while (x < 0);
+
+    }
+    while (x < 0);
 
     return SUCCESS;
 }
 
-retcode graphDrawRoundedRect();
+retcode graphDrawRoundedRect()
+{
+    // Not supported yet
+    return ERR_NOT_SUPPORTED;
+}
+
+/*********************************************************************
+ * Function:  void OutCharGetInfoFlash (XCHAR ch, OUTCHAR_PARAM *pParam)
+ *
+ * PreCondition: none
+ *
+ * Input: ch - character code
+ *        pParam - pointer to character information structure.
+ *
+ * Output: none
+ *
+ * Side Effects: none
+ *
+ * Overview: Gathers the parameters for the specified character of the
+ *           currently set font from flash memory. This is a step performed
+ *           before the character is rendered.
+ *
+ * Note: Application should not call this function. This function is for
+ *       versatility of implementing hardware accelerated text rendering
+ *       only.
+ *
+ ********************************************************************/
+static void
+graphGetCharInfo(UINT16 pCh, struct graphFontOutCharParam *pParam,
+        struct graphFont *pFont)
+{
+    struct graphFontGlyphEntryEx *pChTableExtended;
+    struct graphFontGlyphEntry *pChTable;
+    struct graphBitmapFontHeader *fontHead;
+
+    fontHead = (struct graphBitmapFontHeader*) pFont->address;
+
+    pParam->pChTable = NULL;
+    pParam->pChTableExtended = NULL;
+    pParam->xAdjust = 0;
+    pParam->yAdjust = 0;
+    pParam->xWidthAdjust = 0;
+    pParam->heightOvershoot = 0;
+
+    // set color depth of font,
+    // based on 2^bpp where bpp is the color depth setting in the FONT_HEADER
+    pParam->bpp = 1 << fontHead->bpp;
+
+    if (fontHead->extendedGlyphEntry)
+    {
+        pChTableExtended = (struct graphFontGlyphEntryEx *) (pFont->address +
+                sizeof (struct graphBitmapFontHeader)) + ((UINT16) pCh -
+                (UINT16) (fontHead->firstChar));
+
+        pParam->pChImage = (UINT8 *) (pFont->address + pChTableExtended->offset);
+        pParam->chGlyphWidth = pChTableExtended->glyphWidth;
+
+        pParam->xWidthAdjust = pChTableExtended->glyphWidth -
+                pChTableExtended->cursorAdvance;
+
+        pParam->xAdjust = pChTableExtended->xAdjust;
+        pParam->yAdjust = pChTableExtended->yAdjust;
+
+        if (pParam->yAdjust > 0)
+        {
+            pParam->heightOvershoot = pParam->yAdjust;
+        }
+    }
+    else
+    {
+        pChTable = (struct graphFontGlyphEntry *) ((pFont)->address +
+                sizeof (struct graphBitmapFontHeader)) + ((UINT16) pCh -
+                (UINT16) (fontHead->firstChar));
+
+        pParam->pChImage = (UINT8 *) ((pFont)->address +
+                ((UINT32) (pChTable->offsetMSB) << 8) + pChTable->offsetLSB);
+
+        pParam->chGlyphWidth = pChTable->width;
+    }
+}
+
+static UINT16 _fgcolor100;
+static UINT16 _fgcolor25;
+static UINT16 _fgcolor75;
+static UINT16 _bgcolor100;
+static UINT16 _bgcolor25;
+static UINT16 _bgcolor75;
+
+/**
+ * Calculates mid values of colors
+ */
+static void __attribute__((always_inline)) calculateColors()
+{
+    UINT16 _fgcolor50;
+    UINT16 _bgcolor50;
+
+    _fgcolor50 = (_fgcolor100 & 0b1111011111011110u) >> 1;
+    _fgcolor25 = (_fgcolor50 & 0b1111011111011110u) >> 1;
+    _fgcolor75 = _fgcolor50 + _fgcolor25;
+
+    _bgcolor50 = (_bgcolor100 & 0b1111011111011110u) >> 1;
+    _bgcolor25 = (_bgcolor50 & 0b1111011111011110u) >> 1;
+    _bgcolor75 = _bgcolor50 + _bgcolor25;
+
+    _fgcolor25 += _bgcolor75;
+    _fgcolor75 += _bgcolor25;
+}
+
+static retcode graphCharRender(UINT16 pX, UINT16 pY,
+        struct graphFontOutCharParam *pParam,
+        struct graphBitmapFontHeader *pFontHead)
+{
+    assert(pParam != NULL);
+    assert(pFontHead != NULL);
+
+    UINT8 temp = 0;
+    UINT8 mask;
+    UINT8 restoremask;
+    INT16 xCnt, yCnt, x = 0, y;
+
+    UINT8 val, shift;
+    UINT16 bgcolor;
+
+    if (pParam->bpp == 1)
+    {
+        restoremask = 0x01;
+    }
+    else
+    {
+        if (pParam->bpp == 2)
+        {
+            restoremask = 0x03;
+        }
+        else
+        {
+            return ERR_NOT_SUPPORTED; // BPP > 2 are not yet supported
+        }
+
+        bgcolor = graphLcdDev->getPixel(graphLcdDev, x, y + pFontHead->height >> 1);
+
+        if ((_fgcolor100 != graphLcdDev->drawingColor) || (_bgcolor100 != bgcolor))
+        {
+            _fgcolor100 = graphLcdDev->drawingColor;
+            _bgcolor100 = bgcolor;
+            calculateColors();
+        }
+    }
+
+    if (pFontHead->orientation == GRAPH_FONT_ORIENT_HOR)
+    {
+        y = pY + pParam->yAdjust;
+        for (yCnt = 0; yCnt < pFontHead->height + pParam->heightOvershoot; yCnt++)
+        {
+            x = pX + pParam->xAdjust;
+            mask = 0;
+
+            shift = 0;
+
+            for (xCnt = 0; xCnt < pParam->chGlyphWidth; xCnt++)
+            {
+                if (mask == 0)
+                {
+                    temp = *(pParam->pChImage)++;
+                    mask = restoremask;
+
+                    shift = 0;
+                }
+
+                if (pParam->bpp == 1)
+                {
+                    if (temp & mask)
+                    {
+                        graphLcdDev->drawPixel(graphLcdDev, x, y);
+                    }
+                }
+                else
+                {
+                    val = (temp & mask) >> shift;
+                    if (val)
+                    {
+#if (ANTIALIAS_METHOD == ANTIALIAS_TRANSLUCENT)
+                        bgcolor = graphLcdDev->getPixel(graphLcdDev, x, y);
+                        if (_bgcolor100 != bgcolor)
+                        {
+                            _bgcolor100 = bgcolor;
+                            calculateColors();
+                        }
+#endif
+                        switch (val)
+                        {
+                            case 1: graphLcdDev->drawingColor = _fgcolor25;
+                                break;
+
+                            case 2: graphLcdDev->drawingColor = _fgcolor75;
+                                break;
+
+                            case 3: graphLcdDev->drawingColor = _fgcolor100;
+                        }
+
+                        graphLcdDev->drawPixel(graphLcdDev, x, y);
+                    }
+                }
+
+                mask <<= pParam->bpp;
+                shift += pParam->bpp;
+
+                x++;
+            }
+            y++;
+        }
+    }
+    else // If extended glyph is used, then vertical alignment may not be rendered properly and hence users must position the texts properly
+    {
+        y = pX + pParam->xAdjust;
+        for (yCnt = 0; yCnt < pFontHead->height + pParam->heightOvershoot; yCnt++)
+        {
+            x = pY + pParam->yAdjust;
+            mask = 0;
+
+            shift = 0;
+
+            for (xCnt = 0; xCnt < pParam->chGlyphWidth; xCnt++)
+            {
+                if (mask == 0)
+                {
+                    temp = *(pParam->pChImage)++;
+                    mask = restoremask;
+
+                    shift = 0;
+                }
+
+                if (pParam->bpp == 1)
+                {
+                    if (temp & mask)
+                    {
+                        graphLcdDev->drawPixel(graphLcdDev, x, y);
+                    }
+                }
+                else
+                {
+                    val = (temp & mask) >> shift;
+                    if (val)
+                    {
+
+#if (ANTIALIAS_METHOD == ANTIALIAS_TRANSLUCENT)
+                        bgcolor = graphLcdDev->getPixel(graphLcdDev, x, y);
+                        if (_bgcolor100 != bgcolor)
+                        {
+                            _bgcolor100 = bgcolor;
+                            calculateColors();
+                        }
+#endif
+
+                        switch (val)
+                        {
+                            case 1: graphLcdDev->drawingColor = _fgcolor25;
+                                break;
+
+                            case 2: graphLcdDev->drawingColor = _fgcolor75;
+                                break;
+
+                            case 3: graphLcdDev->drawingColor = _fgcolor100;
+                        }
+
+                        graphLcdDev->drawPixel(graphLcdDev, x, y);
+                    }
+                }
+
+                mask <<= pParam->bpp;
+                shift += pParam->bpp;
+
+                x--;
+            }
+            y++;
+        }
+    }
+
+    // restore color
+    if (pParam->bpp > 1)
+    {
+        graphLcdDev->drawingColor = _fgcolor100;
+    }
+    return SUCCESS;
+
+}
+
+retcode graphDrawBitmapChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, struct graphFont *pFont)
+{
+    struct graphBitmapFontHeader *fontHead;
+    struct graphFontOutCharParam cparam;
+
+    assert(pFont != NULL);
+
+    if (graphLcdDev == NULL)
+        return DEVICE_NOT_SET;
+
+    DEBUG("graphDrawBitmapChar");
+
+    fontHead = (struct graphBitmapFontHeader*) pFont->address;
+
+    if (pChar < fontHead->firstChar)
+        return ERR_CHAR_NOT_IN_FONT;
+    if (pChar > fontHead->lastChar)
+        return ERR_CHAR_NOT_IN_FONT;
+
+    graphGetCharInfo(pChar, &cparam, pFont);
+
+    (*pCharWidth) = cparam.chGlyphWidth - cparam.xAdjust - cparam.xWidthAdjust;
+    graphCharRender(pX, pY, &cparam, fontHead);
+
+    return SUCCESS;
+}
+
+retcode graphDrawOutlineChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, struct graphFont *pFont)
+{
+    // Not supported yet
+    return ERR_NOT_SUPPORTED;
+}
+
+/**
+ * Draw character at specified position using specified font
+ * @param pX Character draw Y position
+ * @param pY Character draw X position
+ * @param pCharWidth Out param, start drawing next char after pCharWidth pixels
+ * @param pChar Character to draw
+ * @param pFont Pointer to font which will be used
+ * @return
+ */
+retcode graphDrawChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, struct graphFont *pFont)
+{
+    if (pFont->type == GRAPH_FONT_BITMAP)
+        return graphDrawBitmapChar(pX, pY, pCharWidth, pChar, pFont);
+    else if (pFont->type == GRAPH_FONT_OUTLINE)
+        return graphDrawOutlineChar(pX, pY, pCharWidth, pChar, pFont);
+    else
+        return ERR_NOT_SUPPORTED;
+}

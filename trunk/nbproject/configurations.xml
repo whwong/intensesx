@@ -2,8 +2,23 @@
 <configurationDescriptor version="62">
   <logicalFolder name="root" displayName="root" projectFiles="true">
     <logicalFolder name="app" displayName="app" projectFiles="true">
+      <logicalFolder name="f1" displayName="rsc" projectFiles="true">
+        <logicalFolder name="f1" displayName="fonts" projectFiles="true">
+          <itemPath>app/rsc/fonts/DroidSans15.c</itemPath>
+          <itemPath>app/rsc/fonts/DroidSans22.c</itemPath>
+          <itemPath>app/rsc/fonts/DroidSans29.c</itemPath>
+          <itemPath>app/rsc/fonts/DroidSansMono15.c</itemPath>
+          <itemPath>app/rsc/fonts/fonts.h</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f2" displayName="winstyle" projectFiles="true">
+          <itemPath>app/rsc/winstyle/winstyle.h</itemPath>
+        </logicalFolder>
+      </logicalFolder>
       <itemPath>app/main.c</itemPath>
       <itemPath>app/keymap.h</itemPath>
+      <itemPath>app/veramono.c</itemPath>
+      <itemPath>app/haveltica.c</itemPath>
+      <itemPath>app/havelticaAA.c</itemPath>
     </logicalFolder>
     <logicalFolder name="boards" displayName="boards" projectFiles="true">
       <logicalFolder name="PIC32MX7MMB" displayName="PIC32MX7MMB" projectFiles="true">
@@ -97,6 +112,9 @@
       <logicalFolder name="f4" displayName="gui" projectFiles="true">
         <itemPath>lib/gui/window.h</itemPath>
         <itemPath>lib/gui/window.c</itemPath>
+        <itemPath>lib/gui/gui.h</itemPath>
+        <itemPath>lib/gui/gui.c</itemPath>
+        <itemPath>lib/gui/guidefs.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="input" projectFiles="true">
         <itemPath>lib/input/inputEvent.c</itemPath>
@@ -224,9 +242,9 @@
         <property key="list-file" value=""/>
         <property key="list-source" value="true"/>
         <property key="list-assembly" value="false"/>
+        <property key="warning-level" value=""/>
         <property key="extra-include-directories-for-preprocessor"
                   value="E:\Projekty\Inz\IntenseS.X\os\port\MPLAB\PIC32MX\"/>
-        <property key="warning-level" value=""/>
         <property key="list-section-info" value="false"/>
         <property key="omit-forms" value="false"/>
         <property key="list-symbols" value="false"/>
@@ -312,9 +330,9 @@
         <property key="UART4" value="true"/>
         <property key="UART3" value="true"/>
         <property key="UART2" value="true"/>
-        <property key="programoptions.preserveprogramrange.end" value="0x1d0001ff"/>
-        <property key="UART1" value="true"/>
         <property key="Freeze All Other Peripherals" value="true"/>
+        <property key="UART1" value="true"/>
+        <property key="programoptions.preserveprogramrange.end" value="0x1d0001ff"/>
       </ICD3PlatformTool>
     </conf>
   </confs>

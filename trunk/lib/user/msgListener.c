@@ -90,7 +90,7 @@ retcode msgListenerPost(struct msgListener *pListener, struct msg *pMsg)
  * @return FALSE if received message is MSG_QUIT, TRUE if not.
  */
 BOOL msgListenerGet(struct msgListener *pListener, struct msg *pMsg,
-        struct window *pWnd, UINT32 pFilterMin, UINT32 pFilterMax)
+        struct guiWindow *pWnd, UINT32 pFilterMin, UINT32 pFilterMax)
 {
     UINT32 sent;
     
@@ -125,7 +125,7 @@ BOOL msgListenerGet(struct msgListener *pListener, struct msg *pMsg,
  * @return TRUE if messasge received, FALSE if not.
  */
 BOOL msgListenerPeek(struct msgListener *pListener, struct msg *pMsg,
-        struct window *pWnd, UINT32 pFilterMin, UINT32 pFilterMax, BOOL pRemoveMsg)
+        struct guiWindow *pWnd, UINT32 pFilterMin, UINT32 pFilterMax, BOOL pRemoveMsg)
 {
     UINT32 sent;
 
