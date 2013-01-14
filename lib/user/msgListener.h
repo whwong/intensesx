@@ -28,9 +28,9 @@ void msgListenerDelete(struct msgListener *pListener);
 retcode msgListenerPost(struct msgListener *pListener, struct msg *pMsg);
 
 BOOL msgListenerGet(struct msgListener *pListener, struct msg *pMsg,
-        struct window *pWnd, UINT32 pFilterMin, UINT32 pFilterMax);
+        struct guiWindow *pWnd, UINT32 pFilterMin, UINT32 pFilterMax);
 
 BOOL msgListenerPeek(struct msgListener *pListener, struct msg *pMsg,
-        struct window *pWnd, UINT32 pFilterMin, UINT32 pFilterMax, BOOL pRemoveMsg);
+        struct guiWindow *pWnd, UINT32 pFilterMin, UINT32 pFilterMax, BOOL pRemoveMsg);
 
 #endif

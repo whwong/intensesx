@@ -10,7 +10,7 @@
 struct msg
 {
         // For future use - windows to which the message is directed
-    	struct window *wnd;
+    	struct guiWindow *wnd;
 	UINT32 message;
 	UINT32 param1;
 	UINT32 param2;
