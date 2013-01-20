@@ -25,7 +25,8 @@ void msgAddListener(struct msgListener* pListener);
 void msgDelListener(struct msgListener* pListener);
 
 void msgPost(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2);
-void msgSend(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2);
+INT32 msgSend(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2);
 void msgPostTask(xTaskHandle pTaskHandle, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2);
+INT32 msgDispatch(struct msg *pMsg);
 
 #endif

@@ -6,6 +6,14 @@
 
 #include "window.h"
 #include "gui.h"
+#include "lib/graphics/graphics.h"
+
+#define WND_DEBUG
+#if defined(WND_DEBUG)
+#define WND_LOG(frm, ...) LOG("wnd: "frm, ##__VA_ARGS__)
+#else
+#define WND_LOG(...)
+#endif
 
 /**
  * Return focused window in given control. Returns NULL if given control
@@ -36,6 +44,7 @@ static struct guiWindow *guiControlGetFocusedChild(struct guiWindow *pWnd)
         }
     }
 
+    WND_LOG("guiControlGetFocusedChild(%p) = %p", pWnd, ret);
     return ret;
 }
 
@@ -58,6 +67,7 @@ struct guiWindow *guiWindowGetFocused()
     }
     while(focusedChild != NULL);
 
+    WND_LOG("guiWindowGetFocused() = %p", wnd);
     return wnd;
 }
 
@@ -105,6 +115,7 @@ static struct guiWindow *guiControlGetXYChild(struct guiWindow *pWnd, UINT16 pX,
         }
     }
 
+    WND_LOG("guiControlGetXYChild(%p, %d, %d) = %p", pWnd, pX, pY, ret);
     return ret;
 }
 
@@ -122,13 +133,22 @@ struct guiWindow *guiWindowAtXY(UINT16 pX, UINT16 pY)
     struct guiWindow *focusedChild;
 
     focusedChild = (struct guiWindow*)guiGetCurrentMainWindow();
-    do
-    {
-        wnd = focusedChild;
-        focusedChild = guiControlGetXYChild(wnd, pX, pY);
-    }
-    while(focusedChild != NULL);
 
+    if (guiXYInRect(pX, pY, &focusedChild->frame) == TRUE)
+    {
+        do
+        {
+            wnd = focusedChild;
+            focusedChild = guiControlGetXYChild(wnd, pX, pY);
+        }
+        while(focusedChild != NULL);
+    }
+    else
+    {
+        wnd = NULL;
+    }
+
+    WND_LOG("guiWindowAtXY(%d, %d) = %p", pX, pY, wnd);
     return wnd;
 }
 
@@ -181,8 +201,49 @@ static void guiAddChildToParent(struct guiWindow *pParent, struct guiWindow *pNe
     }
 }
 
+static retcode guiDelChildFromParent(struct guiWindow *pParent, struct guiWindow *pCtrl)
+{
+    struct guiWindow *firstCtrl;
+    BOOL found = FALSE;
+
+    assert(pParent != NULL);
+    assert(pCtrl != NULL);
+
+    firstCtrl = pParent->firstChild;
+
+    if (!firstCtrl)
+        return ERR_NOT_FOUND;
+    else
+    {
+        if (firstCtrl == pCtrl)
+        {
+            pParent->firstChild = pCtrl->next;
+            found = TRUE;
+        }
+        else
+        {
+            while (firstCtrl->next)
+            {
+                if (firstCtrl->next == pCtrl)
+                {
+                    firstCtrl->next = pCtrl->next;
+                    found = TRUE;
+                    break;
+                }
+
+                firstCtrl = firstCtrl->next;
+            }
+        }
+    }
+
+    if (found == TRUE)
+        return SUCCESS;
+    else
+        return ERR_NOT_FOUND;
+}
+
 struct guiWindow *guiCreateWindow (const char* pClassName,
-        const char* pCaption, DWORD pStyle,
+        const char* pCaption, UINT32 pStyle,
         UINT16 pId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH, 
         struct guiWindow *pParentWnd, UINT32 pAddData)
 {
@@ -196,12 +257,18 @@ struct guiWindow *guiCreateWindow (const char* pClassName,
     cci = guiGetWindowClass(pClassName);
 
     if (!cci)
+    {
+        WND_LOG("Invalid window class name (\"%s\")", pClassName);
         return NULL;
+    }
 
     newCtrl = pvPortMalloc(sizeof(struct guiWindow));
 
     if (!newCtrl)
+    {
+        WND_LOG("Can not allocate memmory for new window");
         return NULL;
+    }
 
     newCtrl->type = WT_CONTROL;
 
@@ -226,6 +293,7 @@ struct guiWindow *guiCreateWindow (const char* pClassName,
         newCtrl->caption = "";
 
     newCtrl->windowStyle = pStyle | WS_CHILD | cci->windowStyle;
+    newCtrl->colorStyle = cci->colorStyle;
 
     newCtrl->id = pId;
     newCtrl->addData = pAddData;
@@ -245,37 +313,171 @@ struct guiWindow *guiCreateWindow (const char* pClassName,
     }
     else
     {
+        WND_LOG("Given parent window is invalid (%p)", pParentWnd);
         free(newCtrl->caption);
         free(newCtrl);
         return NULL;
     }
-// Dorobic te message do tworzenia i rysowania okna
+
     if (msgSend(newCtrl, MSG_NCCREATE, 0, pAddData))
     {
-        //TODO: Delete from parent
+        guiDelChildFromParent(pParentWnd, newCtrl);
         free(newCtrl->caption);
         free(newCtrl);
         return NULL;
     }
 
-    if (msgSend (newCtrl, MSG_CREATE, pParentWnd, pAddData))
+    if (msgSend(newCtrl, MSG_CREATE, (UINT32)pParentWnd, pAddData))
     {
-        //TODO: Delete from parent
+        guiDelChildFromParent(pParentWnd, newCtrl);
         free(newCtrl->caption);
         free(newCtrl);
         return NULL;
     }
 
-    // Size changeing messages should be added there if some day will
+    // TODO: Size changeing messages should be added there if some day will
     // be supported
 
     if ((newCtrl->parent->windowStyle & WS_VISIBLE) &&
             (newCtrl->windowStyle & WS_VISIBLE))
     {
-        //TODO: Draw window
-        //InvalidateRect ((HWND)newCtrl, NULL, TRUE);
-        //SendAsyncMessage ((HWND)newCtrl, MSG_NCPAINT, 0, 0);
+        // TODO: InvalidateRect when damaging will be supported
+        msgSend (newCtrl, MSG_PAINT, 0, (UINT32)&newCtrl->clientFrame);
+        msgSend (newCtrl, MSG_NCPAINT, 0, 0);
     }
+
+    // Dodac klase i dodac okno zobaczyc jak leca message.
 
     return newCtrl;
 }
+
+struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
+        const char* pCaption, UINT32 pStyle,
+        UINT16 pId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH)
+{
+    struct guiWndClass *cci;
+    struct guiMainWindow *newWnd;
+
+    cci = guiGetWindowClass(pClassName);
+
+    if (!cci)
+    {
+        WND_LOG("Invalid window class name (\"%s\")", pClassName);
+        return NULL;
+    }
+
+    newWnd = pvPortMalloc(sizeof(struct guiMainWindow));
+
+    if (!newWnd)
+    {
+        WND_LOG("Can not allocate memmory for new window");
+        return NULL;
+    }
+
+    newWnd->head.type = WT_MAIN;
+
+    newWnd->head.frame.l = pX;
+    newWnd->head.frame.t = pY;
+    newWnd->head.frame.w = pW;
+    newWnd->head.frame.h = pH;
+
+    // When we would like to support WS_BORDER or WS_CAPTION this
+    // frames will be different
+    newWnd->head.clientFrame = newWnd->head.frame;
+
+    if (pCaption)
+    {
+        UINT16 len = strlen(pCaption);
+
+        newWnd->head.caption = pvPortMalloc(len + 1);
+        if (len > 0)
+            strcpy(newWnd->head.caption, pCaption);
+    }
+    else
+        newWnd->head.caption = "";
+
+    newWnd->head.windowStyle = pStyle | cci->windowStyle;
+    newWnd->head.colorStyle = cci->colorStyle;
+
+    newWnd->head.id = pId;
+    newWnd->head.addData = 0;
+    newWnd->head.addData2 = 0;
+    newWnd->head.windowProc = cci->windowProc;
+    newWnd->head.font = guiGetDefaultFont();
+    newWnd->head.mainWin = newWnd;
+    newWnd->head.parent = NULL;
+    newWnd->head.next = NULL;
+
+    newWnd->head.wndClass = cci;
+
+    if (msgSend((struct guiWindow*)newWnd, MSG_NCCREATE, 0, 0))
+    {
+        free(newWnd->head.caption);
+        free(newWnd);
+        return NULL;
+    }
+
+    if (msgSend((struct guiWindow*)newWnd, MSG_CREATE, 0, 0))
+    {
+        free(newWnd->head.caption);
+        free(newWnd);
+        return NULL;
+    }
+
+    // TODO: Size changeing messages should be added there if some day will
+    // be supported
+
+    if (newWnd->head.windowStyle & WS_VISIBLE)
+    {
+        // TODO: InvalidateRect when damaging will be supported
+        guiSetCurrentMainWindow(newWnd);
+        msgSend ((struct guiWindow*)newWnd, MSG_PAINT, 0, (UINT32)&newWnd->head.clientFrame);
+        msgSend ((struct guiWindow*)newWnd, MSG_NCPAINT, 0, 0);
+    }
+
+    // Dodac klase i dodac okno zobaczyc jak leca message.
+
+    return newWnd;
+}
+
+INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
+        UINT32 pParam1, UINT32 pParam2)
+{
+    struct guiWinStyle *ws;
+    UINT32 x2, y2;
+    
+    switch (pMsg)
+    {
+        case MSG_NCPAINT:
+            // Paint the window's non-client area.
+            break;
+            
+        case MSG_PAINT:
+            // Paint the window's client area.
+            guiBeginPaint();
+
+            drawStyleFrame(pWnd->colorStyle.shIdx, &pWnd->clientFrame);
+
+            guiEndPaint();
+            break;
+
+        case MSG_POINTERHOVER:
+            guiBeginPaint();
+
+
+            drawStyleFrame(pWnd->colorStyle.hlIdx, &pWnd->clientFrame);
+
+            guiEndPaint();
+            break;
+
+        case MSG_POINTERLEAVE:
+            guiBeginPaint();
+
+            drawStyleFrame(pWnd->colorStyle.shIdx, &pWnd->clientFrame);
+
+            guiEndPaint();
+            break;
+    }
+    
+    return 0;
+}        

@@ -11,10 +11,14 @@
 #define WINSTYLE_WHITE      {0xff, 0xff, 0xff, 0xff}
 #define WINSTYLE_BTN_FRAME  {0xaa, 0xaa, 0xaa, 0xff}
 #define WINSTYLE_GRAY       {0x55, 0x55, 0x55, 0xff}
+#define WINSTYLE_GRAYHL     {0x55, 0x77, 0x99, 0xff}
 
 enum intenseWinstyleIndexes
 {
-    WSTL_STATIC_TEXT_SH = 0,
+    WSTL_WINDOW_SH = 0,
+    WSTL_WINDOW_HL,
+
+    WSTL_STATIC_TEXT_SH,
     WSTL_STATIC_TEXT_HL,
     WSTL_STATIC_TEXT_SEL,
     WSTL_STATIC_TEXT_GRY,
@@ -27,6 +31,25 @@ enum intenseWinstyleIndexes
 
 const struct guiWinStyle intenseWinstyle[] =
 {
+    // *************************************************************************
+    // * WINDOW Style
+    // *************************************************************************
+    // Window SH
+    {LS_NOSHOW, 0, WINSTYLE_BLACK,   // Left line
+     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Top line
+     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Right line
+     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Bottom line
+     CS_SOLID, WINSTYLE_WHITE,    // FG Color
+     CS_SOLID, WINSTYLE_GRAY},   // BG Color
+
+    // Window HL
+    {CS_SOLID, 1, WINSTYLE_BTN_FRAME,   // Left line
+     CS_SOLID, 2, WINSTYLE_BTN_FRAME,   // Top line
+     CS_SOLID, 3, WINSTYLE_BTN_FRAME,   // Right line
+     CS_SOLID, 4, WINSTYLE_BTN_FRAME,   // Bottom line
+     CS_SOLID, WINSTYLE_WHITE,    // FG Color
+     CS_SOLID, WINSTYLE_GRAYHL},   // BG Color
+
     // *************************************************************************
     // * STATIC TEXT Style
     // *************************************************************************

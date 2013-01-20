@@ -146,10 +146,14 @@ static void inputTask(void *pvParameters)
     struct inputDiskEvent *devn = (struct inputDiskEvent*)&evn;
     struct inputRcuEvent *revn = (struct inputRcuEvent*)&evn;
 
+    struct guiWindow *targetWnd;
+    struct guiWindow *oldTargetWnd = NULL;
+
     UINT32 lastKey = 0, lastKeyRepeated = 0, lastKeyEventTime = 0;
     UINT32 lastRcu = 0, lastRcuRepeated = 0, lastRcuEventTime = 0;
     UINT32 lastRcuCodeReceived = 0;
     UINT32 timePassed = 0;
+    UINT32 buttonDown = 0;
     
     while(1)
     {
@@ -205,6 +209,28 @@ static void inputTask(void *pvParameters)
                             tevn->action, tevn->positionX, tevn->positionY, tevn->speedX,
                             tevn->speedY, tevn->timestamp);
 
+                    targetWnd = guiWindowAtXY(tevn->positionX, tevn->positionY);
+
+                    if ((kevn->action == EVENT_TOUCH_DOWN))
+                        buttonDown = 1;
+                    else if ((kevn->action == EVENT_TOUCH_UP))
+                        buttonDown = 0;
+                    
+                    if (targetWnd != oldTargetWnd)
+                    {
+                        if (oldTargetWnd != NULL)
+                        {
+                            msgPost(oldTargetWnd, MSG_POINTERLEAVE, buttonDown,
+                                ((tevn->positionY << 16) | tevn->positionX));
+                        }
+                        
+                        if (targetWnd != NULL)
+                        {
+                            msgPost(targetWnd, MSG_POINTERHOVER, buttonDown,
+                                ((tevn->positionY << 16) | tevn->positionX));
+                        }
+                    }
+
                     switch(kevn->action)
                     {
                         case EVENT_TOUCH_DOWN:
@@ -212,7 +238,7 @@ static void inputTask(void *pvParameters)
                             // press button 1 down (touch the screen in this case)
                             // and move with speed = 0 because we just touched
                             // screen
-                            msgPost(guiWindowGetFocused(), MSG_POINTERDOWN, 0x0001,
+                            msgPost(targetWnd, MSG_POINTERDOWN, buttonDown,
                                     ((tevn->positionY << 16) | tevn->positionX));
                             break;
 
@@ -234,8 +260,8 @@ static void inputTask(void *pvParameters)
 
                             // 1st param is only speed because we just release
                             // touch from screen so we set btn 1 as released
-                            msgPost(guiWindowGetFocused(), MSG_POINTERUP,
-                                    ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16)),
+                            msgPost(targetWnd, MSG_POINTERUP,
+                                    ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | buttonDown),
                                     ((tevn->positionY << 16) | tevn->positionX));
                             break;
 
@@ -254,12 +280,14 @@ static void inputTask(void *pvParameters)
                             // 1st param is spd & 0x0001 because if we are
                             // touching screen we have to had btn1 pressed
                             // btn1 is equal to touch screen
-                            msgPost(guiWindowGetFocused(), MSG_POINTERMOVE,
-                                    ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | 0x0001),
+                            msgPost(targetWnd, MSG_POINTERMOVE,
+                                    ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | buttonDown),
                                     ((tevn->positionY << 16) | tevn->positionX));
                             break;
                     }
 
+                    oldTargetWnd = targetWnd;
+                    
                     break;
 
                 case EVENT_CHAR:

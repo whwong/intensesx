@@ -52,6 +52,66 @@ static UINT32 dec(UINT32 d, union hldIrFlags *pFlags)
 
 static char fatBenchmarkBuf[512] = "Tutaj zapisujemy dokladnie 64 znaki. Testujemy testujemy a co!\n\rTutaj zapisujemy dokladnie 64 znaki. Testujemy testujemy a co!\n\rTutaj zapisujemy dokladnie 64 znaki. Testujemy testujemy a co!\n\rTutaj zapisujemy dokladnie 64 znaki. Testujemy testujemy a co!\n\r";
 
+INT32 firstWindowProc(struct guiWindow *pWnd, UINT32 pMsg, UINT32 pParam1, UINT32 pParam2)
+{
+    struct hldLcdDevice *lcd;
+    INT32 ret = 0;
+    static INT32 x = 100,y = 100, ox=100, oy=100;
+
+    lcd = hldDeviceGetById(HLD_DEVICE_TYPE_LCD, 0);
+
+    switch(pMsg)
+    {
+        case MSG_POINTERMOVE:
+            x = GET_X_PARAM2(pParam2);
+            y = GET_Y_PARAM2(pParam2);
+
+            lcd->setColor(lcd, 0, 255, 255, 255);
+            graphDrawLine(x,y,ox,oy);
+
+            lcd->setColor(lcd, 0, 30, 30, 255);
+            lcd->drawPixel(lcd, x,y);
+            lcd->drawPixel(lcd, ox,oy);
+
+            ox = x;
+            oy = y;
+            break;
+
+        case MSG_POINTERDOWN:
+            x = GET_X_PARAM2(pParam2);
+            y = GET_Y_PARAM2(pParam2);
+
+            lcd->setColor(lcd, 0, 100, 100, 100);
+            lcd->drawPixel(lcd, x,y);
+            graphDrawCircle(x, y, 3);
+
+            ox = x;
+            oy = y;
+            break;
+
+        case MSG_POINTERUP:
+            x = GET_X_PARAM2(pParam2);
+            y = GET_Y_PARAM2(pParam2);
+
+            lcd->setColor(lcd, 0, 100, 100, 100);
+            lcd->drawPixel(lcd, x,y);
+            graphDrawCircle(x, y, 3);
+
+            //spped
+            lcd->setColor(lcd, 0, 128, 0, 0);
+            graphDrawLine(x,y,x+GET_DX_PARAM1(pParam1),y+GET_DY_PARAM1(pParam1));
+
+            ox = x;
+            oy = y;
+            break;
+                
+        default:
+            ret = guiDefWindowProc(pWnd, pMsg, pParam1, pParam2);
+    }
+    
+    return ret;
+}
+
 static void prvTestTask1( void *pvParameters )
 {
     UINT32 c=0, t;
@@ -248,7 +308,30 @@ static void prvTestTask1( void *pvParameters )
     INT32 charxha = 10;
 
     // GUI Init
+    struct guiMainWindow *wnd;
+    struct guiWndClassInfo wci;
+    guiInit();
     guiSetDefaultFont(&g_DroidSans15);
+    guiSetWinstyle(intenseWinstyle);
+
+    wci.className = "IntenseWin";
+    wci.windowStyle = WS_BORDER;
+    wci.colorStyle.shIdx = WSTL_WINDOW_SH;
+    wci.colorStyle.hlIdx = WSTL_WINDOW_HL;
+    wci.colorStyle.selIdx = WSTL_WINDOW_SH;
+    wci.colorStyle.gryIdx = WSTL_WINDOW_SH;
+    wci.windowProc = firstWindowProc;
+
+    guiRegisterWindowClass(&wci);
+
+    wnd = guiCreateMainWindow("IntenseWin",
+        "First Window", 
+        WS_VISIBLE,
+        1,
+        30,
+        30,
+        200,
+        200);
     
     list = msgListenerCreate(200);
     while(msgListenerGet(list, &m, NULL, 0, 0))
@@ -323,48 +406,7 @@ static void prvTestTask1( void *pvParameters )
                 graphDrawCircle(x, y, 2);
                 break;
 
-            case MSG_POINTERMOVE:
-                x = GET_X_PARAM2(m.param2);
-                y = GET_Y_PARAM2(m.param2);
 
-                lcd->setColor(lcd, 0, 255, 255, 255);
-                graphDrawLine(x,y,ox,oy);
-
-                lcd->setColor(lcd, 0, 30, 30, 255);
-                lcd->drawPixel(lcd, x,y);
-                lcd->drawPixel(lcd, ox,oy);
-
-                ox = x;
-                oy = y;
-                break;
-
-            case MSG_POINTERDOWN:
-                x = GET_X_PARAM2(m.param2);
-                y = GET_Y_PARAM2(m.param2);
-
-                lcd->setColor(lcd, 0, 100, 100, 100);
-                lcd->drawPixel(lcd, x,y);
-                graphDrawCircle(x, y, 3);
-
-                ox = x;
-                oy = y;
-                break;
-
-            case MSG_POINTERUP:
-                x = GET_X_PARAM2(m.param2);
-                y = GET_Y_PARAM2(m.param2);
-
-                lcd->setColor(lcd, 0, 100, 100, 100);
-                lcd->drawPixel(lcd, x,y);
-                graphDrawCircle(x, y, 3);
-
-                //spped
-                lcd->setColor(lcd, 0, 128, 0, 0);
-                graphDrawLine(x,y,x+GET_DX_PARAM1(m.param1),y+GET_DY_PARAM1(m.param1));
-
-                ox = x;
-                oy = y;
-                break;
 
             case MSG_CHAR:
                 lcd->setColor(lcd, 0, 255, 255, 255);
@@ -376,6 +418,8 @@ static void prvTestTask1( void *pvParameters )
                 charxha += cw;
                 break;
         }
+
+        msgDispatch(&m);
     }
     msgListenerDelete(list);
 
@@ -559,7 +603,7 @@ int main(void) {
     boardInit();
 
     xTaskCreate( prvTestTask1, ( const signed char * const ) "Ts1",
-            1024, NULL, tskIDLE_PRIORITY, NULL );
+            2048, NULL, tskIDLE_PRIORITY, NULL );
     xTaskCreate( prvTestTask2, ( const signed char * const ) "Ts2",
             configMINIMAL_STACK_SIZE+50, NULL, tskIDLE_PRIORITY, NULL );
     /* Finally start the scheduler. */

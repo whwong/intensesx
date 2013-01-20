@@ -36,6 +36,7 @@ typedef enum
     ERR_DEVICE_NOT_STARTED = -209,
     ERR_CHAR_NOT_IN_FONT = -210,
     ERR_INVALID_NAME = -211,
+    ERR_NOT_FOUND = -212,
             
     // Retcodes for FatFS file system
     RES_OK = 0,         /* 0: Successful */

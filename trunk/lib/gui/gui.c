@@ -5,18 +5,70 @@
  */
 
 #include "gui.h"
+#include "lib/graphics/graphics.h"
+
+#define GUI_DEBUG
+#if defined(GUI_DEBUG)
+#define GUI_LOG(frm, ...) LOG("gui: "frm, ##__VA_ARGS__)
+#else
+#define GUI_LOG(...)
+#endif
 
 static struct guiWinStyle *currentWinstyle = NULL;
 static struct guiMainWindow *currentMainWindow = NULL;
 static struct graphFont *defaultFont = NULL;
+static xSemaphoreHandle guiDrawMutex = NULL;
+
+/**
+ * Initialize GUI library
+ * @return Result code
+ */
+retcode guiInit()
+{
+    retcode ret;
+    
+    if (guiDrawMutex == NULL)
+        guiDrawMutex = xSemaphoreCreateMutex();
+
+    if (guiDrawMutex == NULL)
+    {
+        return ERR_NO_MEMMORY;
+    }
+    
+    ret = guiInitWindowClasses();
+    if (ret != SUCCESS)
+    {
+        return ret;
+    }
+    
+    return SUCCESS;
+}
+
+/**
+ * Execute always before start drawing in MSG_PAINT message.
+ * This function locks drawing library access for other tasks
+ */
+void guiBeginPaint()
+{
+    while (xSemaphoreTake(guiDrawMutex, portMAX_DELAY) != pdTRUE);
+}
+
+/**
+ * Execute always after end drawing in MSG_PAINT message.
+ * This function releases drawing library access for other tasks
+ */
+void guiEndPaint()
+{
+    xSemaphoreGive(guiDrawMutex);
+}
 
 /**
  * Sets current winstyle
  * @param pWinstyle Pointer to winstyle table
  */
-void guiSetWinstyle(struct guiWinStyle *pWinstyle)
+void guiSetWinstyle(const struct guiWinStyle *pWinstyle)
 {
-    currentWinstyle = pWinstyle;
+    currentWinstyle = (struct guiWinStyle*)pWinstyle;
 }
 
 /**
@@ -50,9 +102,9 @@ struct guiMainWindow *guiGetCurrentMainWindow()
  * Sets default font
  * @param pFont Pointer to font
  */
-void guiSetDefaultFont(struct graphFont *pFont)
+void guiSetDefaultFont(const struct graphFont *pFont)
 {
-    defaultFont = pFont;
+    defaultFont = (struct graphFont *)pFont;
 }
 
 /**
@@ -101,4 +153,57 @@ BOOL guiXYInRect(UINT16 pX, UINT16 pY, struct guiRect *pRect)
         return TRUE;
     else
         return FALSE;
+}
+
+struct guiWinStyle *guiGetStyle(UINT8 pIndex)
+{
+    return &(currentWinstyle[pIndex]);
+}
+
+void drawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
+{
+    struct guiWinStyle *ws;
+    ws = guiGetStyle(pStyleIdx);
+
+    if (ws->bgStyle == CS_SOLID)
+    {
+        guiSetColor(ws->bgColor);
+        guiDrawRect((*pRect));
+    }
+
+    if (ws->leftLineStyle == CS_SOLID)
+    {
+        guiSetColor(ws->leftLineColor);
+        graphDrawRect(pRect->l,
+            pRect->t,
+            pRect->l + ws->leftLineWidth,
+            pRect->t + pRect->h);
+    }
+
+    if (ws->rightLineStyle == CS_SOLID)
+    {
+        guiSetColor(ws->leftLineColor);
+        graphDrawRect(pRect->l + pRect->w - ws->rightLineWidth,
+            pRect->t,
+            pRect->l + pRect->w,
+            pRect->t + pRect->h);
+    }
+
+    if (ws->topLineStyle == CS_SOLID)
+    {
+        guiSetColor(ws->leftLineColor);
+        graphDrawRect(pRect->l,
+            pRect->t,
+            pRect->l + pRect->w,
+            pRect->t + ws->topLineWidth);
+    }
+
+    if (ws->bottomLineStyle == CS_SOLID)
+    {
+        guiSetColor(ws->leftLineColor);
+        graphDrawRect(pRect->l,
+            pRect->t + pRect->h - ws->bottomLineWidth,
+            pRect->l + pRect->w,
+            pRect->t + pRect->h);
+    }
 }

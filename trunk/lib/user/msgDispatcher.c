@@ -125,10 +125,12 @@ void msgPost(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pPa
  * @param pMessage Message code
  * @param pParam1 Parameter 1
  * @param pParam2 Parameter 2
+ * @return Return value is message dependend
  */
-void msgSend(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2)
+INT32 msgSend(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pParam2)
 {
     struct msg m;
+    UINT32 ret = 0;
 
     while (xSemaphoreTake(dispatcherMutex, portMAX_DELAY) != pdTRUE);
     if (pMessage >= MSG_POINTERFIRST && pMessage <= MSG_POINTERLAST)
@@ -146,10 +148,17 @@ void msgSend(struct guiWindow *pWnd, UINT32 pMessage, UINT32 pParam1, UINT32 pPa
     m.timestamp = xTaskGetTickCount();
     xSemaphoreGive(dispatcherMutex);
 
-    pWnd->windowProc(pWnd, &m, pParam1, pParam2);
+    if ((pWnd != NULL) && (pWnd->windowProc != NULL))
+    {
+        ret = pWnd->windowProc(pWnd, m.message, pParam1, pParam2);
 
-    DEBUG("Message dispatched: 0x%08x, p1: 0x%x, p2: 0x%x to %d listeners",
-            pMessage, pParam1, pParam2, listenersCount);
+        DEBUG("Message sent: 0x%08x, p1: 0x%x, p2: 0x%x to wnd: %p",
+            pMessage, pParam1, pParam2, pWnd);
+    }
+    else
+        ret = -1;
+    
+    return ret;
 }
 
 /**
@@ -194,4 +203,32 @@ void msgPostTask(xTaskHandle pTaskHandle, UINT32 pMessage, UINT32 pParam1, UINT3
 
     DEBUG("Message dispatched: 0x%08x, p1: 0x%x, p2: 0x%x to %d/%d listeners",
             pMessage, pParam1, pParam2, listenersDispatched, listenersCount);
+}
+
+/**
+ * Dispatch message synchronously to desired window
+ * @param pMsg Message to dispatch
+ * @return Window proc result
+ */
+INT32 msgDispatch(struct msg *pMsg)
+{
+    INT32 ret = -1;
+
+    assert(pMsg != NULL);
+
+    DEBUG("Message will be dispatched to window");
+
+    if (pMsg->wnd == NULL)
+        return ret;
+    
+    if (pMsg->wnd->windowProc == NULL)
+        return ret;
+
+    ret = (*pMsg->wnd->windowProc)(pMsg->wnd, pMsg->message,
+        pMsg->param1, pMsg->param2);
+
+    DEBUG("Message executed: 0x%08x, p1: 0x%x, p2: 0x%x to wnd: 0x%x ret: %d",
+        pMsg->message, pMsg->param1, pMsg->param2, pMsg->wnd, ret);
+
+    return ret;
 }

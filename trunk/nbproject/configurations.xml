@@ -115,6 +115,8 @@
         <itemPath>lib/gui/gui.h</itemPath>
         <itemPath>lib/gui/gui.c</itemPath>
         <itemPath>lib/gui/guidefs.h</itemPath>
+        <itemPath>lib/gui/wndclass.c</itemPath>
+        <itemPath>lib/gui/wndclass.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="input" projectFiles="true">
         <itemPath>lib/input/inputEvent.c</itemPath>
