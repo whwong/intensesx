@@ -8,6 +8,13 @@
 #include "lib/common.h"
 #include "list.h"
 
+#define WND_CLASS_DEBUG
+#if defined(WND_CLASS_DEBUG)
+#define WND_CLASS_LOG(frm, ...) LOG("wnd: "frm, ##__VA_ARGS__)
+#else
+#define WND_CLASS_LOG(...)
+#endif
+
 static struct list_head clist;
 static xSemaphoreHandle wndClassMutex = NULL;
 
@@ -32,6 +39,7 @@ retcode guiInitWindowClasses()
         return ERR_MUTEX;
     }
 
+    WND_CLASS_LOG("Creating default window classes...");
     // Register default classes
     // TODO: o tutaj register ;)
 
@@ -50,7 +58,11 @@ retcode guiRegisterWindowClass(struct guiWndClassInfo *pWndClassInfo)
     list_for_each_entry(wclass, &clist, list)
     {
         if (strcmp(wclass->className, pWndClassInfo->className) == 0)
+        {
+            WND_CLASS_LOG("Window class name already exists (\"%s\")",
+                    newWndClass->className);
             return ERR_INVALID_NAME;
+        }
     }
 
     xSemaphoreGive(wndClassMutex);
@@ -59,17 +71,22 @@ retcode guiRegisterWindowClass(struct guiWndClassInfo *pWndClassInfo)
 
     if (newWndClass == NULL)
     {
+        WND_CLASS_LOG("Out of memory to register new window class (\"%s\")",
+                newWndClass->className);
         return ERR_NO_MEMMORY;
     }
 
-    newWndClass.windowStyle = pWndClassInfo.windowStyle;
-    newWndClass.windowProc = pWndClassInfo.windowProc;
+    newWndClass->windowStyle = pWndClassInfo->windowStyle;
+    newWndClass->windowProc = pWndClassInfo->windowProc;
+    newWndClass->colorStyle = pWndClassInfo->colorStyle;
 
-    strcpy(newWndClass.className, pWndClassInfo.className);
+    strcpy(newWndClass->className, pWndClassInfo->className);
 
     while (xSemaphoreTake(wndClassMutex, portMAX_DELAY) != pdTRUE);
     list_add(&(newWndClass->list), &clist);
     xSemaphoreGive(wndClassMutex);
+    WND_CLASS_LOG("New window class registered (\"%s\")", newWndClass->className);
+
     return SUCCESS;
 }
 
@@ -85,6 +102,7 @@ retcode guiUnregisterWindowClass(const char *pClassName)
     {
         if (strcmp(wclass->className, pClassName) == 0)
         {
+            WND_CLASS_LOG("Window class unregistered (\"%s\")", wclass->className);
             list_del(&(wclass->list));
             xSemaphoreGive(wndClassMutex);
             vPortFree(wclass);

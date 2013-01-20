@@ -58,14 +58,6 @@
  */
 #define WS_FOCUSSTOP          0x00010000L
 
-struct guiMainWindow
-{
-    struct guiWindow *head;
-
-    // message listener assigned to this window
-    struct msgListener *messageListener;
-};
-
 enum windowType
 {
     WT_MAIN = 0,
@@ -106,11 +98,11 @@ struct guiWindow
     UINT16 idTop; // Id of window where focus will go after pressing top key
     UINT16 idBottom; // Id of window where focus will go after pressing bottom key
 
-    void *addData; /// the additional data.
-    void *addData2; /// the second addtional data.
+    UINT32 addData; /// the additional data.
+    UINT32 addData2; /// the second addtional data.
 
     /// the address of window procedure.
-    retcode (*windowProc)(struct guiWindow *, struct msg *, UINT32, UINT32);
+    INT32 (*windowProc)(struct guiWindow *, UINT32, UINT32, UINT32);
 
     /// the main window that contains this window.
     /// for main window, always be itself.
@@ -127,9 +119,29 @@ struct guiWindow
     struct guiWindow *firstChild;
 };
 
+struct guiMainWindow
+{
+    struct guiWindow head;
+
+    // message listener assigned to this window
+    struct msgListener *messageListener;
+};
+
 struct guiWindow *guiWindowGetFocused();
 struct guiMainWindow *guiWindowGetFocusedMain();
 struct guiWindow *guiWindowAtXY(UINT16 pX, UINT16 pY);
 struct guiMainWindow *guiWindowAtXYMain(UINT16 pX, UINT16 pY);
+
+struct guiWindow *guiCreateWindow (const char* pClassName,
+        const char* pCaption, UINT32 pStyle,
+        UINT16 pId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
+        struct guiWindow *pParentWnd, UINT32 pAddData);
+
+struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
+        const char* pCaption, UINT32 pStyle,
+        UINT16 pId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH);
+
+INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
+        UINT32 pParam1, UINT32 pParam2);
 
 #endif

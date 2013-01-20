@@ -31,7 +31,9 @@ struct msg
 #define MSG_POINTERDOWN     (MSG_INPUT | 0x0002)
 #define MSG_POINTERUP       (MSG_INPUT | 0x0003)
 #define MSG_POINTERDBCLICK  (MSG_INPUT | 0x0004)
-#define MSG_POINTERLAST     (MSG_INPUT | 0x0004)
+#define MSG_POINTERLEAVE    (MSG_INPUT | 0x0005)
+#define MSG_POINTERHOVER    (MSG_INPUT | 0x0006)
+#define MSG_POINTERLAST     (MSG_INPUT | 0x0006)
 
 // Get X and Y coordinates from message param2
 // Vlues are represented as UINT16
@@ -56,5 +58,13 @@ struct msg
 #define MSG_DISKINSERTED    (MSG_INPUT | 0x0014)
 #define MSG_DISKREMOVED     (MSG_INPUT | 0x0015)
 #define MSG_DISKLAST        (MSG_INPUT | 0x0015)
+
+// Window messages
+#define MSG_WINDOWFIRST     (MSG_WINDOW | 0x0001)
+#define MSG_CREATE          (MSG_WINDOW | 0x0001)
+#define MSG_NCCREATE        (MSG_WINDOW | 0x0002)
+#define MSG_PAINT           (MSG_WINDOW | 0x0003)
+#define MSG_NCPAINT         (MSG_WINDOW | 0x0004)
+#define MSG_WINDOWLAST      (MSG_WINDOW | 0x0004)
 
 #endif
