@@ -7,6 +7,7 @@
 #include "wndclass.h"
 #include "lib/common.h"
 #include "list.h"
+#include "button.h"
 
 #define WND_CLASS_DEBUG
 #if defined(WND_CLASS_DEBUG)
@@ -40,8 +41,8 @@ retcode guiInitWindowClasses()
     }
 
     WND_CLASS_LOG("Creating default window classes...");
-    // Register default classes
-    // TODO: o tutaj register ;)
+
+    guiRegisterButtonClass();
 
     return SUCCESS;
 }

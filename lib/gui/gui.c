@@ -160,7 +160,7 @@ struct guiWinStyle *guiGetStyle(UINT8 pIndex)
     return &(currentWinstyle[pIndex]);
 }
 
-void drawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
+void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
 {
     struct guiWinStyle *ws;
     ws = guiGetStyle(pStyleIdx);
@@ -206,4 +206,9 @@ void drawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
             pRect->l + pRect->w,
             pRect->t + pRect->h);
     }
+}
+
+void guiDrawText(struct guiRect *pRect, char *pText, struct graphFont *pFont)
+{
+    graphDrawText(pRect->l, pRect->t, pRect->w, pRect->h, pText, pFont);
 }

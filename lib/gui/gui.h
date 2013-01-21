@@ -10,6 +10,7 @@
 #include "lib/common.h"
 #include "guidefs.h"
 #include "window.h"
+#include "button.h"
 #include "wndclass.h"
 
 #define guiSetColor(c) graphSetDrawingColor(c.a, c.r, c.g, c.b)
@@ -30,6 +31,7 @@ BOOL guiPointInRect(struct guiPoint *pPoint, struct guiRect *pRect);
 BOOL guiXYInRect(UINT16 pX, UINT16 pY, struct guiRect *pRect);
 
 struct guiWinStyle *guiGetStyle(UINT8 pIndex);
-void drawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect);
+void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect);
+void guiDrawText(struct guiRect *pRect, char *pText, struct graphFont *pFont);
 
 #endif

@@ -309,6 +309,7 @@ static void prvTestTask1( void *pvParameters )
 
     // GUI Init
     struct guiMainWindow *wnd;
+    struct guiWindow *btn;
     struct guiWndClassInfo wci;
     guiInit();
     guiSetDefaultFont(&g_DroidSans15);
@@ -332,6 +333,17 @@ static void prvTestTask1( void *pvParameters )
         30,
         200,
         200);
+
+    btn = guiCreateWindow("button",
+        "First Btn",
+        WS_VISIBLE,
+        2,
+        40,
+        40,
+        80,
+        30,
+        (struct guiWindow *)wnd,
+        0);
     
     list = msgListenerCreate(200);
     while(msgListenerGet(list, &m, NULL, 0, 0))
