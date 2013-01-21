@@ -15,18 +15,10 @@
 
 enum intenseWinstyleIndexes
 {
-    WSTL_WINDOW_SH = 0,
-    WSTL_WINDOW_HL,
+    WSTL_USER = WSTL_LAST_DEFAULT,
 
-    WSTL_STATIC_TEXT_SH,
-    WSTL_STATIC_TEXT_HL,
-    WSTL_STATIC_TEXT_SEL,
-    WSTL_STATIC_TEXT_GRY,
-
-    WSTL_BUTTON_SH,
-    WSTL_BUTTON_HL,
-    WSTL_BUTTON_SEL,
-    WSTL_BUTTON_GRY,
+    // Do not change nothing above
+    // User styles defined below
 };
 
 const struct guiWinStyle intenseWinstyle[] =

@@ -32,7 +32,7 @@ static struct guiWindow *guiControlGetFocusedChild(struct guiWindow *pWnd)
     if (pWnd == NULL)
         return NULL;
 
-    for (wnd = pWnd->firstChild; (wnd && wnd->next); wnd = wnd->next)
+    for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
     {
         if ((pWnd->focusId != 0) && (wnd->id == pWnd->focusId))
         {
@@ -103,7 +103,7 @@ static struct guiWindow *guiControlGetXYChild(struct guiWindow *pWnd, UINT16 pX,
     if (pWnd == NULL)
         return NULL;
 
-    for (wnd = pWnd->firstChild; (wnd && wnd->next); wnd = wnd->next)
+    for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
     {
         if (guiXYInRect(pX, pY, &wnd->frame) == TRUE)
         {
@@ -444,6 +444,7 @@ INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2)
 {
     struct guiWinStyle *ws;
+    struct guiWindow *wnd;
     UINT32 x2, y2;
     
     switch (pMsg)
@@ -455,27 +456,36 @@ INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
         case MSG_PAINT:
             // Paint the window's client area.
             guiBeginPaint();
-
-            drawStyleFrame(pWnd->colorStyle.shIdx, &pWnd->clientFrame);
-
+            guiDrawStyleFrame(pWnd->colorStyle.shIdx, &pWnd->clientFrame);
             guiEndPaint();
+
+            for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
+            {
+                msgSend(wnd, MSG_PAINT, pParam1, pParam2);
+            }
             break;
 
         case MSG_POINTERHOVER:
             guiBeginPaint();
-
-
-            drawStyleFrame(pWnd->colorStyle.hlIdx, &pWnd->clientFrame);
-
+            guiDrawStyleFrame(pWnd->colorStyle.hlIdx, &pWnd->clientFrame);
             guiEndPaint();
+
+            for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
+            {
+                msgSend(wnd, MSG_PAINT, pParam1, pParam2);
+            }
             break;
 
         case MSG_POINTERLEAVE:
             guiBeginPaint();
-
-            drawStyleFrame(pWnd->colorStyle.shIdx, &pWnd->clientFrame);
-
+            guiDrawStyleFrame(pWnd->colorStyle.shIdx, &pWnd->clientFrame);
             guiEndPaint();
+
+            // TODO: Te rysowanie childow mi sie nie podoba ;/
+            for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
+            {
+                msgSend(wnd, MSG_PAINT, pParam1, pParam2);
+            }
             break;
     }
     

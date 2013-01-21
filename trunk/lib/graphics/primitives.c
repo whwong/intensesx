@@ -486,10 +486,55 @@ retcode graphDrawBitmapChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pCh
     return SUCCESS;
 }
 
+void graphDrawBitmapText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
+        char * pText, struct graphFont *pFont)
+{
+    char c;
+    UINT32 charWidth, x = 0;
+    struct graphBitmapFontHeader *fontHead;
+    struct graphFontOutCharParam cparam;
+
+    assert(pFont != NULL);
+
+    if (graphLcdDev == NULL)
+        return;
+
+    DEBUG("graphDrawBitmapText");
+
+    fontHead = (struct graphBitmapFontHeader*) pFont->address;
+
+    if (fontHead->height > pH)
+        return;
+
+    while ((c = *(pText++)) != 0)
+    {
+        if (c < fontHead->firstChar)
+            continue;
+        if (c > fontHead->lastChar)
+            continue;
+
+        graphGetCharInfo(c, &cparam, pFont);
+
+        charWidth = cparam.chGlyphWidth - cparam.xAdjust - cparam.xWidthAdjust;
+
+        if ((x + charWidth) > pW)
+            break;
+
+        graphCharRender(pX+x, pY, &cparam, fontHead);
+        x += charWidth;
+    }
+}
+
 retcode graphDrawOutlineChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, struct graphFont *pFont)
 {
     // Not supported yet
     return ERR_NOT_SUPPORTED;
+}
+
+void graphDrawOutlineText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
+        char * pText, struct graphFont *pFont)
+{
+    return;
 }
 
 /**
@@ -509,4 +554,15 @@ retcode graphDrawChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, st
         return graphDrawOutlineChar(pX, pY, pCharWidth, pChar, pFont);
     else
         return ERR_NOT_SUPPORTED;
+}
+
+void graphDrawText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
+        char * pText, struct graphFont *pFont)
+{
+    if (pFont->type == GRAPH_FONT_BITMAP)
+        graphDrawBitmapText(pX, pY, pW, pH, pText, pFont);
+    else if (pFont->type == GRAPH_FONT_OUTLINE)
+        graphDrawOutlineText(pX, pY, pW, pH, pText, pFont);
+    else
+        return;
 }

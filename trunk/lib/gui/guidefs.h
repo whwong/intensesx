@@ -7,6 +7,24 @@
 #ifndef _LIB_GUI_DEFS_H_
 #define _LIB_GUI_DEFS_H_
 
+enum guiDefaultWinstyleIndexes
+{
+    WSTL_WINDOW_SH = 0,
+    WSTL_WINDOW_HL,
+
+    WSTL_STATIC_TEXT_SH,
+    WSTL_STATIC_TEXT_HL,
+    WSTL_STATIC_TEXT_SEL,
+    WSTL_STATIC_TEXT_GRY,
+
+    WSTL_BUTTON_SH,
+    WSTL_BUTTON_HL,
+    WSTL_BUTTON_SEL,
+    WSTL_BUTTON_GRY,
+
+    WSTL_LAST_DEFAULT,
+};
+
 struct guiPoint
 {
     UINT16 x;

@@ -62,6 +62,11 @@ struct graphFont
     const UINT8 *address;
 };
 
+retcode graphDrawChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth,
+        UINT16 pChar, struct graphFont *pFont);
+void graphDrawText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
+        char * pText, struct graphFont *pFont);
+
 struct graphBitmapFontHeader
 {
     UINT8 fontID;                     // User assigned value

@@ -65,6 +65,9 @@ struct msg
 #define MSG_NCCREATE        (MSG_WINDOW | 0x0002)
 #define MSG_PAINT           (MSG_WINDOW | 0x0003)
 #define MSG_NCPAINT         (MSG_WINDOW | 0x0004)
-#define MSG_WINDOWLAST      (MSG_WINDOW | 0x0004)
+#define MSG_ENABLE          (MSG_WINDOW | 0x0005)
+#define MSG_SETTEXT         (MSG_WINDOW | 0x0006)
+#define MSG_GETTEXT         (MSG_WINDOW | 0x0007)
+#define MSG_WINDOWLAST      (MSG_WINDOW | 0x0007)
 
 #endif
