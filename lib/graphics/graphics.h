@@ -20,6 +20,19 @@ extern struct hldLcdDevice *graphLcdDev;
 #define GRAPH_FONT_ORIENT_HOR 0
 #define GRAPH_FONT_ORIENT_VER 1
 
+// Font style
+// mutually exclusive
+#define FS_ALIGN_MASK     0x00000003
+#define FS_ALIGN_LEFT     0x00000000
+#define FS_ALIGN_CENTER   0x00000001
+#define FS_ALIGN_RIGHT    0x00000002
+
+// mutually exclusive
+#define FS_VALIGN_MASK    0x0000000C
+#define FS_VALIGN_CENTER  0x00000000
+#define FS_VALIGN_TOP     0x00000004
+#define FS_VALIGN_BOTTOM  0x00000008
+
 // Mid colors are calculated only once while rendering each character. This is ideal for rendering text over a constant background.
 #define ANTIALIAS_OPAQUE        0
 
@@ -65,7 +78,9 @@ struct graphFont
 retcode graphDrawChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth,
         UINT16 pChar, struct graphFont *pFont);
 void graphDrawText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
-        char * pText, struct graphFont *pFont);
+        char * pText, struct graphFont *pFont, UINT32 pStyle);
+
+void graphGetTextSize(UINT16 *pW, UINT16 *pH, char * pText, struct graphFont *pFont);
 
 struct graphBitmapFontHeader
 {

@@ -33,7 +33,7 @@ void guiRegisterButtonClass()
 INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2)
 {
-    UINT32 len, idx;
+    UINT32 len, idx, w, h;
     
     switch (pMsg)
     {
@@ -83,9 +83,10 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             
             guiDrawStyleFrame(idx, &pWnd->clientFrame);
 
-            // TODO: cos slabo rozpoznaje kollory tla i jak jest hl to i tak miksuje do sh
-            // TODO: no i zla pozycja + rysowanie childow jakos inaczej zrobic w window.c
-            guiDrawText(&pWnd->clientFrame, pWnd->caption, pWnd->font);
+            // TODO: rysowanie childow jakos inaczej zrobic w window.c
+            // TODO: jak jest button wcisniety i wyjedziemy pointerem to zostaje wcisniety
+            guiDrawText(&pWnd->clientFrame, pWnd->caption, pWnd->font,
+                FS_ALIGN_CENTER | FS_VALIGN_CENTER);
 
             guiEndPaint();
             break;

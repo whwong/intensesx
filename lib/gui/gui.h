@@ -32,6 +32,6 @@ BOOL guiXYInRect(UINT16 pX, UINT16 pY, struct guiRect *pRect);
 
 struct guiWinStyle *guiGetStyle(UINT8 pIndex);
 void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect);
-void guiDrawText(struct guiRect *pRect, char *pText, struct graphFont *pFont);
+void guiDrawText(struct guiRect *pRect, char *pText, struct graphFont *pFont, UINT32 pStyle);
 
 #endif
