@@ -208,7 +208,7 @@ void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
     }
 }
 
-void guiDrawText(struct guiRect *pRect, char *pText, struct graphFont *pFont)
+void guiDrawText(struct guiRect *pRect, char *pText, struct graphFont *pFont, UINT32 pStyle)
 {
-    graphDrawText(pRect->l, pRect->t, pRect->w, pRect->h, pText, pFont);
+    graphDrawText(pRect->l, pRect->t, pRect->w, pRect->h, pText, pFont, pStyle);
 }

@@ -311,7 +311,7 @@ static retcode graphCharRender(UINT16 pX, UINT16 pY,
             return ERR_NOT_SUPPORTED; // BPP > 2 are not yet supported
         }
 
-        bgcolor = graphLcdDev->getPixel(graphLcdDev, x, y + pFontHead->height >> 1);
+        bgcolor = graphLcdDev->getPixel(graphLcdDev, pX, pY + (pFontHead->height >> 1));
 
         if ((_fgcolor100 != graphLcdDev->drawingColor) || (_bgcolor100 != bgcolor))
         {
@@ -459,7 +459,7 @@ static retcode graphCharRender(UINT16 pX, UINT16 pY,
 
 }
 
-retcode graphDrawBitmapChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, struct graphFont *pFont)
+static retcode graphDrawBitmapChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, struct graphFont *pFont)
 {
     struct graphBitmapFontHeader *fontHead;
     struct graphFontOutCharParam cparam;
@@ -486,10 +486,11 @@ retcode graphDrawBitmapChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pCh
     return SUCCESS;
 }
 
-void graphDrawBitmapText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
-        char * pText, struct graphFont *pFont)
+static void graphDrawBitmapText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
+        char * pText, struct graphFont *pFont, UINT32 pStyle)
 {
     char c;
+    UINT16 tw, th;
     UINT32 charWidth, x = 0;
     struct graphBitmapFontHeader *fontHead;
     struct graphFontOutCharParam cparam;
@@ -505,6 +506,32 @@ void graphDrawBitmapText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
 
     if (fontHead->height > pH)
         return;
+
+    if ((pStyle & FS_ALIGN_MASK) == FS_ALIGN_CENTER)
+    {
+        graphGetTextSize(&tw, &th, pText, pFont);
+        if (tw < pW)
+            pX += (pW - tw) / 2;
+    } 
+    else if ((pStyle & FS_ALIGN_MASK) == FS_ALIGN_RIGHT)
+    {
+        graphGetTextSize(&tw, &th, pText, pFont);
+        if (tw < pW)
+            pX += (pW - tw);
+    }
+
+    if ((pStyle & FS_VALIGN_MASK) == FS_VALIGN_BOTTOM)
+    {
+        // We do not need to check fontHead->height < pH condition because
+        // we actually do it at the begining of function and return when
+        // condition is false
+        pY += (pH - fontHead->height);
+    }
+    else if ((pStyle & FS_VALIGN_MASK) == FS_VALIGN_CENTER)
+    {
+        // Same case, see above comment
+        pY += (pH - fontHead->height)/2;
+    }
 
     while ((c = *(pText++)) != 0)
     {
@@ -525,14 +552,14 @@ void graphDrawBitmapText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
     }
 }
 
-retcode graphDrawOutlineChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, struct graphFont *pFont)
+static retcode graphDrawOutlineChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, struct graphFont *pFont)
 {
     // Not supported yet
     return ERR_NOT_SUPPORTED;
 }
 
-void graphDrawOutlineText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
-        char * pText, struct graphFont *pFont)
+static void graphDrawOutlineText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
+        char * pText, struct graphFont *pFont, UINT32 pStyle)
 {
     return;
 }
@@ -557,12 +584,57 @@ retcode graphDrawChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, st
 }
 
 void graphDrawText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
-        char * pText, struct graphFont *pFont)
+        char * pText, struct graphFont *pFont, UINT32 pStyle)
 {
     if (pFont->type == GRAPH_FONT_BITMAP)
-        graphDrawBitmapText(pX, pY, pW, pH, pText, pFont);
+        graphDrawBitmapText(pX, pY, pW, pH, pText, pFont, pStyle);
     else if (pFont->type == GRAPH_FONT_OUTLINE)
-        graphDrawOutlineText(pX, pY, pW, pH, pText, pFont);
+        graphDrawOutlineText(pX, pY, pW, pH, pText, pFont, pStyle);
     else
         return;
 }
+
+static void graphGetOutlineTextSize(UINT16 *pW, UINT16 *pH, char * pText, struct graphFont *pFont)
+{
+
+}
+
+static void graphGetBitmapTextSize(UINT16 *pW, UINT16 *pH, char * pText, struct graphFont *pFont)
+{
+    char c;
+    UINT32 charWidth, w = 0;
+    struct graphBitmapFontHeader *fontHead;
+    struct graphFontOutCharParam cparam;
+
+    assert(pFont != NULL);
+
+    fontHead = (struct graphBitmapFontHeader*) pFont->address;
+
+    while ((c = *(pText++)) != 0)
+    {
+        if (c < fontHead->firstChar)
+            continue;
+        if (c > fontHead->lastChar)
+            continue;
+
+        graphGetCharInfo(c, &cparam, pFont);
+
+        charWidth = cparam.chGlyphWidth - cparam.xAdjust - cparam.xWidthAdjust;
+
+        w += charWidth;
+    }
+
+    *pH = fontHead->height;
+    *pW = w;
+}
+
+void graphGetTextSize(UINT16 *pW, UINT16 *pH, char * pText, struct graphFont *pFont)
+{
+    if (pFont->type == GRAPH_FONT_BITMAP)
+        graphGetBitmapTextSize(pW, pH, pText, pFont);
+    else if (pFont->type == GRAPH_FONT_OUTLINE)
+        graphGetOutlineTextSize(pW, pH, pText, pFont);
+    else
+        return;
+}
+
