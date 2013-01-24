@@ -312,7 +312,7 @@ static void prvTestTask1( void *pvParameters )
     struct guiWindow *btn;
     struct guiWndClassInfo wci;
     guiInit();
-    guiSetDefaultFont(&g_DroidSans15);
+    guiSetDefaultFont(&g_DroidSans22);
     guiSetWinstyle(intenseWinstyle);
 
     wci.className = "IntenseWin";
@@ -335,13 +335,24 @@ static void prvTestTask1( void *pvParameters )
         200);
 
     btn = guiCreateWindow("button",
-        "First Btn",
+        "Cancel",
         WS_VISIBLE,
         2,
         40,
         40,
-        80,
-        30,
+        150,
+        40,
+        (struct guiWindow *)wnd,
+        0);
+
+        btn = guiCreateWindow("button",
+        "Agree",
+        WS_VISIBLE,
+        3,
+        40,
+        90,
+        150,
+        40,
         (struct guiWindow *)wnd,
         0);
     
@@ -428,6 +439,24 @@ static void prvTestTask1( void *pvParameters )
                 charxh += cw;
                 graphDrawChar(charxha, 100, &cw, m.param1, &g_DroidSans29);
                 charxha += cw;
+                break;
+
+            case MSG_COMMAND:
+                if ((m.param1 >> 16) == BN_CLICKED)
+                {
+                    LOG("BN_CLICLED z maina id: %d", (m.param1 & 0xFFFF));
+                    
+                    switch((m.param1 & 0xFFFF))
+                    {
+                        case 2:
+                            audio1chPlaySound("satellit.wav", SND_ASYNC);
+                            break;
+                            
+                        case 3:
+                            audio1chPlaySound("asaf2.wav", SND_ASYNC);
+                            break;
+                    }
+                }
                 break;
         }
 

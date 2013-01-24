@@ -470,6 +470,7 @@ INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
             guiDrawStyleFrame(pWnd->colorStyle.hlIdx, &pWnd->clientFrame);
             guiEndPaint();
 
+            // TODO: Te rysowanie childow mi sie nie podoba ;/
             for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
             {
                 msgSend(wnd, MSG_PAINT, pParam1, pParam2);
