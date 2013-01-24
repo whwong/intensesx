@@ -33,7 +33,9 @@ void guiRegisterButtonClass()
 INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2)
 {
+    UINT32 ret = 0;
     UINT32 len, idx, w, h;
+    struct guiWinStyle *ws;
     
     switch (pMsg)
     {
@@ -48,13 +50,30 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
                 pWnd->addData2 |= BS_DISABLED;
             break;
 
-        case MSG_SETTEXT:
-            vPortFree(pWnd->caption);
-            len = strlen((char *)pParam2);
+        case MSG_SETFONT:
+            if ((struct graphFont *)pParam1 != NULL)
+            {
+                pWnd->font = (struct graphFont *)pParam1;
 
-            pWnd->caption = pvPortMalloc(len + 1);
-            if (len > 0)
-                strcpy(pWnd->caption, (char *)pParam2);
+                if ((pParam2 & 0xFF) != 0x00)
+                    msgSend(pWnd, MSG_PAINT, 0, 0);
+            }
+            else
+                ret = -1;
+            break;
+
+        case MSG_SETTEXT:
+            if ((char *)pParam2 != NULL)
+            {
+                vPortFree(pWnd->caption);
+                len = strlen((char *)pParam2);
+
+                pWnd->caption = pvPortMalloc(len + 1);
+                if (len > 0)
+                    strcpy(pWnd->caption, (char *)pParam2);
+            }
+            else
+                ret = -1;
             break;
 
         case MSG_GETTEXT:
@@ -83,21 +102,32 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             
             guiDrawStyleFrame(idx, &pWnd->clientFrame);
 
-            // TODO: rysowanie childow jakos inaczej zrobic w window.c
-            // TODO: jak jest button wcisniety i wyjedziemy pointerem to zostaje wcisniety
-            guiDrawText(&pWnd->clientFrame, pWnd->caption, pWnd->font,
-                FS_ALIGN_CENTER | FS_VALIGN_CENTER);
+            ws = guiGetStyle(idx);
+            if (ws->fgStyle == CS_SOLID)
+            {
+                guiSetColor(ws->fgColor);
+                guiDrawText(&pWnd->clientFrame, pWnd->caption, pWnd->font,
+                        FS_ALIGN_CENTER | FS_VALIGN_CENTER);
+            }
 
             guiEndPaint();
             break;
 
         case MSG_POINTERHOVER:
-            pWnd->addData2 |= BS_HILITE;
+            if (pParam1 == 0)
+                pWnd->addData2 |= BS_HILITE;
+            else
+                pWnd->addData2 |= (BS_PRESSED | BS_HILITE);
+            
             msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
 
         case MSG_POINTERLEAVE:
-            pWnd->addData2 &= ~BS_HILITE;
+            if (pParam1 == 0)
+                pWnd->addData2 &= ~BS_HILITE;
+            else
+                pWnd->addData2 &= ~BS_PRESSED;
+                
             msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
 
@@ -107,6 +137,8 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             break;
             
         case MSG_POINTERUP:
+            if ((pWnd->addData2 & BS_PRESSED) && (pWnd->addData2 & BS_HILITE))
+                BUTTON_NOTIFY_PARENT(pWnd, BN_CLICKED);
             pWnd->addData2 &= ~BS_PRESSED;
             msgSend(pWnd, MSG_PAINT, 0, 0);
             break;

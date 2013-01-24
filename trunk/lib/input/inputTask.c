@@ -12,6 +12,7 @@
 #include "os/task.h"
 #include "lib/input/keyCodes.h"
 #include "lib/gui/window.h"
+#include "lib/gui/gui.h"
 
 static xTaskHandle inputTaskHandler;
 static const struct inputKeyMap *keymap;
@@ -146,8 +147,10 @@ static void inputTask(void *pvParameters)
     struct inputDiskEvent *devn = (struct inputDiskEvent*)&evn;
     struct inputRcuEvent *revn = (struct inputRcuEvent*)&evn;
 
-    struct guiWindow *targetWnd;
-    struct guiWindow *oldTargetWnd = NULL;
+    struct guiWindow *targetWnd = NULL;
+    struct guiWindow *pointerWnd = NULL;
+    struct guiWindow *oldPointerWnd = NULL;
+    UINT32 cursorAtTargetWnd = FALSE;
 
     UINT32 lastKey = 0, lastKeyRepeated = 0, lastKeyEventTime = 0;
     UINT32 lastRcu = 0, lastRcuRepeated = 0, lastRcuEventTime = 0;
@@ -209,25 +212,42 @@ static void inputTask(void *pvParameters)
                             tevn->action, tevn->positionX, tevn->positionY, tevn->speedX,
                             tevn->speedY, tevn->timestamp);
 
-                    targetWnd = guiWindowAtXY(tevn->positionX, tevn->positionY);
-
-                    if ((kevn->action == EVENT_TOUCH_DOWN))
-                        buttonDown = 1;
-                    else if ((kevn->action == EVENT_TOUCH_UP))
-                        buttonDown = 0;
+                    pointerWnd = guiWindowAtXY(tevn->positionX, tevn->positionY);
                     
-                    if (targetWnd != oldTargetWnd)
+                    if ((targetWnd == NULL) && (pointerWnd != oldPointerWnd))
                     {
-                        if (oldTargetWnd != NULL)
+                        if (oldPointerWnd != NULL)
                         {
-                            msgPost(oldTargetWnd, MSG_POINTERLEAVE, buttonDown,
+                            msgPost(oldPointerWnd, MSG_POINTERLEAVE, 0,
                                 ((tevn->positionY << 16) | tevn->positionX));
                         }
-                        
-                        if (targetWnd != NULL)
+
+                        if (pointerWnd != NULL)
                         {
-                            msgPost(targetWnd, MSG_POINTERHOVER, buttonDown,
+                            msgPost(pointerWnd, MSG_POINTERHOVER, 0,
                                 ((tevn->positionY << 16) | tevn->positionX));
+                        }
+                    }
+
+                    if (targetWnd != NULL)
+                    {
+                        if (guiXYInRect(tevn->positionX, tevn->positionY, &targetWnd->clientFrame) == TRUE)
+                        {
+                            if (cursorAtTargetWnd == FALSE)
+                            {
+                                cursorAtTargetWnd = TRUE;
+                                msgPost(targetWnd, MSG_POINTERHOVER, 1,
+                                    ((tevn->positionY << 16) | tevn->positionX));
+                            }
+                        }
+                        else
+                        {
+                            if (cursorAtTargetWnd == TRUE)
+                            {
+                                cursorAtTargetWnd = FALSE;
+                                msgPost(targetWnd, MSG_POINTERLEAVE, 1,
+                                    ((tevn->positionY << 16) | tevn->positionX));
+                            }
                         }
                     }
 
@@ -238,8 +258,13 @@ static void inputTask(void *pvParameters)
                             // press button 1 down (touch the screen in this case)
                             // and move with speed = 0 because we just touched
                             // screen
-                            msgPost(targetWnd, MSG_POINTERDOWN, buttonDown,
-                                    ((tevn->positionY << 16) | tevn->positionX));
+                            if (pointerWnd != NULL)
+                            {
+                                targetWnd = pointerWnd;
+                                cursorAtTargetWnd = TRUE;
+                                msgPost(targetWnd, MSG_POINTERDOWN, 1,
+                                        ((tevn->positionY << 16) | tevn->positionX));
+                            }
                             break;
 
                         case EVENT_TOUCH_UP:
@@ -258,11 +283,22 @@ static void inputTask(void *pvParameters)
                             else if (tevn->speedY < -127)
                                 tevn->speedY = -127;
 
-                            // 1st param is only speed because we just release
-                            // touch from screen so we set btn 1 as released
-                            msgPost(targetWnd, MSG_POINTERUP,
-                                    ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | buttonDown),
-                                    ((tevn->positionY << 16) | tevn->positionX));
+                            if (targetWnd != NULL)
+                            {
+                                // 1st param is only speed because we just release
+                                // touch from screen so we set btn 1 as released
+                                msgPost(targetWnd, MSG_POINTERUP,
+                                        ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | 0),
+                                        ((tevn->positionY << 16) | tevn->positionX));
+                                pointerWnd = targetWnd;
+                                targetWnd = NULL;
+                            }
+                            else if (pointerWnd != NULL)
+                            {
+                                msgPost(pointerWnd, MSG_POINTERUP,
+                                        ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | 0),
+                                        ((tevn->positionY << 16) | tevn->positionX));
+                            }
                             break;
 
                         case EVENT_TOUCH_MOVE:
@@ -277,16 +313,25 @@ static void inputTask(void *pvParameters)
                             else if (tevn->speedY < -127)
                                 tevn->speedY = -127;
 
-                            // 1st param is spd & 0x0001 because if we are
-                            // touching screen we have to had btn1 pressed
-                            // btn1 is equal to touch screen
-                            msgPost(targetWnd, MSG_POINTERMOVE,
-                                    ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | buttonDown),
-                                    ((tevn->positionY << 16) | tevn->positionX));
+                            if (targetWnd != NULL)
+                            {
+                                msgPost(targetWnd, MSG_POINTERMOVE,
+                                        ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | 1),
+                                        ((tevn->positionY << 16) | tevn->positionX));
+                            }
+                            else if (pointerWnd != NULL)
+                            {
+                                // 1st param is spd | 0x0001 because if we are
+                                // touching screen we have to had btn1 pressed
+                                // btn1 is equal to touch screen
+                                msgPost(pointerWnd, MSG_POINTERMOVE,
+                                        ((tevn->speedY << 24) | ((tevn->speedX & 0xFF) << 16) | 0),
+                                        ((tevn->positionY << 16) | tevn->positionX));
+                            }
                             break;
                     }
 
-                    oldTargetWnd = targetWnd;
+                    oldPointerWnd = pointerWnd;
                     
                     break;
 
@@ -356,3 +401,4 @@ static void inputTask(void *pvParameters)
         }
     }
 }
+

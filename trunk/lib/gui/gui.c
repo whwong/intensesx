@@ -176,14 +176,14 @@ void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
         guiSetColor(ws->leftLineColor);
         graphDrawRect(pRect->l,
             pRect->t,
-            pRect->l + ws->leftLineWidth,
+            pRect->l + ws->leftLineWidth - 1,
             pRect->t + pRect->h);
     }
 
     if (ws->rightLineStyle == CS_SOLID)
     {
         guiSetColor(ws->leftLineColor);
-        graphDrawRect(pRect->l + pRect->w - ws->rightLineWidth,
+        graphDrawRect(pRect->l + pRect->w - ws->rightLineWidth + 1,
             pRect->t,
             pRect->l + pRect->w,
             pRect->t + pRect->h);
@@ -195,14 +195,14 @@ void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
         graphDrawRect(pRect->l,
             pRect->t,
             pRect->l + pRect->w,
-            pRect->t + ws->topLineWidth);
+            pRect->t + ws->topLineWidth - 1);
     }
 
     if (ws->bottomLineStyle == CS_SOLID)
     {
         guiSetColor(ws->leftLineColor);
         graphDrawRect(pRect->l,
-            pRect->t + pRect->h - ws->bottomLineWidth,
+            pRect->t + pRect->h - ws->bottomLineWidth + 1,
             pRect->l + pRect->w,
             pRect->t + pRect->h);
     }

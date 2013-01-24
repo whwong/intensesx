@@ -9,7 +9,7 @@
 #define WINSTYLE_HL_BLUE    {0x59, 0xaf, 0xff, 0xff}
 #define WINSTYLE_BLACK      {0x00, 0x00, 0x00, 0xff}
 #define WINSTYLE_WHITE      {0xff, 0xff, 0xff, 0xff}
-#define WINSTYLE_BTN_FRAME  {0xaa, 0xaa, 0xaa, 0xff}
+#define WINSTYLE_BTN_FRAME  {0xcc, 0xcc, 0xcc, 0xff}
 #define WINSTYLE_GRAY       {0x55, 0x55, 0x55, 0xff}
 #define WINSTYLE_GRAYHL     {0x55, 0x77, 0x99, 0xff}
 
@@ -97,10 +97,10 @@ const struct guiWinStyle intenseWinstyle[] =
      CS_SOLID, WINSTYLE_HL_BLUE},   // BG Color
 
     // Button SEL
-    {LS_SOLID, 2, WINSTYLE_BTN_FRAME,   // Left line
-     LS_SOLID, 1, WINSTYLE_BTN_FRAME,   // Top line
-     LS_SOLID, 2, WINSTYLE_BTN_FRAME,   // Right line
-     LS_SOLID, 1, WINSTYLE_BTN_FRAME,   // Bottom line
+    {LS_SOLID, 0, WINSTYLE_BTN_FRAME,   // Left line
+     LS_SOLID, 0, WINSTYLE_BTN_FRAME,   // Top line
+     LS_SOLID, 0, WINSTYLE_BTN_FRAME,   // Right line
+     LS_SOLID, 0, WINSTYLE_BTN_FRAME,   // Bottom line
      CS_SOLID, WINSTYLE_WHITE,    // FG Color
      CS_SOLID, WINSTYLE_BLUE},   // BG Color
 
