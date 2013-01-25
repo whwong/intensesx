@@ -47,7 +47,6 @@ static struct guiWindow *guiControlGetFocusedChild(struct guiWindow *pWnd)
         }
     }
 
-    WND_LOG("guiControlGetFocusedChild(%p) = %p", pWnd, ret);
     return ret;
 }
 
@@ -66,10 +65,8 @@ struct guiWindow *guiWindowGetFocused()
     if (wnd != NULL)
     {
         focusedChild = guiGetWindowById(wnd, wnd->focusId);
-        LOG("guiGetWindowById(%p, %d);", wnd, wnd->focusId);
     }
     
-    WND_LOG("guiWindowGetFocused() = %p", focusedChild);
     return focusedChild;
 }
 /* Old version with focus inheritance probably to delete in future
@@ -88,7 +85,6 @@ struct guiWindow *guiWindowGetFocused()
     }
     while(focusedChild != NULL);
 
-    WND_LOG("guiWindowGetFocused() = %p", wnd);
     return wnd;
 }*/
 
@@ -137,7 +133,6 @@ static struct guiWindow *guiControlGetXYChild(struct guiWindow *pWnd, UINT16 pX,
         }
     }
 
-    WND_LOG("guiControlGetXYChild(%p, %d, %d) = %p", pWnd, pX, pY, ret);
     return ret;
 }
 
@@ -171,7 +166,6 @@ struct guiWindow *guiWindowAtXY(UINT16 pX, UINT16 pY)
         wnd = NULL;
     }
 
-    WND_LOG("guiWindowAtXY(%d, %d) = %p", pX, pY, wnd);
     return wnd;
 }
 
@@ -527,15 +521,12 @@ static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
             if (oldFocusedWnd != NULL)
             {
                 msgSend(oldFocusedWnd, MSG_KILLFOCUS, (UINT32)wnd, 0);
-                WND_LOG("Message MSG_KILLFOCUS sent");
             }
 
             if (wnd != NULL)
             {
                 wnd->mainWin->head.focusId = wnd->id;
-                WND_LOG("Focus changed");
                 msgSend(wnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
-                WND_LOG("Message MSG_SETFOCUS sent");
             }
         }
     }

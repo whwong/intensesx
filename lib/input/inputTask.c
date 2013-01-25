@@ -161,11 +161,6 @@ static void inputTask(void *pvParameters)
     {
         if (inputEventPeek(&evn, INPUT_TASK_MAX_SCAN_TIME) == TRUE)
         {
-            struct guiWindow *tmpwnd = guiWindowGetFocused();
-            if (tmpwnd != NULL)
-                LOG("FID: %d", tmpwnd->id);
-            else
-                LOG("FID: none");
             switch(evn.type)
             {
                 case EVENT_KEY:
@@ -175,13 +170,6 @@ static void inputTask(void *pvParameters)
                     switch(kevn->action)
                     {
                         case EVENT_KEY_DOWN:
-
-                            if ((kevn->code == V_KEY_LEFT) || (kevn->code == V_KEY_RIGHT) ||
-                                    (kevn->code == V_KEY_UP) || (kevn->code == V_KEY_DOWN))
-                            {
-                                targetWnd = NULL;
-                            }
-
                             sendKeyMessage(MSG_KEYDOWN, kevn->code, 0);
                             lastKey = kevn->code;
                             lastKeyRepeated = 0;
@@ -201,7 +189,7 @@ static void inputTask(void *pvParameters)
                             revn->action, revn->code, revn->timestamp);
 
                     if (revn->action == EVENT_RCU_CODE_RECEIVED)
-                    {
+                    {                        
                         if (revn->code != lastRcu)
                         {
                             sendKeyMessage(MSG_KEYDOWN, revn->code, 0);
@@ -233,11 +221,16 @@ static void inputTask(void *pvParameters)
                                 ((tevn->positionY << 16) | tevn->positionX));
                         }
 
+                        msgPost(oldPointerWnd, MSG_KILLFOCUS, (UINT32)pointerWnd, 0);
+
                         if (pointerWnd != NULL)
                         {
                             msgPost(pointerWnd, MSG_POINTERHOVER, 0,
                                 ((tevn->positionY << 16) | tevn->positionX));
                         }
+
+                        msgPost(pointerWnd, MSG_SETFOCUS, (UINT32)oldPointerWnd, 0);
+
                     }
 
                     if (targetWnd != NULL)
