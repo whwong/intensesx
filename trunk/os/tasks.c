@@ -2459,6 +2459,25 @@ void vTaskExitCritical( void )
 #endif
 /*-----------------------------------------------------------*/
 
+void vTaskGetName(char* pcName)
+{
+    strcpy(pcName, pxCurrentTCB->pcTaskName);
+}
 
+/*-----------------------------------------------------------*/
+
+unsigned portBASE_TYPE uxTaskGetStackAddr( void )
+{
+    return pxCurrentTCB->pxStack;
+}
+
+/*-----------------------------------------------------------*/
+
+unsigned portBASE_TYPE uxTaskGetStackTopAddr( void )
+{
+    return pxCurrentTCB->pxTopOfStack;
+}
+
+/*-----------------------------------------------------------*/
 
 

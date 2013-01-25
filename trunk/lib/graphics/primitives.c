@@ -500,8 +500,6 @@ static void graphDrawBitmapText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
     if (graphLcdDev == NULL)
         return;
 
-    DEBUG("graphDrawBitmapText");
-
     fontHead = (struct graphBitmapFontHeader*) pFont->address;
 
     if (fontHead->height > pH)

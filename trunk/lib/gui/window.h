@@ -58,6 +58,12 @@
  */
 #define WS_FOCUSSTOP          0x00010000L
 
+// guiShowWindow parameters
+// Show window
+#define SW_SHOW 5
+// Hide window
+#define SW_HIDE 0
+
 enum windowType
 {
     WT_MAIN = 0,
@@ -131,10 +137,12 @@ struct guiWindow *guiWindowGetFocused();
 struct guiMainWindow *guiWindowGetFocusedMain();
 struct guiWindow *guiWindowAtXY(UINT16 pX, UINT16 pY);
 struct guiMainWindow *guiWindowAtXYMain(UINT16 pX, UINT16 pY);
+struct guiWindow *guiGetWindowById(struct guiWindow *pRoot, UINT16 pId);
 
 struct guiWindow *guiCreateWindow (const char* pClassName,
         const char* pCaption, UINT32 pStyle,
-        UINT16 pId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
+        UINT16 pId, UINT16 pIdLeft, UINT16 pIdRight, UINT16 pIdTop, UINT16 pIdBottom,
+        UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
         struct guiWindow *pParentWnd, UINT32 pAddData);
 
 struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
@@ -143,5 +151,7 @@ struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
 
 INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2);
+
+BOOL guiShowWindow(struct guiWindow *pWnd, UINT32 pCmdShow);
 
 #endif

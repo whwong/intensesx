@@ -156,12 +156,16 @@ static void inputTask(void *pvParameters)
     UINT32 lastRcu = 0, lastRcuRepeated = 0, lastRcuEventTime = 0;
     UINT32 lastRcuCodeReceived = 0;
     UINT32 timePassed = 0;
-    UINT32 buttonDown = 0;
     
     while(1)
     {
         if (inputEventPeek(&evn, INPUT_TASK_MAX_SCAN_TIME) == TRUE)
         {
+            struct guiWindow *tmpwnd = guiWindowGetFocused();
+            if (tmpwnd != NULL)
+                LOG("FID: %d", tmpwnd->id);
+            else
+                LOG("FID: none");
             switch(evn.type)
             {
                 case EVENT_KEY:
@@ -171,6 +175,13 @@ static void inputTask(void *pvParameters)
                     switch(kevn->action)
                     {
                         case EVENT_KEY_DOWN:
+
+                            if ((kevn->code == V_KEY_LEFT) || (kevn->code == V_KEY_RIGHT) ||
+                                    (kevn->code == V_KEY_UP) || (kevn->code == V_KEY_DOWN))
+                            {
+                                targetWnd = NULL;
+                            }
+
                             sendKeyMessage(MSG_KEYDOWN, kevn->code, 0);
                             lastKey = kevn->code;
                             lastKeyRepeated = 0;

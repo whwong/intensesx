@@ -1312,6 +1312,9 @@ unsigned portBASE_TYPE uxTaskGetTaskNumber( xTaskHandle xTask );
  */
 void vTaskSetTaskNumber( xTaskHandle xTask, unsigned portBASE_TYPE uxHandle );
 
+void vTaskGetName(char* pcName);
+unsigned portBASE_TYPE uxTaskGetStackAddr( void );
+unsigned portBASE_TYPE uxTaskGetStackTopAddr( void );
 
 #ifdef __cplusplus
 }

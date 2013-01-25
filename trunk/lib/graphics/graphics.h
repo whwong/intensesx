@@ -45,6 +45,7 @@ extern struct hldLcdDevice *graphLcdDev;
 // Common graphics library funkctions
 void graphSetLcdDevice(struct hldLcdDevice *pLcdDev);
 retcode graphSetDrawingColor(UINT8 pA, UINT8 pR, UINT8 pG, UINT8 pB);
+retcode graphClearScreen();
 
 // Drawing primitives
 retcode graphDrawLine(UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2);

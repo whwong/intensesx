@@ -7,6 +7,7 @@
 #include "window.h"
 #include "gui.h"
 #include "lib/graphics/graphics.h"
+#include "lib/input/keyCodes.h"
 
 #define WND_DEBUG
 #if defined(WND_DEBUG)
@@ -20,6 +21,8 @@
  * is different than WT_PANEL
  * @param pWnd Pointer to parent window
  * @return Returns focused child window
+ * @remark Used only when focus inheritance enabled. Probablly will be deleted
+ * in future
  */
 static struct guiWindow *guiControlGetFocusedChild(struct guiWindow *pWnd)
 {
@@ -57,6 +60,24 @@ struct guiWindow *guiWindowGetFocused()
     // Just one main window on screen supported at this moment so check
     // only current main window children
     struct guiWindow *wnd;
+    struct guiWindow *focusedChild = NULL;
+
+    wnd = (struct guiWindow*)guiGetCurrentMainWindow();
+    if (wnd != NULL)
+    {
+        focusedChild = guiGetWindowById(wnd, wnd->focusId);
+        LOG("guiGetWindowById(%p, %d);", wnd, wnd->focusId);
+    }
+    
+    WND_LOG("guiWindowGetFocused() = %p", focusedChild);
+    return focusedChild;
+}
+/* Old version with focus inheritance probably to delete in future
+struct guiWindow *guiWindowGetFocused()
+{
+    // Just one main window on screen supported at this moment so check
+    // only current main window children
+    struct guiWindow *wnd;
     struct guiWindow *focusedChild;
 
     focusedChild = (struct guiWindow*)guiGetCurrentMainWindow();
@@ -69,7 +90,7 @@ struct guiWindow *guiWindowGetFocused()
 
     WND_LOG("guiWindowGetFocused() = %p", wnd);
     return wnd;
-}
+}*/
 
 /**
  * Gets focused root window. If focused is child window get parent of window
@@ -105,7 +126,8 @@ static struct guiWindow *guiControlGetXYChild(struct guiWindow *pWnd, UINT16 pX,
 
     for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
     {
-        if (guiXYInRect(pX, pY, &wnd->frame) == TRUE)
+        if ((guiXYInRect(pX, pY, &wnd->frame) == TRUE) &&
+                (wnd->windowStyle & WS_VISIBLE))
         {
             // Ok got it
             ret = wnd;
@@ -134,7 +156,8 @@ struct guiWindow *guiWindowAtXY(UINT16 pX, UINT16 pY)
 
     focusedChild = (struct guiWindow*)guiGetCurrentMainWindow();
 
-    if (guiXYInRect(pX, pY, &focusedChild->frame) == TRUE)
+    if ((guiXYInRect(pX, pY, &focusedChild->frame) == TRUE) &&
+                (focusedChild->windowStyle & WS_VISIBLE))
     {
         do
         {
@@ -165,6 +188,26 @@ struct guiMainWindow *guiWindowAtXYMain(UINT16 pX, UINT16 pY)
     // In future this should checks which main window is at cursor pos and return
     // pointer to it.
     return guiGetCurrentMainWindow();
+}
+
+struct guiWindow *guiGetWindowById(struct guiWindow *pRoot, UINT16 pId)
+{
+    struct guiWindow *wnd, *tw;
+
+    if (pRoot->id == pId)
+        return pRoot;
+
+    for (wnd = pRoot->firstChild; wnd; wnd = wnd->next)
+    {
+        tw = guiGetWindowById(wnd, pId);
+
+        if (tw != NULL)
+        {
+            return tw;
+        }
+    }
+
+    return NULL;
 }
 
 struct guiMainWindow *guiGetMainWindowPtrOfControl(struct guiWindow *pWnd)
@@ -244,7 +287,8 @@ static retcode guiDelChildFromParent(struct guiWindow *pParent, struct guiWindow
 
 struct guiWindow *guiCreateWindow (const char* pClassName,
         const char* pCaption, UINT32 pStyle,
-        UINT16 pId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH, 
+        UINT16 pId, UINT16 pIdLeft, UINT16 pIdRight, UINT16 pIdTop, UINT16 pIdBottom,
+        UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
         struct guiWindow *pParentWnd, UINT32 pAddData)
 {
     struct guiMainWindow *mainWin;
@@ -296,6 +340,10 @@ struct guiWindow *guiCreateWindow (const char* pClassName,
     newCtrl->colorStyle = cci->colorStyle;
 
     newCtrl->id = pId;
+    newCtrl->idLeft = pIdLeft;
+    newCtrl->idRight = pIdRight;
+    newCtrl->idTop = pIdTop;
+    newCtrl->idBottom = pIdBottom;
     newCtrl->addData = pAddData;
     newCtrl->addData2 = 0;
     newCtrl->windowProc = cci->windowProc;
@@ -440,19 +488,70 @@ struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
     return newWnd;
 }
 
-INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
+static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2)
 {
-    struct guiWinStyle *ws;
+    struct guiWindow *wnd = NULL;
+    struct guiWindow *oldFocusedWnd = NULL;
+
+    assert(pWnd != NULL);
+
+    if ((pParam1 == V_KEY_LEFT) || (pParam1 == V_KEY_RIGHT) ||
+            (pParam1 == V_KEY_UP) || (pParam1 == V_KEY_DOWN))
+    {
+        oldFocusedWnd = guiWindowGetFocused();
+
+        if (pParam1 == V_KEY_LEFT)
+        {
+            wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idLeft);
+        }
+        else if (pParam1 == V_KEY_RIGHT)
+        {
+            wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idRight);
+        }
+        else if (pParam1 == V_KEY_UP)
+        {
+            wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idTop);
+        }
+        else if (pParam1 == V_KEY_DOWN)
+        {
+            wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idBottom);
+        }
+
+        if (wnd != oldFocusedWnd)
+        {
+            if ((oldFocusedWnd != NULL) && (wnd != NULL))
+                WND_LOG("Change focus from id: %d, to id: %d", oldFocusedWnd->id, wnd->id);
+
+
+            if (oldFocusedWnd != NULL)
+            {
+                msgSend(oldFocusedWnd, MSG_KILLFOCUS, (UINT32)wnd, 0);
+                WND_LOG("Message MSG_KILLFOCUS sent");
+            }
+
+            if (wnd != NULL)
+            {
+                wnd->mainWin->head.focusId = wnd->id;
+                WND_LOG("Focus changed");
+                msgSend(wnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
+                WND_LOG("Message MSG_SETFOCUS sent");
+            }
+        }
+    }
+}
+
+static INT32 guiDefMainWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
+        UINT32 pParam1, UINT32 pParam2)
+{
     struct guiWindow *wnd;
-    UINT32 x2, y2;
     
     switch (pMsg)
     {
         case MSG_NCPAINT:
             // Paint the window's non-client area.
             break;
-            
+
         case MSG_PAINT:
             // Paint the window's client area.
             guiBeginPaint();
@@ -488,7 +587,104 @@ INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
                 msgSend(wnd, MSG_PAINT, pParam1, pParam2);
             }
             break;
+
+        case MSG_KEYDOWN:
+            guiDefKeyDownProc(pWnd, pMsg, pParam1, pParam2);
+            break;
     }
-    
+
     return 0;
-}        
+}
+
+static INT32 guiDefConrolProc(struct guiWindow *pWnd, UINT32 pMsg,
+        UINT32 pParam1, UINT32 pParam2)
+{
+    struct guiWindow *wnd;
+    
+    switch (pMsg)
+    {
+        case MSG_KEYDOWN:
+            guiDefKeyDownProc(pWnd, pMsg, pParam1, pParam2);
+            break;
+
+        case MSG_POINTERHOVER:
+            if (pParam1 == 0)
+            {
+                wnd = guiWindowGetFocused();
+                msgSend(wnd, MSG_KILLFOCUS, (UINT32)pWnd, 0);
+                pWnd->mainWin->head.focusId = pWnd->id;
+                msgSend(pWnd, MSG_SETFOCUS, (UINT32)wnd, 0);
+            }
+            break;
+
+        case MSG_POINTERLEAVE:
+            if (pParam1 == 0)
+                pWnd->mainWin->head.focusId = 0;
+            break;
+
+        case MSG_POINTERDOWN:
+            wnd = guiWindowGetFocused();
+            msgSend(wnd, MSG_KILLFOCUS, (UINT32)pWnd, 0);
+            pWnd->mainWin->head.focusId = pWnd->id;
+            msgSend(pWnd, MSG_SETFOCUS, (UINT32)wnd, 0);
+            break;
+    }
+
+    return 0;
+}
+
+INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
+        UINT32 pParam1, UINT32 pParam2)
+{
+    if (pWnd->type == WT_MAIN)
+        return guiDefMainWindowProc(pWnd, pMsg, pParam1, pParam2);
+    else if (pWnd->type == WT_CONTROL)
+        return guiDefConrolProc(pWnd, pMsg, pParam1, pParam2);
+    else
+        return 0;
+}
+
+BOOL guiShowWindow(struct guiWindow *pWnd, UINT32 pCmdShow)
+{
+    BOOL ret;
+
+    assert(pWnd != NULL);
+ 
+    ret = ((pWnd->windowStyle & WS_VISIBLE) == WS_VISIBLE);
+
+    if (pWnd->type == WT_MAIN)
+    {
+        switch (pCmdShow)
+        {
+            case SW_SHOW:
+                guiSetCurrentMainWindow((struct guiMainWindow *)pWnd);
+                msgPost(pWnd, MSG_NCPAINT, 0 ,0);
+                msgPost(pWnd, MSG_PAINT, 0 ,0);
+                break;
+
+            case SW_HIDE:
+                guiSetCurrentMainWindow(NULL);
+                graphClearScreen();
+                break;
+        }
+    }
+    else if (pWnd->type == WT_CONTROL)
+    {
+        switch (pCmdShow)
+        {
+            case SW_SHOW:
+                pWnd->windowStyle |= WS_VISIBLE;
+                msgPost(pWnd, MSG_NCPAINT, 0 ,0);
+                msgPost(pWnd, MSG_PAINT, 0 ,0);
+                break;
+
+            case SW_HIDE:
+                pWnd->windowStyle &= ~WS_VISIBLE;
+                if (pWnd->parent != NULL)
+                    msgPost(pWnd->parent, MSG_PAINT, 0 ,0);
+                break;
+        }
+    }
+
+    return ret;
+}
