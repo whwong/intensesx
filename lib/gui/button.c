@@ -36,7 +36,8 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
     UINT32 ret = 0;
     UINT32 len, idx, w, h;
     struct guiWinStyle *ws;
-    
+
+    // Jeszcze ukrywanie przycisku trzeba zrobic
     switch (pMsg)
     {
         case MSG_CREATE:
@@ -48,6 +49,8 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
                 pWnd->addData2 &= ~BS_DISABLED;
             else
                 pWnd->addData2 |= BS_DISABLED;
+
+            msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
 
         case MSG_SETFONT:
@@ -91,23 +94,30 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             // Paint the window's client area.
             guiBeginPaint();
 
-            if (pWnd->addData2 & BS_DISABLED)
-                idx = pWnd->colorStyle.gryIdx;
-            else if (pWnd->addData2 & BS_PRESSED)
-                idx = pWnd->colorStyle.selIdx;
-            else if (pWnd->addData2 & BS_HILITE)
-                idx = pWnd->colorStyle.hlIdx;
-            else
-                idx = pWnd->colorStyle.shIdx;
-            
-            guiDrawStyleFrame(idx, &pWnd->clientFrame);
-
-            ws = guiGetStyle(idx);
-            if (ws->fgStyle == CS_SOLID)
+            if (pWnd->windowStyle & WS_VISIBLE)
             {
-                guiSetColor(ws->fgColor);
-                guiDrawText(&pWnd->clientFrame, pWnd->caption, pWnd->font,
-                        FS_ALIGN_CENTER | FS_VALIGN_CENTER);
+                // While button is disabled styles like hilite or pressed are
+                // updated for button while touch down and touch up messages.
+                // There we are always firstly check that button is disabled,
+                // if it is just draw disabled button no matters on other states.
+                if (pWnd->addData2 & BS_DISABLED)
+                    idx = pWnd->colorStyle.gryIdx;
+                else if (pWnd->addData2 & BS_PRESSED)
+                    idx = pWnd->colorStyle.selIdx;
+                else if (pWnd->addData2 & BS_HILITE)
+                    idx = pWnd->colorStyle.hlIdx;
+                else
+                    idx = pWnd->colorStyle.shIdx;
+
+                guiDrawStyleFrame(idx, &pWnd->clientFrame);
+
+                ws = guiGetStyle(idx);
+                if (ws->fgStyle == CS_SOLID)
+                {
+                    guiSetColor(ws->fgColor);
+                    guiDrawText(&pWnd->clientFrame, pWnd->caption, pWnd->font,
+                            FS_ALIGN_CENTER | FS_VALIGN_CENTER);
+                }
             }
 
             guiEndPaint();
@@ -119,7 +129,8 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             else
                 pWnd->addData2 |= (BS_PRESSED | BS_HILITE);
             
-            msgSend(pWnd, MSG_PAINT, 0, 0);
+            if (!(pWnd->addData2 & BS_DISABLED))
+                msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
 
         case MSG_POINTERLEAVE:
@@ -128,21 +139,46 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             else
                 pWnd->addData2 &= ~BS_PRESSED;
                 
-            msgSend(pWnd, MSG_PAINT, 0, 0);
+            if (!(pWnd->addData2 & BS_DISABLED))
+                msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
 
         case MSG_POINTERDOWN:
-            pWnd->addData2 |= BS_PRESSED;
-            msgSend(pWnd, MSG_PAINT, 0, 0);
+            pWnd->addData2 |= (BS_PRESSED | BS_HILITE);
+            if (!(pWnd->addData2 & BS_DISABLED))
+                msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
             
         case MSG_POINTERUP:
-            if ((pWnd->addData2 & BS_PRESSED) && (pWnd->addData2 & BS_HILITE))
+            if ((pWnd->addData2 & BS_PRESSED) && (pWnd->addData2 & BS_HILITE) &&
+                    (!(pWnd->addData2 & BS_DISABLED)))
+            {
                 BUTTON_NOTIFY_PARENT(pWnd, BN_CLICKED);
-            pWnd->addData2 &= ~BS_PRESSED;
-            msgSend(pWnd, MSG_PAINT, 0, 0);
+                pWnd->addData2 &= ~BS_PRESSED;
+                msgSend(pWnd, MSG_PAINT, 0, 0);
+            }
+            else
+            {
+                pWnd->addData2 &= ~BS_PRESSED;
+            }
+            break;
+
+        case MSG_SETFOCUS:
+            if (!(pWnd->addData2 & BS_DISABLED))
+            {
+                pWnd->addData2 |= BS_HILITE;
+                msgSend(pWnd, MSG_PAINT, 0, 0);
+            }
+            break;
+
+        case MSG_KILLFOCUS:
+            if (!(pWnd->addData2 & BS_DISABLED))
+            {
+                pWnd->addData2 &= ~BS_HILITE;
+                msgSend(pWnd, MSG_PAINT, 0, 0);
+            }
             break;
     }
     
-    return 0;
+    return guiDefWindowProc(pWnd, pMsg, pParam1, pParam2);
 }        

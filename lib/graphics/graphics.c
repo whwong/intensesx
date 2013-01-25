@@ -24,3 +24,15 @@ retcode graphSetDrawingColor(UINT8 pA, UINT8 pR, UINT8 pG, UINT8 pB)
     else
         return DEVICE_NOT_SET;
 }
+
+retcode graphClearScreen()
+{
+    if (graphLcdDev != NULL)
+    {
+        graphLcdDev->setColor(graphLcdDev, 0xff, 0x00, 0x00, 0x00);
+        graphDrawRect(0,0,graphLcdDev->getMaxX(), graphLcdDev->getMaxY());
+        return SUCCESS;
+    }
+    else
+        return DEVICE_NOT_SET;
+}

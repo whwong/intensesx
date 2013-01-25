@@ -70,6 +70,8 @@ struct msg
 #define MSG_GETTEXT         (MSG_WINDOW | 0x0007)
 #define MSG_SETFONT         (MSG_WINDOW | 0x0008)
 #define MSG_COMMAND         (MSG_WINDOW | 0x0009)
-#define MSG_WINDOWLAST      (MSG_WINDOW | 0x0009)
+#define MSG_SETFOCUS        (MSG_WINDOW | 0x000A)
+#define MSG_KILLFOCUS       (MSG_WINDOW | 0x000B)
+#define MSG_WINDOWLAST      (MSG_WINDOW | 0x000B)
 
 #endif

@@ -55,7 +55,6 @@ static char fatBenchmarkBuf[512] = "Tutaj zapisujemy dokladnie 64 znaki. Testuje
 INT32 firstWindowProc(struct guiWindow *pWnd, UINT32 pMsg, UINT32 pParam1, UINT32 pParam2)
 {
     struct hldLcdDevice *lcd;
-    INT32 ret = 0;
     static INT32 x = 100,y = 100, ox=100, oy=100;
 
     lcd = hldDeviceGetById(HLD_DEVICE_TYPE_LCD, 0);
@@ -104,12 +103,25 @@ INT32 firstWindowProc(struct guiWindow *pWnd, UINT32 pMsg, UINT32 pParam1, UINT3
             ox = x;
             oy = y;
             break;
-                
-        default:
-            ret = guiDefWindowProc(pWnd, pMsg, pParam1, pParam2);
     }
     
-    return ret;
+    return guiDefWindowProc(pWnd, pMsg, pParam1, pParam2);
+}
+
+void overflowme()
+{
+    UINT32 t[100];
+    UINT32 tab[1024];
+
+    taskYIELD();
+
+    for (t[0] = 1; t[0] = 60; t[0]++)
+    {
+        t[t[0]] = t[0];
+    }
+
+    tab[10] = 0;
+    return;
 }
 
 static void prvTestTask1( void *pvParameters )
@@ -306,10 +318,13 @@ static void prvTestTask1( void *pvParameters )
     INT32 charx = 10;
     INT32 charxh = 10;
     INT32 charxha = 10;
+    BOOL state = 0;
 
     // GUI Init
     struct guiMainWindow *wnd;
     struct guiWindow *btn;
+    struct guiWindow *btn2;
+    struct guiWindow *btn3;
     struct guiWndClassInfo wci;
     guiInit();
     guiSetDefaultFont(&g_DroidSans22);
@@ -335,27 +350,41 @@ static void prvTestTask1( void *pvParameters )
         200);
 
     btn = guiCreateWindow("button",
-        "Cancel",
+        "Simulate overflow",
         WS_VISIBLE,
-        2,
+        2, 2, 4, 4, 3,
         40,
         40,
-        150,
+        170,
         40,
         (struct guiWindow *)wnd,
         0);
 
-        btn = guiCreateWindow("button",
-        "Agree",
+        btn2 = guiCreateWindow("button",
+        "Simulate exception",
         WS_VISIBLE,
-        3,
+        3, 3, 3, 2, 4,
         40,
         90,
-        150,
+        170,
         40,
         (struct guiWindow *)wnd,
         0);
-    
+
+
+        btn3 = guiCreateWindow("button",
+        "btn",
+        WS_VISIBLE,
+        4, 4, 4, 3, 2,
+        40,
+        140,
+        170,
+        40,
+        (struct guiWindow *)wnd,
+        0);
+
+    wnd->head.focusId = btn->id;
+
     list = msgListenerCreate(200);
     while(msgListenerGet(list, &m, NULL, 0, 0))
     {
@@ -372,7 +401,7 @@ static void prvTestTask1( void *pvParameters )
                 LOG("Disk status: %x", ds);
                 break;
 
-            case MSG_KEYDOWN:
+            /*case MSG_KEYDOWN:
                 if (m.param1 == V_KEY_LEFT)
                     x += 5;
                 else if (m.param1 == V_KEY_RIGHT)
@@ -427,7 +456,7 @@ static void prvTestTask1( void *pvParameters )
             case MSG_KEYUP:
                 lcd->setColor(lcd, 0, 255, 0, 0);
                 graphDrawCircle(x, y, 2);
-                break;
+                break;*/
 
 
 
@@ -449,11 +478,19 @@ static void prvTestTask1( void *pvParameters )
                     switch((m.param1 & 0xFFFF))
                     {
                         case 2:
+                            // Overflow
+                            //overflowme();
                             audio1chPlaySound("satellit.wav", SND_ASYNC);
+                            guiShowWindow(btn2, (state == 0) ? SW_SHOW : SW_HIDE);
+                            //msgPost(btn2, MSG_ENABLE, state, 0);
+                            msgPost(btn2, MSG_SETFONT, (UINT32)&g_DroidSans15, 1);
+                            state = 1 - state;
                             break;
                             
                         case 3:
                             audio1chPlaySound("asaf2.wav", SND_ASYNC);
+                            // Exception
+                            //charxha = *(UINT32*)state;
                             break;
                     }
                 }
@@ -644,7 +681,7 @@ int main(void) {
     boardInit();
 
     xTaskCreate( prvTestTask1, ( const signed char * const ) "Ts1",
-            2048, NULL, tskIDLE_PRIORITY, NULL );
+            1024, NULL, tskIDLE_PRIORITY, NULL );
     xTaskCreate( prvTestTask2, ( const signed char * const ) "Ts2",
             configMINIMAL_STACK_SIZE+50, NULL, tskIDLE_PRIORITY, NULL );
     /* Finally start the scheduler. */
@@ -656,19 +693,72 @@ int main(void) {
 void vApplicationStackOverflowHook( void )
 {
 	/* Look at pxCurrentTCB to see which task overflowed its stack. */
-        graphSetDrawingColor(0,255,0,0);
-        graphDrawRect(0,0,240,320);
-	for( ;; );
+    char buf[30];
+    char taskNameBuf[10];
+    
+    graphSetDrawingColor(255, 255, 0, 0);
+    graphDrawRect(0, 0, 240, 320);
+
+    graphSetDrawingColor(255, 255, 255, 255);
+    graphDrawRect(10, 10, 220, 30);
+
+    graphSetDrawingColor(255, 255, 0, 0);
+    graphDrawText(10, 10, 220, 30, "IntenseOS", guiGetDefaultFont(),
+            FS_ALIGN_CENTER | FS_VALIGN_TOP);
+
+    graphSetDrawingColor(255, 255, 255, 255);
+
+    graphDrawText(10, 50, 220, 30, "Stack overflow detected",
+            guiGetDefaultFont(), FS_ALIGN_LEFT);
+    graphDrawText(10, 100, 220, 30, "Details:", guiGetDefaultFont(), FS_ALIGN_LEFT);
+
+    vTaskGetName(taskNameBuf);
+
+    sprintf(buf, "Task name = \"%s\"", taskNameBuf);
+    graphDrawText(10, 130, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    sprintf(buf, "Stack = 0x%08x", uxTaskGetStackAddr());
+    graphDrawText(10, 160, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    sprintf(buf, "Stack top = 0x%08x", uxTaskGetStackTopAddr());
+    graphDrawText(10, 190, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+
+    graphDrawText(10, 240, 220, 30, "Dev. need to be restarted",
+            guiGetDefaultFont(), FS_ALIGN_LEFT);
+
+    for (;;);
 }
 /*-----------------------------------------------------------*/
 
 void _general_exception_handler( unsigned long ulCause, unsigned long ulStatus )
 {
-	/* This overrides the definition provided by the kernel.  Other exceptions
-	should be handled here. */
-        graphSetDrawingColor(0,0,0,255);
-        graphDrawRect(0,0,240,320);
-	for( ;; );
+    char buf[20];
+    
+    graphSetDrawingColor(255, 0, 0, 255);
+    graphDrawRect(0, 0, 240, 320);
+
+    graphSetDrawingColor(255, 255, 255, 255);
+    graphDrawRect(10, 10, 220, 30);
+
+    graphSetDrawingColor(255, 0, 0, 255);
+    graphDrawText(10, 10, 220, 30, "IntenseOS", guiGetDefaultFont(),
+            FS_ALIGN_CENTER | FS_VALIGN_TOP);
+
+    graphSetDrawingColor(255, 255, 255, 255);
+
+    graphDrawText(10, 50, 220, 30, "Fatal exception occured",
+            guiGetDefaultFont(), FS_ALIGN_LEFT);
+    graphDrawText(10, 100, 220, 30, "Details:", guiGetDefaultFont(), FS_ALIGN_LEFT);
+
+    sprintf(buf, "CAUSE = 0x%08x", ulCause);
+    graphDrawText(10, 130, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    sprintf(buf, "STATUS = 0x%08x", ulStatus);
+    graphDrawText(10, 160, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    sprintf(buf, "EPC = 0x%08x", _CP0_GET_EPC());
+    graphDrawText(10, 190, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+
+    graphDrawText(10, 240, 220, 30, "Dev. need to be restarted",
+            guiGetDefaultFont(), FS_ALIGN_LEFT);
+
+    for (;;);
 }
 
 
