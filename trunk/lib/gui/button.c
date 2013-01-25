@@ -124,19 +124,15 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             break;
 
         case MSG_POINTERHOVER:
-            if (pParam1 == 0)
-                pWnd->addData2 |= BS_HILITE;
-            else
-                pWnd->addData2 |= (BS_PRESSED | BS_HILITE);
+            if (pParam1 == 1)
+                pWnd->addData2 |= BS_PRESSED;
             
             if (!(pWnd->addData2 & BS_DISABLED))
                 msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
 
         case MSG_POINTERLEAVE:
-            if (pParam1 == 0)
-                pWnd->addData2 &= ~BS_HILITE;
-            else
+            if (pParam1 == 1)
                 pWnd->addData2 &= ~BS_PRESSED;
                 
             if (!(pWnd->addData2 & BS_DISABLED))
@@ -144,13 +140,15 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             break;
 
         case MSG_POINTERDOWN:
-            pWnd->addData2 |= (BS_PRESSED | BS_HILITE);
+            pWnd->addData2 |= BS_PRESSED;
+            
             if (!(pWnd->addData2 & BS_DISABLED))
                 msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
             
         case MSG_POINTERUP:
-            if ((pWnd->addData2 & BS_PRESSED) && (pWnd->addData2 & BS_HILITE) &&
+            if ((pWnd->addData2 & BS_PRESSED) &&
+                    guiXYInRect((pParam2 & 0xFFFF), ((pParam2 >> 16) & 0xFFFF), &pWnd->clientFrame) &&
                     (!(pWnd->addData2 & BS_DISABLED)))
             {
                 BUTTON_NOTIFY_PARENT(pWnd, BN_CLICKED);
