@@ -149,7 +149,7 @@ static void inputTask(void *pvParameters)
 
     struct guiWindow *targetWnd = NULL;
     struct guiWindow *pointerWnd = NULL;
-    struct guiWindow *oldPointerWnd = NULL;
+    struct guiWindow *oldFocusedWnd = NULL;
     UINT32 cursorAtTargetWnd = FALSE;
 
     UINT32 lastKey = 0, lastKeyRepeated = 0, lastKeyEventTime = 0;
@@ -212,25 +212,26 @@ static void inputTask(void *pvParameters)
                             tevn->speedY, tevn->timestamp);
 
                     pointerWnd = guiWindowAtXY(tevn->positionX, tevn->positionY);
+                    oldFocusedWnd = guiWindowGetFocused();
                     
-                    if ((targetWnd == NULL) && (pointerWnd != oldPointerWnd))
+                    if ((pointerWnd != NULL) && (targetWnd == NULL) && (pointerWnd != oldFocusedWnd))
                     {
-                        if (oldPointerWnd != NULL)
+                        if (oldFocusedWnd != NULL)
                         {
-                            msgPost(oldPointerWnd, MSG_POINTERLEAVE, 0,
+                            msgPost(oldFocusedWnd, MSG_POINTERLEAVE, 0,
                                 ((tevn->positionY << 16) | tevn->positionX));
-                        }
 
-                        msgPost(oldPointerWnd, MSG_KILLFOCUS, (UINT32)pointerWnd, 0);
+                            msgPost(oldFocusedWnd, MSG_KILLFOCUS, (UINT32)pointerWnd, 0);
+                        }
 
                         if (pointerWnd != NULL)
                         {
                             msgPost(pointerWnd, MSG_POINTERHOVER, 0,
                                 ((tevn->positionY << 16) | tevn->positionX));
+
+                            guiWindowSetFocused(pointerWnd);
+                            msgPost(pointerWnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
                         }
-
-                        msgPost(pointerWnd, MSG_SETFOCUS, (UINT32)oldPointerWnd, 0);
-
                     }
 
                     if (targetWnd != NULL)
@@ -334,8 +335,6 @@ static void inputTask(void *pvParameters)
                             }
                             break;
                     }
-
-                    oldPointerWnd = pointerWnd;
                     
                     break;
 

@@ -89,6 +89,18 @@ struct guiWindow *guiWindowGetFocused()
 }*/
 
 /**
+ * Sets pWnd.id as pWnd.mainWin focusId. This function do not send
+ * MSG_SETFOCUS and MSG_KILLFOCUS messages so it will not redraw control
+ * with focused style.
+ * @param pWnd Pointer to window which will be focused
+ */
+void guiWindowSetFocused(struct guiWindow *pWnd)
+{
+    WND_LOG("Change focus from id: %d, to id: %d", pWnd->mainWin->head.focusId, pWnd->id);
+    pWnd->mainWin->head.focusId = pWnd->id;
+}
+
+/**
  * Gets focused root window. If focused is child window get parent of window
  * and parent of next etc until we catch root window.
  * @return Root window pointer. NULL if there is no any focused window
@@ -384,8 +396,11 @@ struct guiWindow *guiCreateWindow (const char* pClassName,
             (newCtrl->windowStyle & WS_VISIBLE))
     {
         // TODO: InvalidateRect when damaging will be supported
-        msgSend (newCtrl, MSG_PAINT, 0, (UINT32)&newCtrl->clientFrame);
-        msgSend (newCtrl, MSG_NCPAINT, 0, 0);
+        if (newCtrl->mainWin->head.focusId == newCtrl->id)
+            msgSend(newCtrl, MSG_SETFOCUS, 0, 0);
+        
+        msgSend(newCtrl, MSG_PAINT, 0, (UINT32)&newCtrl->clientFrame);
+        msgSend(newCtrl, MSG_NCPAINT, 0, 0);
     }
 
     // Dodac klase i dodac okno zobaczyc jak leca message.
@@ -395,7 +410,7 @@ struct guiWindow *guiCreateWindow (const char* pClassName,
 
 struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
         const char* pCaption, UINT32 pStyle,
-        UINT16 pId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH)
+        UINT16 pId, UINT16 pFocusedId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH)
 {
     struct guiWndClass *cci;
     struct guiMainWindow *newWnd;
@@ -442,6 +457,11 @@ struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
     newWnd->head.colorStyle = cci->colorStyle;
 
     newWnd->head.id = pId;
+    newWnd->head.idLeft = pId;
+    newWnd->head.idRight = pId;
+    newWnd->head.idTop = pId;
+    newWnd->head.idBottom = pId;
+    newWnd->head.focusId = pFocusedId;
     newWnd->head.addData = 0;
     newWnd->head.addData2 = 0;
     newWnd->head.windowProc = cci->windowProc;
@@ -477,11 +497,17 @@ struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
         msgSend ((struct guiWindow*)newWnd, MSG_NCPAINT, 0, 0);
     }
 
-    // Dodac klase i dodac okno zobaczyc jak leca message.
-
     return newWnd;
 }
 
+/**
+ * Default key down procedure for controls and main windows
+ * @param pWnd Window pointer
+ * @param pMsg Message code
+ * @param pParam1
+ * @param pParam2
+ * @return Control proc result, depends from message
+ */
 static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2)
 {
@@ -497,27 +523,83 @@ static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
 
         if (pParam1 == V_KEY_LEFT)
         {
-            wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idLeft);
+            if (pWnd->idLeft != 0)
+            {
+                wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idLeft);
+                if (wnd != NULL)
+                {
+                    while ((wnd != NULL) && ((wnd->windowStyle & WS_VISIBLE) == 0))
+                    {
+                        wnd = guiGetWindowById((struct guiWindow *)wnd->mainWin, wnd->idLeft);
+                    }
+                }
+            }
+            else
+            {
+                // TODO: Obtain focused window automatically based on window positions
+                // DO NOT SUPPORTED YET!
+            }
         }
         else if (pParam1 == V_KEY_RIGHT)
         {
-            wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idRight);
+            if (pWnd->idRight != 0)
+            {
+                wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idRight);
+                if (wnd != NULL)
+                {
+                    while ((wnd != NULL) && ((wnd->windowStyle & WS_VISIBLE) == 0))
+                    {
+                        wnd = guiGetWindowById((struct guiWindow *)wnd->mainWin, wnd->idRight);
+                    }
+                }
+            }
+            else
+            {
+                // TODO: Obtain focused window automatically based on window positions
+                // DO NOT SUPPORTED YET!
+            }
         }
         else if (pParam1 == V_KEY_UP)
         {
-            wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idTop);
+            if (pWnd->idTop != 0)
+            {
+                wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idTop);
+                if (wnd != NULL)
+                {
+                    while ((wnd != NULL) && ((wnd->windowStyle & WS_VISIBLE) == 0))
+                    {
+                        wnd = guiGetWindowById((struct guiWindow *)wnd->mainWin, wnd->idTop);
+                    }
+                }
+            }
+            else
+            {
+                // TODO: Obtain focused window automatically based on window positions
+                // DO NOT SUPPORTED YET!
+            }
         }
         else if (pParam1 == V_KEY_DOWN)
         {
-            wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idBottom);
+            if (pWnd->idBottom != 0)
+            {
+                wnd = guiGetWindowById((struct guiWindow *)pWnd->mainWin, pWnd->idBottom);
+                if (wnd != NULL)
+                {
+                    while ((wnd != NULL) && ((wnd->windowStyle & WS_VISIBLE) == 0))
+                    {
+                        wnd = guiGetWindowById((struct guiWindow *)wnd->mainWin, wnd->idBottom);
+                    }
+                }
+            }
+            else
+            {
+                // TODO: Obtain focused window automatically based on window positions
+                // DO NOT SUPPORTED YET!
+            }
         }
 
         if (wnd != oldFocusedWnd)
         {
-            if ((oldFocusedWnd != NULL) && (wnd != NULL))
-                WND_LOG("Change focus from id: %d, to id: %d", oldFocusedWnd->id, wnd->id);
-
-
             if (oldFocusedWnd != NULL)
             {
                 msgSend(oldFocusedWnd, MSG_KILLFOCUS, (UINT32)wnd, 0);
@@ -525,7 +607,7 @@ static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
 
             if (wnd != NULL)
             {
-                wnd->mainWin->head.focusId = wnd->id;
+                guiWindowSetFocused(wnd);
                 msgSend(wnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
             }
         }
@@ -539,6 +621,10 @@ static INT32 guiDefMainWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
     
     switch (pMsg)
     {
+        case MSG_CREATE:
+            pWnd->addData2 = pWnd->colorStyle.shIdx;
+            break;
+
         case MSG_NCPAINT:
             // Paint the window's non-client area.
             break;
@@ -546,7 +632,7 @@ static INT32 guiDefMainWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
         case MSG_PAINT:
             // Paint the window's client area.
             guiBeginPaint();
-            guiDrawStyleFrame(pWnd->colorStyle.shIdx, &pWnd->clientFrame);
+            guiDrawStyleFrame(pWnd->addData2, &pWnd->clientFrame);
             guiEndPaint();
 
             for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
@@ -555,28 +641,14 @@ static INT32 guiDefMainWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
             }
             break;
 
-        case MSG_POINTERHOVER:
-            guiBeginPaint();
-            guiDrawStyleFrame(pWnd->colorStyle.hlIdx, &pWnd->clientFrame);
-            guiEndPaint();
-
-            // TODO: Te rysowanie childow mi sie nie podoba ;/
-            for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
-            {
-                msgSend(wnd, MSG_PAINT, pParam1, pParam2);
-            }
+        case MSG_SETFOCUS:
+            pWnd->addData2 = pWnd->colorStyle.hlIdx;
+            msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
 
-        case MSG_POINTERLEAVE:
-            guiBeginPaint();
-            guiDrawStyleFrame(pWnd->colorStyle.shIdx, &pWnd->clientFrame);
-            guiEndPaint();
-
-            // TODO: Te rysowanie childow mi sie nie podoba ;/
-            for (wnd = pWnd->firstChild; wnd; wnd = wnd->next)
-            {
-                msgSend(wnd, MSG_PAINT, pParam1, pParam2);
-            }
+        case MSG_KILLFOCUS:
+            pWnd->addData2 = pWnd->colorStyle.shIdx;
+            msgSend(pWnd, MSG_PAINT, 0, 0);
             break;
 
         case MSG_KEYDOWN:
@@ -591,34 +663,53 @@ static INT32 guiDefConrolProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2)
 {
     struct guiWindow *wnd;
+    UINT32 len;
     
     switch (pMsg)
     {
+        case MSG_SETFONT:
+            if ((struct graphFont *)pParam1 != NULL)
+            {
+                pWnd->font = (struct graphFont *)pParam1;
+
+                if ((pParam2 & 0xFF) != 0x00)
+                    msgSend(pWnd, MSG_PAINT, 0, 0);
+            }
+            else
+                return -1;
+            break;
+
+        case MSG_SETTEXT:
+            if ((char *)pParam2 != NULL)
+            {
+                vPortFree(pWnd->caption);
+                len = strlen((char *)pParam2);
+
+                pWnd->caption = pvPortMalloc(len + 1);
+                if (len > 0)
+                    strcpy(pWnd->caption, (char *)pParam2);
+            }
+            else
+                return -1;
+            break;
+
+        case MSG_GETTEXT:
+            len = min(strlen((char *)pWnd->caption), pParam1);
+
+            if (len > 0)
+                strcpy((char *)pParam2, pWnd->caption);
+            break;
+            
         case MSG_KEYDOWN:
             guiDefKeyDownProc(pWnd, pMsg, pParam1, pParam2);
             break;
 
-        case MSG_POINTERHOVER:
-            if (pParam1 == 0)
-            {
-                wnd = guiWindowGetFocused();
-                msgSend(wnd, MSG_KILLFOCUS, (UINT32)pWnd, 0);
-                pWnd->mainWin->head.focusId = pWnd->id;
-                msgSend(pWnd, MSG_SETFOCUS, (UINT32)wnd, 0);
-            }
-            break;
-
-        case MSG_POINTERLEAVE:
-            if (pParam1 == 0)
-                pWnd->mainWin->head.focusId = 0;
-            break;
-
-        case MSG_POINTERDOWN:
+/*        case MSG_POINTERDOWN:
             wnd = guiWindowGetFocused();
             msgSend(wnd, MSG_KILLFOCUS, (UINT32)pWnd, 0);
             pWnd->mainWin->head.focusId = pWnd->id;
             msgSend(pWnd, MSG_SETFOCUS, (UINT32)wnd, 0);
-            break;
+            break;*/
     }
 
     return 0;

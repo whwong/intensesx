@@ -134,6 +134,7 @@ struct guiMainWindow
 };
 
 struct guiWindow *guiWindowGetFocused();
+void guiWindowSetFocusedId(UINT16 pId);
 struct guiMainWindow *guiWindowGetFocusedMain();
 struct guiWindow *guiWindowAtXY(UINT16 pX, UINT16 pY);
 struct guiMainWindow *guiWindowAtXYMain(UINT16 pX, UINT16 pY);
@@ -147,7 +148,7 @@ struct guiWindow *guiCreateWindow (const char* pClassName,
 
 struct guiMainWindow *guiCreateMainWindow (const char* pClassName,
         const char* pCaption, UINT32 pStyle,
-        UINT16 pId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH);
+        UINT16 pId, UINT16 pFocusedId, UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH);
 
 INT32 guiDefWindowProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2);
