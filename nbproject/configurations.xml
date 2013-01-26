@@ -119,6 +119,8 @@
         <itemPath>lib/gui/wndclass.h</itemPath>
         <itemPath>lib/gui/button.c</itemPath>
         <itemPath>lib/gui/button.h</itemPath>
+        <itemPath>lib/gui/progressbar.c</itemPath>
+        <itemPath>lib/gui/progressbar.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="input" projectFiles="true">
         <itemPath>lib/input/inputEvent.c</itemPath>

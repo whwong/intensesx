@@ -311,7 +311,8 @@ static retcode graphCharRender(UINT16 pX, UINT16 pY,
             return ERR_NOT_SUPPORTED; // BPP > 2 are not yet supported
         }
 
-        bgcolor = graphLcdDev->getPixel(graphLcdDev, pX, pY + (pFontHead->height >> 1));
+        bgcolor = graphLcdDev->getPixel(graphLcdDev,
+                pX + (pParam->chGlyphWidth >> 1), pY + (pFontHead->height >> 1));
 
         if ((_fgcolor100 != graphLcdDev->drawingColor) || (_bgcolor100 != bgcolor))
         {

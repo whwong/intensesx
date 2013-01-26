@@ -8,7 +8,7 @@
 #include "lib/common.h"
 #include "lib/input/inputEvent.h"
 
-xQueueHandle inputEventsQueue;
+xQueueHandle inputEventsQueue = NULL;
 
 /**
  * Init input manager, run it always before start any input device drivers
@@ -41,6 +41,9 @@ retcode inputEventInit(UINT16 pQueueSize)
 retcode inputEventNotify(struct inputEvent *pEvent)
 {
     assert(pEvent != NULL);
+
+    if (inputEventsQueue == NULL)
+        return ERR_QUEUE_FULL;
 
     if(xQueueSend(inputEventsQueue, pEvent, INPUT_EVENT_TIMEOUT))
         return SUCCESS;
@@ -149,6 +152,9 @@ retcode inputDiskEventNotify(UINT8 pAction, UINT32 pDevId)
 retcode inputEventNotifyISR(struct inputEvent *pEvent, INT32 *pHiPriorTaskWoken)
 {
     assert(pEvent != NULL);
+
+    if (inputEventsQueue == NULL)
+        return ERR_QUEUE_FULL;
 
     if(xQueueSendFromISR(inputEventsQueue, pEvent, pHiPriorTaskWoken))
         return SUCCESS;
@@ -263,6 +269,9 @@ void inputEventGet(struct inputEvent *pEvent)
 
     assert(pEvent != NULL);
 
+    if (inputEventsQueue == NULL)
+        return;
+
     do
     {
         received = xQueueReceive(inputEventsQueue, pEvent, portMAX_DELAY);
@@ -282,5 +291,9 @@ void inputEventGet(struct inputEvent *pEvent)
 BOOL inputEventPeek(struct inputEvent *pEvent, UINT32 pWaitForMessage)
 {
     assert(pEvent != NULL);
+
+    if (inputEventsQueue == NULL)
+        return ERR_QUEUE_FULL;
+    
     return xQueueReceive(inputEventsQueue, pEvent, pWaitForMessage);
 }

@@ -163,6 +163,9 @@ struct guiWindow *guiWindowAtXY(UINT16 pX, UINT16 pY)
 
     focusedChild = (struct guiWindow*)guiGetCurrentMainWindow();
 
+    if (focusedChild == NULL)
+        return NULL;
+
     if ((guiXYInRect(pX, pY, &focusedChild->frame) == TRUE) &&
                 (focusedChild->windowStyle & WS_VISIBLE))
     {
@@ -537,6 +540,7 @@ static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
             else
             {
                 // TODO: Obtain focused window automatically based on window positions
+                // There we need to check WS_FOCUSSTOP
                 // DO NOT SUPPORTED YET!
             }
         }
@@ -556,6 +560,7 @@ static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
             else
             {
                 // TODO: Obtain focused window automatically based on window positions
+                // There we need to check WS_FOCUSSTOP
                 // DO NOT SUPPORTED YET!
             }
         }
@@ -575,6 +580,7 @@ static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
             else
             {
                 // TODO: Obtain focused window automatically based on window positions
+                // There we need to check WS_FOCUSSTOP
                 // DO NOT SUPPORTED YET!
             }
         }
@@ -594,6 +600,7 @@ static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
             else
             {
                 // TODO: Obtain focused window automatically based on window positions
+                // There we need to check WS_FOCUSSTOP
                 // DO NOT SUPPORTED YET!
             }
         }

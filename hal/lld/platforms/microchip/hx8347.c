@@ -356,10 +356,10 @@ static retcode lldHx8347Fill(struct hldLcdDevice *pLcdDev,
     }
 
     lldHx8347SetCS();
-    for(y = pY1; y < pY2 + 1; y++)
+    for(y = pY1; y < pY2; y++)
     {
         lldHx8347SetAddress(pX1, y);
-        for(x = pX1; x < pX2 + 1; x++)
+        for(x = pX1; x < pX2; x++)
         {
             lldHx8347WritePixel(pLcdDev->drawingColor);
         }

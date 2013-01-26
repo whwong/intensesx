@@ -7,6 +7,7 @@
 
 #define WINSTYLE_BLUE       {0x00, 0x84, 0xff, 0xff}
 #define WINSTYLE_HL_BLUE    {0x59, 0xaf, 0xff, 0xff}
+#define WINSTYLE_BG_BLUE    {0x25, 0x3a, 0x47, 0xff}
 #define WINSTYLE_BLACK      {0x00, 0x00, 0x00, 0xff}
 #define WINSTYLE_WHITE      {0xff, 0xff, 0xff, 0xff}
 #define WINSTYLE_BTN_FRAME  {0xcc, 0xcc, 0xcc, 0xff}
@@ -111,6 +112,25 @@ const struct guiWinStyle intenseWinstyle[] =
      LS_SOLID, 1, WINSTYLE_GRAY,   // Bottom line
      CS_SOLID, WINSTYLE_GRAY,    // FG Color
      CS_SOLID, WINSTYLE_BLACK},   // BG Color
+
+    // *************************************************************************
+    // * PROGRESS BAR Style
+    // *************************************************************************
+    // Progress Bar SH
+    {LS_SOLID, 1, WINSTYLE_BTN_FRAME,   // Left line
+     LS_SOLID, 1, WINSTYLE_BTN_FRAME,   // Top line
+     LS_SOLID, 1, WINSTYLE_BTN_FRAME,   // Right line
+     LS_SOLID, 1, WINSTYLE_BTN_FRAME,   // Bottom line
+     CS_SOLID, WINSTYLE_WHITE,    // FG Color
+     CS_SOLID, WINSTYLE_BG_BLUE},   // BG Color
+
+    // Progress Bar - Bar style
+    {LS_NOSHOW, 0, WINSTYLE_BTN_FRAME,   // Left line
+     LS_NOSHOW, 0, WINSTYLE_BTN_FRAME,   // Top line
+     LS_NOSHOW, 0, WINSTYLE_BTN_FRAME,   // Right line
+     LS_NOSHOW, 0, WINSTYLE_BTN_FRAME,   // Bottom line
+     LS_NOSHOW, WINSTYLE_WHITE,    // FG Color
+     CS_SOLID, WINSTYLE_BLUE},   // BG Color
 };
 
 #endif
