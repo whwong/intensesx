@@ -33,8 +33,8 @@ void guiRegisterButtonClass()
 INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
         UINT32 pParam1, UINT32 pParam2)
 {
-    UINT32 ret = 0;
-    UINT32 len, idx, w, h;
+    BOOL isPointerInRect;
+    UINT32 idx;
     struct guiWinStyle *ws;
 
     // Jeszcze ukrywanie przycisku trzeba zrobic
@@ -51,39 +51,6 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
                 pWnd->addData2 |= BS_DISABLED;
 
             msgSend(pWnd, MSG_PAINT, 0, 0);
-            break;
-
-        case MSG_SETFONT:
-            if ((struct graphFont *)pParam1 != NULL)
-            {
-                pWnd->font = (struct graphFont *)pParam1;
-
-                if ((pParam2 & 0xFF) != 0x00)
-                    msgSend(pWnd, MSG_PAINT, 0, 0);
-            }
-            else
-                ret = -1;
-            break;
-
-        case MSG_SETTEXT:
-            if ((char *)pParam2 != NULL)
-            {
-                vPortFree(pWnd->caption);
-                len = strlen((char *)pParam2);
-
-                pWnd->caption = pvPortMalloc(len + 1);
-                if (len > 0)
-                    strcpy(pWnd->caption, (char *)pParam2);
-            }
-            else
-                ret = -1;
-            break;
-
-        case MSG_GETTEXT:
-            len = min(strlen((char *)pWnd->caption), pParam1);
-
-            if (len > 0)
-                strcpy((char *)pParam2, pWnd->caption);
             break;
             
         case MSG_NCPAINT:
@@ -147,8 +114,10 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
             break;
             
         case MSG_POINTERUP:
-            if ((pWnd->addData2 & BS_PRESSED) &&
-                    guiXYInRect((pParam2 & 0xFFFF), ((pParam2 >> 16) & 0xFFFF), &pWnd->clientFrame) &&
+            isPointerInRect = guiXYInRect((pParam2 & 0xFFFF),
+                    ((pParam2 >> 16) & 0xFFFF), &pWnd->clientFrame);
+            
+            if ((pWnd->addData2 & BS_PRESSED) && isPointerInRect &&
                     (!(pWnd->addData2 & BS_DISABLED)))
             {
                 BUTTON_NOTIFY_PARENT(pWnd, BN_CLICKED);

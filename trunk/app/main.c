@@ -343,7 +343,7 @@ static void prvTestTask1( void *pvParameters )
     wnd = guiCreateMainWindow("IntenseWin",
         "First Window", 
         WS_VISIBLE,
-        1,
+        1, 2,
         30,
         30,
         200,
@@ -382,8 +382,6 @@ static void prvTestTask1( void *pvParameters )
         40,
         (struct guiWindow *)wnd,
         0);
-
-    wnd->head.focusId = btn->id;
 
     list = msgListenerCreate(200);
     while(msgListenerGet(list, &m, NULL, 0, 0))
@@ -473,7 +471,7 @@ static void prvTestTask1( void *pvParameters )
             case MSG_COMMAND:
                 if ((m.param1 >> 16) == BN_CLICKED)
                 {
-                    LOG("BN_CLICLED z maina id: %d", (m.param1 & 0xFFFF));
+                    LOG("BN_CLICKED z maina id: %d", (m.param1 & 0xFFFF));
                     
                     switch((m.param1 & 0xFFFF))
                     {
