@@ -7,6 +7,7 @@
 #include "button.h"
 #include "gui.h"
 #include "lib/graphics/graphics.h"
+#include "lib/input/keyCodes.h"
 
 #define BTN_DEBUG
 #if defined(BTN_DEBUG)
@@ -104,6 +105,25 @@ INT32 guiDefButtonProc(struct guiWindow *pWnd, UINT32 pMsg,
                 
             if (!(pWnd->addData2 & BS_DISABLED))
                 msgSend(pWnd, MSG_PAINT, 0, 0);
+            break;
+
+        case MSG_KEYDOWN:
+            if ((pParam1 == V_KEY_ENTER) && !(pWnd->addData2 & BS_PRESSED))
+            {
+                pWnd->addData2 |= BS_PRESSED;
+
+                if (!(pWnd->addData2 & BS_DISABLED))
+                    msgSend(pWnd, MSG_PAINT, 0, 0);
+            }
+            break;
+
+        case MSG_KEYUP:
+            if ((pParam1 == V_KEY_ENTER) && !(pWnd->addData2 & BS_DISABLED))
+            {
+                BUTTON_NOTIFY_PARENT(pWnd, BN_CLICKED);
+                pWnd->addData2 &= ~BS_PRESSED;
+                msgSend(pWnd, MSG_PAINT, 0, 0);
+            }
             break;
 
         case MSG_POINTERDOWN:

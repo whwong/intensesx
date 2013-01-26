@@ -19,6 +19,7 @@
 #include "lib/log.h"
 
 #include "hal/lld/platforms/microchip/pic32UART.h"
+#include "lib/gui/progressbar.h"
 #include "hal/lld/platforms/microchip/pic32ADC.h"
 #include "hal/lld/platforms/microchip/pic32IR.h"
 #include "hal/lld/resistiveTouch.h"
@@ -325,6 +326,7 @@ static void prvTestTask1( void *pvParameters )
     struct guiWindow *btn;
     struct guiWindow *btn2;
     struct guiWindow *btn3;
+    struct guiWindow *pb;
     struct guiWndClassInfo wci;
     guiInit();
     guiSetDefaultFont(&g_DroidSans22);
@@ -344,10 +346,10 @@ static void prvTestTask1( void *pvParameters )
         "First Window", 
         WS_VISIBLE,
         1, 2,
-        30,
-        30,
-        200,
-        200);
+        10,
+        10,
+        220,
+        300);
 
     btn = guiCreateWindow("button",
         "Simulate overflow",
@@ -380,6 +382,17 @@ static void prvTestTask1( void *pvParameters )
         140,
         170,
         40,
+        (struct guiWindow *)wnd,
+        0);
+
+        pb = guiCreateWindow("progressbar",
+        "100%",
+        WS_VISIBLE | PBS_NOTIFY | PBS_ALLOW_DRAGGING,
+        5, 5, 5, 5, 5,
+        20,
+        190,
+        200,
+        30,
         (struct guiWindow *)wnd,
         0);
 
@@ -483,14 +496,38 @@ static void prvTestTask1( void *pvParameters )
                             //msgPost(btn2, MSG_ENABLE, state, 0);
                             msgPost(btn2, MSG_SETFONT, (UINT32)&g_DroidSans15, 1);
                             state = 1 - state;
+                            msgPost(pb, PBM_SETRANGE, (INT32)50, 100);
                             break;
                             
                         case 3:
+                            msgPost(pb, PBM_DELTAPOS, (INT32)-2, 0);
                             audio1chPlaySound("asaf2.wav", SND_ASYNC);
                             // Exception
                             //charxha = *(UINT32*)state;
                             break;
+
+                        case 4:
+                            msgPost(pb, PBM_DELTAPOS, (INT32)2, 0);
+                            break;
                     }
+                }
+                else if ((m.param1 >> 16) == PBN_REACHMAX)
+                {
+                    LOG("Max from wnd id %d", m.param1 & 0xffff);
+                }
+                else if ((m.param1 >> 16) == PBN_REACHMIN)
+                {
+                    LOG("Min from wnd id %d", m.param1 & 0xffff);
+                }
+                else if ((m.param1 >> 16) == PBN_CLICKED)
+                {
+                    LOG("Click from wnd id %d", m.param1 & 0xffff);
+                }
+                else if ((m.param1 >> 16) == PBN_CHANGED)
+                {
+                    UINT32 p;
+                    msgSend((struct guiWindow *)m.param2, PBM_GETPOS, (UINT32)&p, 0);
+                    LOG("PB %d changed to: %d", m.param1 & 0xffff, p);
                 }
                 break;
         }

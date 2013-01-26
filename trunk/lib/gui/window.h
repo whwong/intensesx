@@ -53,7 +53,9 @@
 /**
  * Not implemented, reserved for future use.
  * Indicates the user can set the input focus to the control by
- * using arrow keys.
+ * using arrow keys when automatic focus changing is selected. We can
+ * let automatic focus select window to focus by passing 0 as
+ * idLeft/Right/Top/Bottom parameter.
  * @note This style is valid only for controls.
  */
 #define WS_FOCUSSTOP          0x00010000L

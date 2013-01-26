@@ -43,6 +43,7 @@ retcode guiInitWindowClasses()
     WND_CLASS_LOG("Creating default window classes...");
 
     guiRegisterButtonClass();
+    guiRegisterProgressBarClass();
 
     return SUCCESS;
 }

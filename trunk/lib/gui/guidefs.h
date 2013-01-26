@@ -22,6 +22,9 @@ enum guiDefaultWinstyleIndexes
     WSTL_BUTTON_SEL,
     WSTL_BUTTON_GRY,
 
+    WSTL_PROGRESSBAR_SH,
+    WSTL_PROGRESSBAR_BAR_SH,
+
     WSTL_LAST_DEFAULT,
 };
 
