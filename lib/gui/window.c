@@ -94,10 +94,16 @@ struct guiWindow *guiWindowGetFocused()
  * with focused style.
  * @param pWnd Pointer to window which will be focused
  */
-void guiWindowSetFocused(struct guiWindow *pWnd)
+BOOL guiWindowSetFocused(struct guiWindow *pWnd)
 {
-    WND_LOG("Change focus from id: %d, to id: %d", pWnd->mainWin->head.focusId, pWnd->id);
-    pWnd->mainWin->head.focusId = pWnd->id;
+    if ((pWnd->windowStyle & WS_FOCUSSTOP))
+    {
+        WND_LOG("Change focus from id: %d, to id: %d", pWnd->mainWin->head.focusId, pWnd->id);
+        pWnd->mainWin->head.focusId = pWnd->id;
+        return TRUE;
+    }
+    else
+        return FALSE;
 }
 
 /**
@@ -614,8 +620,8 @@ static INT32 guiDefKeyDownProc(struct guiWindow *pWnd, UINT32 pMsg,
 
             if (wnd != NULL)
             {
-                guiWindowSetFocused(wnd);
-                msgSend(wnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
+                if (guiWindowSetFocused(wnd))
+                    msgSend(wnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
             }
         }
     }

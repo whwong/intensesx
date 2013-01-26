@@ -79,7 +79,7 @@
 // Probably we should to set it to much lower value
 // It need to be tested with 512 and 768
 #define configISR_STACK_SIZE			( 1024 )
-#define configTOTAL_HEAP_SIZE			( ( size_t ) 16383*3 )
+#define configTOTAL_HEAP_SIZE			( ( size_t ) 16383*4 )
 #define configMAX_TASK_NAME_LEN			( 4 )
 #define configUSE_TRACE_FACILITY		0
 #define configUSE_16_BIT_TICKS			0

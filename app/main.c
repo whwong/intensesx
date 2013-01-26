@@ -353,7 +353,7 @@ static void prvTestTask1( void *pvParameters )
 
     btn = guiCreateWindow("button",
         "Simulate overflow",
-        WS_VISIBLE,
+        WS_VISIBLE | WS_FOCUSSTOP,
         2, 2, 4, 4, 3,
         40,
         40,
@@ -364,7 +364,7 @@ static void prvTestTask1( void *pvParameters )
 
         btn2 = guiCreateWindow("button",
         "Simulate exception",
-        WS_VISIBLE,
+        WS_VISIBLE | WS_FOCUSSTOP,
         3, 3, 3, 2, 4,
         40,
         90,
@@ -376,7 +376,7 @@ static void prvTestTask1( void *pvParameters )
 
         btn3 = guiCreateWindow("button",
         "btn",
-        WS_VISIBLE,
+        WS_VISIBLE | WS_FOCUSSTOP,
         4, 4, 4, 3, 2,
         40,
         140,
@@ -385,9 +385,21 @@ static void prvTestTask1( void *pvParameters )
         (struct guiWindow *)wnd,
         0);
 
+
+        pb = guiCreateWindow("progressbar",
+        "10",
+        WS_VISIBLE | PBS_ALLOW_DRAGGING | PBS_VERTICAL,
+        6, 6, 6, 6, 6,
+        20,
+        240,
+        30,
+        70,
+        (struct guiWindow *)wnd,
+        0);
+        
         pb = guiCreateWindow("progressbar",
         "100%",
-        WS_VISIBLE | PBS_NOTIFY | PBS_ALLOW_DRAGGING,
+        WS_VISIBLE | PBS_ALLOW_DRAGGING | PBS_NOTIFY,
         5, 5, 5, 5, 5,
         20,
         190,
@@ -496,7 +508,7 @@ static void prvTestTask1( void *pvParameters )
                             //msgPost(btn2, MSG_ENABLE, state, 0);
                             msgPost(btn2, MSG_SETFONT, (UINT32)&g_DroidSans15, 1);
                             state = 1 - state;
-                            msgPost(pb, PBM_SETRANGE, (INT32)50, 100);
+                            msgPost(pb, PBM_SETRANGE, (INT32)0, 10);
                             break;
                             
                         case 3:
@@ -525,8 +537,13 @@ static void prvTestTask1( void *pvParameters )
                 }
                 else if ((m.param1 >> 16) == PBN_CHANGED)
                 {
+                    char buf[100];
                     UINT32 p;
                     msgSend((struct guiWindow *)m.param2, PBM_GETPOS, (UINT32)&p, 0);
+                    sprintf(buf, "%d%%", p);
+                    msgSend((struct guiWindow *)m.param2, MSG_SETTEXT, 0, (UINT32)buf);
+                    msgPost((struct guiWindow *)m.param2, MSG_PAINT, 0, 0);
+
                     LOG("PB %d changed to: %d", m.param1 & 0xffff, p);
                 }
                 break;
@@ -716,7 +733,7 @@ int main(void) {
     boardInit();
 
     xTaskCreate( prvTestTask1, ( const signed char * const ) "Ts1",
-            1024, NULL, tskIDLE_PRIORITY, NULL );
+            2048, NULL, tskIDLE_PRIORITY, NULL );
     xTaskCreate( prvTestTask2, ( const signed char * const ) "Ts2",
             configMINIMAL_STACK_SIZE+50, NULL, tskIDLE_PRIORITY, NULL );
     /* Finally start the scheduler. */

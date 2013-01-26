@@ -31,6 +31,8 @@ BOOL guiPointInRect(struct guiPoint *pPoint, struct guiRect *pRect);
 BOOL guiXYInRect(UINT16 pX, UINT16 pY, struct guiRect *pRect);
 
 struct guiWinStyle *guiGetStyle(UINT8 pIndex);
+void guiDrawStyleFrameBg(UINT8 pStyleIdx, struct guiRect *pRect, BOOL pIncludeBorders);
+void guiDrawStyleFrameBorders(UINT8 pStyleIdx, struct guiRect *pRect);
 void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect);
 void guiDrawText(struct guiRect *pRect, char *pText, struct graphFont *pFont, UINT32 pStyle);
 

@@ -160,7 +160,7 @@ struct guiWinStyle *guiGetStyle(UINT8 pIndex)
     return &(currentWinstyle[pIndex]);
 }
 
-void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
+void guiDrawStyleFrameBg(UINT8 pStyleIdx, struct guiRect *pRect, BOOL pDrawOnBorders)
 {
     struct guiWinStyle *ws;
     ws = guiGetStyle(pStyleIdx);
@@ -168,8 +168,25 @@ void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
     if (ws->bgStyle == CS_SOLID)
     {
         guiSetColor(ws->bgColor);
-        guiDrawRect((*pRect));
+        if (pDrawOnBorders)
+        {
+            graphDrawRect(pRect->l, pRect->t,
+                    pRect->l + pRect->w, pRect->t + pRect->h);
+        }
+        else
+        {
+            graphDrawRect(pRect->l + ws->leftLineWidth,
+                    pRect->t + ws->topLineWidth,
+                    pRect->l + pRect->w - ws->rightLineWidth,
+                    pRect->t + pRect->h - ws->bottomLineWidth);
+        }
     }
+}
+
+void guiDrawStyleFrameBorders(UINT8 pStyleIdx, struct guiRect *pRect)
+{
+    struct guiWinStyle *ws;
+    ws = guiGetStyle(pStyleIdx);
 
     if (ws->leftLineStyle == CS_SOLID)
     {
@@ -206,6 +223,23 @@ void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
             pRect->l + pRect->w,
             pRect->t + pRect->h);
     }
+}
+
+void guiDrawStyleFrame(UINT8 pStyleIdx, struct guiRect *pRect)
+{
+    struct guiWinStyle *ws;
+    ws = guiGetStyle(pStyleIdx);
+
+    if (ws->bgStyle == CS_SOLID)
+    {
+        guiSetColor(ws->bgColor);
+        graphDrawRect(pRect->l + ws->leftLineWidth,
+            pRect->t + ws->topLineWidth,
+            pRect->l + pRect->w - ws->rightLineWidth,
+            pRect->t + pRect->h - ws->bottomLineWidth);
+    }
+
+    guiDrawStyleFrameBorders(pStyleIdx, pRect);
 }
 
 void guiDrawText(struct guiRect *pRect, char *pText, struct graphFont *pFont, UINT32 pStyle)

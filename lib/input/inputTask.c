@@ -229,8 +229,8 @@ static void inputTask(void *pvParameters)
                             msgPost(pointerWnd, MSG_POINTERHOVER, 0,
                                 ((tevn->positionY << 16) | tevn->positionX));
 
-                            guiWindowSetFocused(pointerWnd);
-                            msgPost(pointerWnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
+                            if (guiWindowSetFocused(pointerWnd))
+                                msgPost(pointerWnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
                         }
                     }
 

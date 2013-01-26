@@ -115,9 +115,9 @@ static inline UINT32 __attribute__ ((always_inline))
 lldHx8347GetMaxX(struct hldLcdDevice *pLcdDev)
 {
     #if (DISP_ORIENTATION == 90) || (DISP_ORIENTATION == 270)
-        return (320 - 1);
+        return (320);
     #elif (DISP_ORIENTATION == 0) || (DISP_ORIENTATION == 180)
-        return (240 - 1);
+        return (240);
     #endif
 }
 
@@ -125,9 +125,9 @@ static inline UINT32 __attribute__ ((always_inline))
 lldHx8347GetMaxY(struct hldLcdDevice *pLcdDev)
 {
     #if (DISP_ORIENTATION == 90) || (DISP_ORIENTATION == 270)
-        return (240 - 1);
+        return (240);
     #elif (DISP_ORIENTATION == 0) || (DISP_ORIENTATION == 180)
-        return (320 - 1);
+        return (320);
     #endif
 }
 
