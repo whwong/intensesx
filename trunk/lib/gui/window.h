@@ -55,7 +55,10 @@
  * Indicates the user can set the input focus to the control by
  * using arrow keys when automatic focus changing is selected. We can
  * let automatic focus select window to focus by passing 0 as
- * idLeft/Right/Top/Bottom parameter.
+ * idLeft/Right/Top/Bottom parameter. It also indicates that focus will be
+ * given to window which was selected by pointer device. If this style
+ * is not assosiated to window focus will not be updated after
+ * pointer device select.
  * @note This style is valid only for controls.
  */
 #define WS_FOCUSSTOP          0x00010000L
@@ -136,7 +139,7 @@ struct guiMainWindow
 };
 
 struct guiWindow *guiWindowGetFocused();
-void guiWindowSetFocusedId(UINT16 pId);
+BOOL guiWindowSetFocused(struct guiWindow *pWnd);
 struct guiMainWindow *guiWindowGetFocusedMain();
 struct guiWindow *guiWindowAtXY(UINT16 pX, UINT16 pY);
 struct guiMainWindow *guiWindowAtXYMain(UINT16 pX, UINT16 pY);

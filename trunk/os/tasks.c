@@ -2468,14 +2468,14 @@ void vTaskGetName(char* pcName)
 
 unsigned portBASE_TYPE uxTaskGetStackAddr( void )
 {
-    return pxCurrentTCB->pxStack;
+    return (portBASE_TYPE)pxCurrentTCB->pxStack;
 }
 
 /*-----------------------------------------------------------*/
 
 unsigned portBASE_TYPE uxTaskGetStackTopAddr( void )
 {
-    return pxCurrentTCB->pxTopOfStack;
+    return (portBASE_TYPE)pxCurrentTCB->pxTopOfStack;
 }
 
 /*-----------------------------------------------------------*/
