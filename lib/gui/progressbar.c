@@ -216,20 +216,28 @@ INT32 guiDefProgressBarProc(struct guiWindow *pWnd, UINT32 pMsg,
 
         case MSG_POINTERDOWN:
             pWnd->windowStyle |= PBS_PRESSED;
+            if (pWnd->windowStyle & PBS_ALLOW_DRAGGING)
+            {
+                PROGRESSBAR_NOTIFY_PARENT(pWnd, PBN_DRAGGINGSTART);
+                guiProgressBarPointerMove(pWnd, pMsg, pParam1, pParam2);
+            }
             break;
             
         case MSG_POINTERUP:
             isPointerInRect = guiXYInRect((pParam2 & 0xFFFF),
                     ((pParam2 >> 16) & 0xFFFF), &pWnd->clientFrame);
-            
-            if ((pWnd->windowStyle & PBS_PRESSED) && isPointerInRect)
+
+            if (pWnd->windowStyle & PBS_PRESSED)
             {
                 if ((pWnd->windowStyle & PBS_NOTIFY))
-                    PROGRESSBAR_NOTIFY_PARENT(pWnd, PBN_CLICKED);
-                pWnd->windowStyle &= ~PBS_PRESSED;
-            }
-            else
-            {
+                {
+                    if (isPointerInRect)
+                        PROGRESSBAR_NOTIFY_PARENT(pWnd, PBN_CLICKED);
+
+                    if (pWnd->windowStyle & PBS_ALLOW_DRAGGING)
+                        PROGRESSBAR_NOTIFY_PARENT(pWnd, PBN_DRAGGINGEND);
+                }
+
                 pWnd->windowStyle &= ~PBS_PRESSED;
             }
             break;

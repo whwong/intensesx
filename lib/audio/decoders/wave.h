@@ -17,6 +17,8 @@ struct audioWaveFile
 {
     struct audioFile head;
     UINT8 format;
+    UINT32 dataStartIndex;
+    UINT32 samplesCount;
 };
 
 // Data format in file
@@ -87,5 +89,9 @@ struct audioWaveFile *audioWaveReadHeaders(FIL *pFile);
 
 retcode
 audioWaveLoadBuffer(struct audioWaveFile *pWaveFile, UINT8 *pBuf, UINT32 *pLoaded);
+
+UINT32 audioWaveGetSamplesCount(struct audioWaveFile *pWaveFile);
+UINT32 audioWaveGetCurrentSample(struct audioWaveFile *pWaveFile);
+void audioWaveSetCurrentSample(struct audioWaveFile *pWaveFile, UINT32 pCurrentSample);
 
 #endif

@@ -52,23 +52,7 @@ const struct guiWinStyle intenseWinstyle[] =
      LS_NOSHOW, 0, WINSTYLE_BLACK,   // Right line
      LS_NOSHOW, 0, WINSTYLE_BLACK,   // Bottom line
      CS_SOLID, WINSTYLE_WHITE,    // FG Color
-     CS_NOSHOW, WINSTYLE_BLACK},   // BG Color
-
-    // Static text HL
-    {LS_NOSHOW, 0, WINSTYLE_BLACK,   // Left line
-     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Top line
-     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Right line
-     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Bottom line
-     CS_SOLID, WINSTYLE_WHITE,    // FG Color
-     CS_SOLID, WINSTYLE_HL_BLUE},   // BG Color
-
-    // Static text SEL
-    {LS_NOSHOW, 0, WINSTYLE_BLACK,   // Left line
-     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Top line
-     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Right line
-     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Bottom line
-     CS_SOLID, WINSTYLE_WHITE,    // FG Color
-     CS_SOLID, WINSTYLE_BLUE},   // BG Color
+     CS_SOLID, WINSTYLE_BLACK},   // BG Color
 
     // Static text GRY
     {LS_NOSHOW, 0, WINSTYLE_BLACK,   // Left line
@@ -76,7 +60,7 @@ const struct guiWinStyle intenseWinstyle[] =
      LS_NOSHOW, 0, WINSTYLE_BLACK,   // Right line
      LS_NOSHOW, 0, WINSTYLE_BLACK,   // Bottom line
      CS_SOLID, WINSTYLE_GRAY,    // FG Color
-     CS_NOSHOW, WINSTYLE_BLACK},   // BG Color
+     CS_SOLID, WINSTYLE_GRAY},   // BG Color
 
     // *************************************************************************
     // * BUTTON Style

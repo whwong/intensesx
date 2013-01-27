@@ -39,6 +39,7 @@
 
 #include "rsc/fonts/fonts.h"
 #include "rsc/winstyle/winstyle.h"
+#include "lib/gui/statictext.h"
 
 int main(void);
 
@@ -327,6 +328,7 @@ static void prvTestTask1( void *pvParameters )
     struct guiWindow *btn2;
     struct guiWindow *btn3;
     struct guiWindow *pb;
+    struct guiWindow *st;
     struct guiWndClassInfo wci;
     guiInit();
     guiSetDefaultFont(&g_DroidSans22);
@@ -404,6 +406,17 @@ static void prvTestTask1( void *pvParameters )
         20,
         190,
         200,
+        30,
+        (struct guiWindow *)wnd,
+        0);
+
+        st = guiCreateWindow("statictext",
+        "Title",
+        WS_VISIBLE | SS_RIGHT | SS_DISABLED,
+        7, 7, 7, 7, 7,
+        80,
+        240,
+        100,
         30,
         (struct guiWindow *)wnd,
         0);
@@ -519,7 +532,8 @@ static void prvTestTask1( void *pvParameters )
                             break;
 
                         case 4:
-                            msgPost(pb, PBM_DELTAPOS, (INT32)2, 0);
+                            msgPost(pb, PBM_SETRANGE, (INT32)0, audio1chGetSamplesCount());
+                            msgPost(pb, PBM_SETPOS, audio1chGetCurrentSample(), 0);
                             break;
                     }
                 }
@@ -535,16 +549,19 @@ static void prvTestTask1( void *pvParameters )
                 {
                     LOG("Click from wnd id %d", m.param1 & 0xffff);
                 }
-                else if ((m.param1 >> 16) == PBN_CHANGED)
+                else if ((m.param1 >> 16) == PBN_DRAGGINGEND)
                 {
-                    char buf[100];
+                    /*char buf[100];
                     UINT32 p;
                     msgSend((struct guiWindow *)m.param2, PBM_GETPOS, (UINT32)&p, 0);
                     sprintf(buf, "%d%%", p);
                     msgSend((struct guiWindow *)m.param2, MSG_SETTEXT, 0, (UINT32)buf);
                     msgPost((struct guiWindow *)m.param2, MSG_PAINT, 0, 0);
 
-                    LOG("PB %d changed to: %d", m.param1 & 0xffff, p);
+                    LOG("PB %d changed to: %d", m.param1 & 0xffff, p);*/
+                    UINT32 p;
+                    msgSend((struct guiWindow *)m.param2, PBM_GETPOS, (UINT32)&p, 0);
+                    audio1chSetCurrentSample(p);
                 }
                 break;
         }

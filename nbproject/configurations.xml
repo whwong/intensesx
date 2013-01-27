@@ -121,6 +121,8 @@
         <itemPath>lib/gui/button.h</itemPath>
         <itemPath>lib/gui/progressbar.c</itemPath>
         <itemPath>lib/gui/progressbar.h</itemPath>
+        <itemPath>lib/gui/statictext.c</itemPath>
+        <itemPath>lib/gui/statictext.h</itemPath>
       </logicalFolder>
       <logicalFolder name="f2" displayName="input" projectFiles="true">
         <itemPath>lib/input/inputEvent.c</itemPath>

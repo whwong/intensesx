@@ -44,6 +44,7 @@ retcode guiInitWindowClasses()
 
     guiRegisterButtonClass();
     guiRegisterProgressBarClass();
+    guiRegisterStaticTextClass();
 
     return SUCCESS;
 }
