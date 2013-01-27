@@ -23,6 +23,9 @@ retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags);
 UINT32 audio1chGetSample(signed portBASE_TYPE *pHigherPriorityTaskWoken);
 void audio1chStopSound();
 void audio1chPause(BOOL pPause);
+void audio1chSetCurrentSample(UINT32 pCurrentSample);
+UINT32 audio1chGetCurrentSample();
+UINT32 audio1chGetSamplesCount();
 
 #else
 #define audio1chGetSample(...) 0

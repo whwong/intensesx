@@ -75,6 +75,13 @@ struct audioWaveFile *audioWaveReadHeaders(FIL *pFile)
     af->head.bits = formatChunk.bitsPerSample;
     af->head.neededBufLen = WAVE_NEEDED_BUF_LEN;
 
+
+    af->dataStartIndex = f_tell(pFile);
+    af->samplesCount = subchunkHead.subchunkSize / formatChunk.numChannels /
+            (formatChunk.bitsPerSample / 8);
+
+    LOG("wave start: %d, all %d", af->dataStartIndex, af->samplesCount);
+
     return af;
 }
 
@@ -98,4 +105,26 @@ audioWaveLoadBuffer(struct audioWaveFile *pWaveFile, UINT8 *pBuf, UINT32 *pLoade
     *pLoaded = rd;
     //LOG("OK %d, %d", pWaveFile->head.neededBufLen, *pLoaded);
     return SUCCESS;
+}
+
+UINT32 audioWaveGetSamplesCount(struct audioWaveFile *pWaveFile)
+{
+    return pWaveFile->samplesCount;
+}
+
+UINT32 audioWaveGetCurrentSample(struct audioWaveFile *pWaveFile)
+{
+    UINT32 curadr, progress;
+    curadr = f_tell(pWaveFile->head.fileHandle);
+    curadr -= pWaveFile->dataStartIndex;
+    progress = curadr / pWaveFile->head.channels / (pWaveFile->head.bits / 8);
+    return progress;
+}
+
+void audioWaveSetCurrentSample(struct audioWaveFile *pWaveFile, UINT32 pCurrentSample)
+{
+    UINT32 curadr = pWaveFile->dataStartIndex;
+    curadr += pCurrentSample * pWaveFile->head.channels * (pWaveFile->head.bits / 8);
+
+    f_lseek(pWaveFile->head.fileHandle, curadr);
 }

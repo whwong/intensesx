@@ -459,4 +459,52 @@ void audio1chPause(BOOL pPause)
         playing = 1-pPause;
 }
 
+void audio1chSetCurrentSample(UINT32 pCurrentSample)
+{
+    if (currentAudioFile != NULL)
+    {
+        if (currentAudioFile->type == DECODER_WAVE)
+        {
+            audioWaveSetCurrentSample((struct audioWaveFile *)currentAudioFile,
+                    pCurrentSample);
+        }
+    }
+}
+
+UINT32 audio1chGetCurrentSample()
+{
+    if (currentAudioFile != NULL)
+    {
+        if (currentAudioFile->type == DECODER_WAVE)
+        {
+            return audioWaveGetCurrentSample((struct audioWaveFile *)currentAudioFile);
+        }
+        else
+        {
+            // Unsupported ;(
+            return 0;
+        }
+    }
+    else
+        return 0;
+}
+
+UINT32 audio1chGetSamplesCount()
+{
+    if (currentAudioFile != NULL)
+    {
+        if (currentAudioFile->type == DECODER_WAVE)
+        {
+            return audioWaveGetSamplesCount((struct audioWaveFile *)currentAudioFile);
+        }
+        else
+        {
+            // Unsupported ;(
+            return 0;
+        }
+    }
+    else
+        return 0;
+}
+
 #endif

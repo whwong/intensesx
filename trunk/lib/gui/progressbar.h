@@ -103,6 +103,16 @@
  */
 #define PBN_CHANGED 4
 
+/**
+ * @brief Notifies parent when dragging has been started
+ */
+#define PBN_DRAGGINGEND 5
+
+/**
+ * @brief Notifies parent when dragging has been ended
+ */
+#define PBN_DRAGGINGSTART 6
+
 #define PROGRESSBAR_NOTIFY_PARENT(wnd, code) msgPost((struct guiWindow *)wnd->mainWin, \
         MSG_COMMAND, ((code << 16) | (wnd->id & 0xFFFF)), (UINT32)wnd)
 
