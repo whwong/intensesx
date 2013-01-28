@@ -14,7 +14,7 @@ void guiRegisterStaticTextClass()
     struct guiWndClassInfo wci;
 
     wci.className = "statictext";
-    wci.windowStyle = WS_CHILD | WS_VISIBLE;
+    wci.windowStyle = WS_CHILD;
     wci.colorStyle.shIdx = WSTL_STATICTEXT_SH;
     wci.colorStyle.hlIdx = WSTL_STATICTEXT_SH;
     wci.colorStyle.selIdx = WSTL_STATICTEXT_SH;
@@ -34,14 +34,13 @@ INT32 guiDefStaticTextProc(struct guiWindow *pWnd, UINT32 pMsg,
     switch (pMsg)
     {
         case MSG_CREATE:
-            pWnd->addData2 = 0;
             break;
 
         case MSG_ENABLE:
             if (pParam1 == TRUE)
-                pWnd->addData2 &= ~SS_DISABLED;
+                pWnd->windowStyle &= ~SS_DISABLED;
             else
-                pWnd->addData2 |= SS_DISABLED;
+                pWnd->windowStyle |= SS_DISABLED;
 
             msgSend(pWnd, MSG_PAINT, 0, 0);
             break;

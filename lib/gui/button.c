@@ -21,7 +21,7 @@ void guiRegisterButtonClass()
     struct guiWndClassInfo wci;
 
     wci.className = "button";
-    wci.windowStyle = WS_CHILD | WS_VISIBLE;
+    wci.windowStyle = WS_CHILD;
     wci.colorStyle.shIdx = WSTL_BUTTON_SH;
     wci.colorStyle.hlIdx = WSTL_BUTTON_HL;
     wci.colorStyle.selIdx = WSTL_BUTTON_SEL;

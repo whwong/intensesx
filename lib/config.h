@@ -29,4 +29,10 @@
 // Use one channel audio output
 #define USE_ONE_CHANNEL_AUDIO
 
+// Size of input events queue
+#define INPUT_QUEUE_SIZE 200
+
+// Default messages queue size for messages listener
+#define DEF_MSG_QUEUE_SIZE 200
+
 #endif

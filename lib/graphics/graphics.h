@@ -79,7 +79,7 @@ struct graphFont
 retcode graphDrawChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth,
         UINT16 pChar, struct graphFont *pFont);
 void graphDrawText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
-        char * pText, struct graphFont *pFont, UINT32 pStyle);
+        char * pText, const struct graphFont *pFont, UINT32 pStyle);
 
 void graphGetTextSize(UINT16 *pW, UINT16 *pH, char * pText, struct graphFont *pFont);
 

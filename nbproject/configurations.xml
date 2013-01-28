@@ -8,17 +8,23 @@
           <itemPath>app/rsc/fonts/DroidSans22.c</itemPath>
           <itemPath>app/rsc/fonts/DroidSans29.c</itemPath>
           <itemPath>app/rsc/fonts/DroidSansMono15.c</itemPath>
-          <itemPath>app/rsc/fonts/fonts.h</itemPath>
+          <itemPath>app/rsc/fonts/haveltica.c</itemPath>
+          <itemPath>app/rsc/fonts/havelticaAA.c</itemPath>
+          <itemPath>app/rsc/fonts/veramono.c</itemPath>
+        </logicalFolder>
+        <logicalFolder name="f3" displayName="windows" projectFiles="true">
+          <itemPath>app/windows/player.c</itemPath>
+          <itemPath>app/windows/player.h</itemPath>
         </logicalFolder>
         <logicalFolder name="f2" displayName="winstyle" projectFiles="true">
           <itemPath>app/rsc/winstyle/winstyle.h</itemPath>
         </logicalFolder>
+        <itemPath>app/rsc/rsc.h</itemPath>
       </logicalFolder>
       <itemPath>app/main.c</itemPath>
       <itemPath>app/keymap.h</itemPath>
-      <itemPath>app/veramono.c</itemPath>
-      <itemPath>app/haveltica.c</itemPath>
-      <itemPath>app/havelticaAA.c</itemPath>
+      <itemPath>app/init.c</itemPath>
+      <itemPath>app/init.h</itemPath>
     </logicalFolder>
     <logicalFolder name="boards" displayName="boards" projectFiles="true">
       <logicalFolder name="PIC32MX7MMB" displayName="PIC32MX7MMB" projectFiles="true">

@@ -26,6 +26,11 @@ void audio1chPause(BOOL pPause);
 void audio1chSetCurrentSample(UINT32 pCurrentSample);
 UINT32 audio1chGetCurrentSample();
 UINT32 audio1chGetSamplesCount();
+UINT32 audio1chGetBits();
+UINT32 audio1chGetChannels();
+UINT32 audio1chGetSampleRate();
+BOOL audio1chIsPlaying();
+BOOL audio1chIsFileLoaded();
 
 #else
 #define audio1chGetSample(...) 0

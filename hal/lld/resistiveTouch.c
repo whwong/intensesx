@@ -148,7 +148,7 @@ lldResTouchGetX(struct hldTouchDevice *pTouchDev)
     INT32 res;
 
 #if (LCD_ORIENTATION == 90) || (LCD_ORIENTATION == 270)
-    result = adcY;
+    res = adcY;
 #else
     res = adcX;
 #endif
@@ -156,14 +156,14 @@ lldResTouchGetX(struct hldTouchDevice *pTouchDev)
     if(res >= 0)
     {
 #if (LCD_ORIENTATION == 90) || (LCD_ORIENTATION == 270)
-        result = (pTouchDev->config.screenResolutionX * (res - pTouchDev->config.yMinCal)) /
+        res = (pTouchDev->config.screenResolutionX * (res - pTouchDev->config.yMinCal)) /
                 (pTouchDev->config.yMaxCal - pTouchDev->config.yMinCal);
 #else
         res = (pTouchDev->config.screenResolutionX * (res - pTouchDev->config.xMinCal)) /
                 (pTouchDev->config.xMaxCal - pTouchDev->config.xMinCal);
 #endif
 
-#if (LCD_ORIENTATION == 0) || (LCD_ORIENTATION == 360)
+#if (LCD_ORIENTATION == 0) || (LCD_ORIENTATION == 90)
         res = pTouchDev->config.screenResolutionX - res;
 #endif
     }
@@ -177,7 +177,7 @@ lldResTouchGetY(struct hldTouchDevice *pTouchDev)
     INT32 res;
 
 #if (LCD_ORIENTATION == 90) || (LCD_ORIENTATION == 270)
-    result = adcX;
+    res = adcX;
 #else
     res = adcY;
 #endif
@@ -185,14 +185,14 @@ lldResTouchGetY(struct hldTouchDevice *pTouchDev)
     if(res >= 0)
     {
 #if (LCD_ORIENTATION == 90) || (LCD_ORIENTATION == 270)
-        result = (pTouchDev->config.screenResolutionY * (res - pTouchDev->config.xMinCal)) /
+        res = (pTouchDev->config.screenResolutionY * (res - pTouchDev->config.xMinCal)) /
                 (pTouchDev->config.xMaxCal - pTouchDev->config.xMinCal);
 #else
         res = (pTouchDev->config.screenResolutionY * (res - pTouchDev->config.yMinCal)) /
                 (pTouchDev->config.yMaxCal - pTouchDev->config.yMinCal);
 #endif
 
-#if (LCD_ORIENTATION == 0) || (LCD_ORIENTATION == 360)
+#if (LCD_ORIENTATION == 0) || (LCD_ORIENTATION == 180)
         res = pTouchDev->config.screenResolutionY - res;
 #endif
     }

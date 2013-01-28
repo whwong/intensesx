@@ -1,17 +1,25 @@
 /**
  * @file fonts.h
- * @brief Fonts header file
+ * @brief Resource header file
  * @author Daniel Szot
  */
  
-#ifndef _RSC_FONTS_H_
-#define _RSC_FONTS_H_ 
+#ifndef _RSC_RSC_H_
+#define _RSC_RSC_H_
  
 #include "lib/graphics/graphics.h"
 
+// Fonts
 extern const struct graphFont g_DroidSans15;
 extern const struct graphFont g_DroidSans22;
 extern const struct graphFont g_DroidSans29;
 extern const struct graphFont g_DroidSansMono15;
+extern const struct graphFont g_FontHaveltica26AA;
+
+// Keymap
+extern const struct inputKeyMap intenseKeymap[];
+
+// Winstyle
+extern const struct guiWinStyle intenseWinstyle[];
 
 #endif

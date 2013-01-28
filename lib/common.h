@@ -11,6 +11,7 @@
 #include "board.h"
 #include "os/FreeRTOS.h"
 #include "os/task.h"
+#include "os/timers.h"
 #include "GenericTypeDefs.h"
 #include "retcode.h"
 #include "config.h"
