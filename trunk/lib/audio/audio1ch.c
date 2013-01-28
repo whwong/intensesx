@@ -226,12 +226,13 @@ retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags)
     if (ret != FR_OK)
     {
         AUDIO_LOG("File open error #%d", ret);
+        vPortFree(f);
         xSemaphoreGive(audio1chPlayMutex);
         return ERR_FILE;
     }
 
     // Check extensions
-    if (checkExtension(pFileName, "wav"))
+    if (checkExtension(pFileName, "wav") || checkExtension(pFileName, "WAV"))
     {
         AUDIO_LOG("WAVE file. Parsing header...");
         currentAudioFile = (struct audioFile*)audioWaveReadHeaders(f);
@@ -256,8 +257,11 @@ retcode audio1chPlaySound(const char *pFileName, UINT32 pFlags)
             else
                 AUDIO_LOG("Audio device not started");
 
+            f_close(f);
+            vPortFree(f);
+            vPortFree(currentAudioFile);
+            currentAudioFile = NULL;
             xSemaphoreGive(audio1chPlayMutex);
-            audio1chStopSound();
             return ret;
         }
 
@@ -338,7 +342,6 @@ void audio1chStopSound()
     if (audio1chPlayMutex == NULL)
     {
         AUDIO_LOG("Error while creating playing mutex");
-        audio1chStopSound();
         return;
     }
 
@@ -505,6 +508,49 @@ UINT32 audio1chGetSamplesCount()
     }
     else
         return 0;
+}
+
+UINT32 audio1chGetBits()
+{
+    if (currentAudioFile != NULL)
+    {
+        return currentAudioFile->bits;
+    }
+    else
+        return 0;
+}
+
+UINT32 audio1chGetChannels()
+{
+    if (currentAudioFile != NULL)
+    {
+        return currentAudioFile->channels;
+    }
+    else
+        return 0;
+}
+
+UINT32 audio1chGetSampleRate()
+{
+    if (currentAudioFile != NULL)
+    {
+        return currentAudioFile->sampleRate;
+    }
+    else
+        return 0;
+}
+
+BOOL audio1chIsPlaying()
+{
+    return (BOOL)playing;
+}
+
+BOOL audio1chIsFileLoaded()
+{
+    if (currentAudioFile != NULL)
+        return TRUE;
+    else
+        return FALSE;
 }
 
 #endif

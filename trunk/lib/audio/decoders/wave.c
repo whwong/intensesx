@@ -55,16 +55,22 @@ struct audioWaveFile *audioWaveReadHeaders(FIL *pFile)
     if ((fr != FR_OK) || (rd != sizeof(struct audioWaveChunkFormat)))
         return NULL;
 
-    // Seek for data chunk
-    fr = f_read(pFile, &subchunkHead, sizeof(struct audioWaveSubchunk), (UINT*)&rd);
-    if ((fr != FR_OK) || (rd != sizeof(struct audioWaveSubchunk)))
-        return NULL;
-
-    if (subchunkHead.subchunkID != DATA_DWORD)
+    // Find data chunk
+    subchunkHead.subchunkSize = 0;
+    do
     {
-        WAVE_LOG("Can't find data chunk");
-        return NULL;
-    }
+        fr = f_lseek(pFile, f_tell(pFile) + subchunkHead.subchunkSize);
+        if (fr != FR_OK)
+            return NULL;
+
+        fr = f_read(pFile, &subchunkHead, sizeof(struct audioWaveSubchunk), (UINT*)&rd);
+        if ((fr != FR_OK) || (rd != sizeof(struct audioWaveSubchunk)))
+        {
+            WAVE_LOG("Can't find data chunk or data chunk read error");
+            return NULL;
+        }
+        LOG("size: %d, data: 0x%x", subchunkHead.subchunkSize, subchunkHead.subchunkID);
+    } while(subchunkHead.subchunkID != DATA_DWORD);
 
     af = pvPortMalloc(sizeof(struct audioWaveFile));
     af->head.fileHandle = pFile;

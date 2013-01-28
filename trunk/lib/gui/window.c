@@ -746,6 +746,7 @@ BOOL guiShowWindow(struct guiWindow *pWnd, UINT32 pCmdShow)
     assert(pWnd != NULL);
  
     ret = ((pWnd->windowStyle & WS_VISIBLE) == WS_VISIBLE);
+    pWnd->windowStyle |= WS_VISIBLE;
 
     if (pWnd->type == WT_MAIN)
     {

@@ -11,6 +11,8 @@
 #include "guidefs.h"
 #include "window.h"
 #include "button.h"
+#include "progressbar.h"
+#include "statictext.h"
 #include "wndclass.h"
 
 #define guiSetColor(c) graphSetDrawingColor(c.a, c.r, c.g, c.b)

@@ -114,9 +114,9 @@ lldHx8347SetColor(struct hldLcdDevice *pLcdDev, UINT8 pA, UINT8 pR, UINT8 pG, UI
 static inline UINT32 __attribute__ ((always_inline))
 lldHx8347GetMaxX(struct hldLcdDevice *pLcdDev)
 {
-    #if (DISP_ORIENTATION == 90) || (DISP_ORIENTATION == 270)
+    #if (LCD_ORIENTATION == 90) || (LCD_ORIENTATION == 270)
         return (320);
-    #elif (DISP_ORIENTATION == 0) || (DISP_ORIENTATION == 180)
+    #elif (LCD_ORIENTATION == 0) || (LCD_ORIENTATION == 180)
         return (240);
     #endif
 }
@@ -124,9 +124,9 @@ lldHx8347GetMaxX(struct hldLcdDevice *pLcdDev)
 static inline UINT32 __attribute__ ((always_inline))
 lldHx8347GetMaxY(struct hldLcdDevice *pLcdDev)
 {
-    #if (DISP_ORIENTATION == 90) || (DISP_ORIENTATION == 270)
+    #if (LCD_ORIENTATION == 90) || (LCD_ORIENTATION == 270)
         return (240);
-    #elif (DISP_ORIENTATION == 0) || (DISP_ORIENTATION == 180)
+    #elif (LCD_ORIENTATION == 0) || (LCD_ORIENTATION == 180)
         return (320);
     #endif
 }
@@ -273,7 +273,7 @@ static retcode lldHx8347Open(struct hldLcdDevice *pLcdDev)
     lldHx8347SetReg(0x5D,0xCC);   //
 
     // Window setting
-    #if (DISP_ORIENTATION == 0)
+    #if (LCD_ORIENTATION == 0)
     lldHx8347SetReg(0x04,0x00);
     lldHx8347SetReg(0x05,0xEF);
     lldHx8347SetReg(0x08,0x01);
@@ -288,7 +288,7 @@ static retcode lldHx8347Open(struct hldLcdDevice *pLcdDev)
     // Display Setting
     //lldHx8347SetReg(0x01,0x06);   // IDMON=0, INVON=1, NORON=1, PTLON=0
 
-    #if (DISP_ORIENTATION == 0)
+    #if (LCD_ORIENTATION == 0)
     lldHx8347SetReg(0x16,0x08);   // MY=0, MX=0, MV=0, BGR=1
     #else
     lldHx8347SetReg(0x16,0x68);   // MY=0, MX=1, MV=1, BGR=1

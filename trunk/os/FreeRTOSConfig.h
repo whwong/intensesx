@@ -88,7 +88,7 @@
 #define configUSE_TIMERS                        1
 #define configTIMER_TASK_PRIORITY               3
 #define configTIMER_QUEUE_LENGTH                5
-#define configTIMER_TASK_STACK_DEPTH            (configMINIMAL_STACK_SIZE+50)
+#define configTIMER_TASK_STACK_DEPTH            (configMINIMAL_STACK_SIZE+2048)
 #define configUSE_RECURSIVE_MUTEXES             1
 #define configCHECK_FOR_STACK_OVERFLOW          2
 #define configQUEUE_REGISTRY_SIZE		10

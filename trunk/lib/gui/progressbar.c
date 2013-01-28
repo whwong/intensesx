@@ -31,7 +31,7 @@ void guiRegisterProgressBarClass()
     struct guiWndClassInfo wci;
 
     wci.className = "progressbar";
-    wci.windowStyle = WS_CHILD | WS_VISIBLE;
+    wci.windowStyle = WS_CHILD;
     wci.colorStyle.shIdx = WSTL_PROGRESSBAR_SH;
     // For progress bar hl style is bar style
     wci.colorStyle.hlIdx = WSTL_PROGRESSBAR_BAR_SH;

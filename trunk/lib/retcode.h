@@ -37,6 +37,7 @@ typedef enum
     ERR_CHAR_NOT_IN_FONT = -210,
     ERR_INVALID_NAME = -211,
     ERR_NOT_FOUND = -212,
+    ERR_FILE_SYSTEM = -213,
             
     // Retcodes for FatFS file system
     RES_OK = 0,         /* 0: Successful */

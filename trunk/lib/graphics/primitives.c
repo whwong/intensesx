@@ -583,7 +583,7 @@ retcode graphDrawChar(UINT16 pX, UINT16 pY, UINT16 *pCharWidth, UINT16 pChar, st
 }
 
 void graphDrawText(UINT16 pX, UINT16 pY, UINT16 pW, UINT16 pH,
-        char * pText, struct graphFont *pFont, UINT32 pStyle)
+        char * pText, const struct graphFont *pFont, UINT32 pStyle)
 {
     if (pFont->type == GRAPH_FONT_BITMAP)
         graphDrawBitmapText(pX, pY, pW, pH, pText, pFont, pStyle);
