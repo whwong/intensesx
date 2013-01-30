@@ -48,6 +48,10 @@ static xSemaphoreHandle audio1chPlayMutex = NULL;
 static struct hldAudioDevice *currentDevice = NULL;
 // Currently playing audio file handle
 static struct audioFile *currentAudioFile = NULL;
+// Playing end callback
+// It is executed after play stop only when sound was previously successfully
+// played
+static void (*audioPlayingEndCallback)();
 // Ending flag. Any task can set it to 1, then playing task will end end set it
 // back to 0
 // static UINT8 endingFlag;
@@ -55,6 +59,11 @@ static struct audioFile *currentAudioFile = NULL;
 // static UINT8 playingTaskRunning = 0;
 // Currently playing sound flsgs
 static UINT32 currentAudioFlags = 0;
+
+void audioSetPlayingEndCallback(void (*pCB)())
+{
+    audioPlayingEndCallback = pCB;
+}
 
 /**
  * Checks that specified filename extension is equal to pExt
@@ -107,6 +116,7 @@ static void audioSoundProc(void *pvParameter)
 
         if (currentAudioFlags & SND_CLOSING)
         {
+            playing = 0;
             audio1chStopSound();
             break;
         }
@@ -120,6 +130,7 @@ static void audioSoundProc(void *pvParameter)
 
                 if ((rd == 0) || (ret != SUCCESS))
                 {
+                    playing = 0;
                     audio1chStopSound();
                     break;
                 }
@@ -130,10 +141,13 @@ static void audioSoundProc(void *pvParameter)
         else
         {
             // Unsupported ;(
+            playing = 0;
             audio1chStopSound();
             break;
         }
     }
+    
+    audioPlayingEndCallback();
 
     // To be absolutelly sure that we never get out this function when it is
     // task routine

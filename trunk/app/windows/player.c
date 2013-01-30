@@ -16,7 +16,11 @@
 /* RTOS timeout to add/del timer from timer queue */
 #define TIMER_TIMEOUT 1000
 
+#define MSG_PLAY_END (MSG_USER+0x0010)
+
 static struct guiMainWindow *wndPlayer;
+
+extern retcode pca9532WriteReg(struct hldI2CDevice *i2c, UINT8 pReg, UINT8 pVal);
 
 // Main buttons
 static struct guiWindow *btnRpt;
@@ -33,9 +37,10 @@ static struct guiWindow *btnVol;
 static struct guiWindow *pbVol;
 static struct guiWindow *pbPos;
 
-// Progress bars
+// Static texts
 static struct guiWindow *stTitle;
 static struct guiWindow *stDetails;
+static struct guiWindow *stTitleBar;
 
 // State variables
 static UINT32 currentFileIndex = 1;
@@ -422,6 +427,11 @@ static retcode appPlayerCreate()
     return SUCCESS;
 }
 
+void appPlayingEndCallback()
+{
+    msgPost((struct guiWindow*)wndPlayer, MSG_PLAY_END, 0, 0);
+}
+
 void appPlayerShow()
 {
     if (appPlayerCreate() == SUCCESS)
@@ -433,6 +443,7 @@ void appPlayerShow()
         msgSend((struct guiWindow *)wndPlayer, MSG_NCPAINT, 0 ,0);
         msgSend((struct guiWindow *)wndPlayer, MSG_PAINT, 0 ,0);
         msgSend(btnPlay, MSG_SETFOCUS, 0, 0);
+        audioSetPlayingEndCallback(&appPlayingEndCallback);
     }
 }
 
@@ -503,7 +514,7 @@ static void appBtnListClicked()
 
 static void appBtnSetClicked()
 {
-
+    bigScreenInit();
 }
 
 static void appBtnVolClicked()
@@ -553,7 +564,7 @@ static void appPbPosChanged()
     msgSend(pbPos, PBM_GETPOS, (UINT32)&pos, 0);
     LOG("Pos: %d", pos);
 }
-
+#include "app/lcdInit.h"
 static void appPbVolChanged()
 {
     struct hldAudioDevice *audio;
@@ -580,6 +591,13 @@ static INT32 appPlayerWndProc(struct guiWindow *pWnd, UINT32 pMsg, UINT32 pParam
     switch(pMsg)
     {
         case MSG_CREATE:
+            break;
+
+        case MSG_PLAY_END:
+            if (rptState == 1)
+                playActual(TRUE);
+            else
+                playNext();
             break;
 
         case MSG_COMMAND:
@@ -801,10 +819,25 @@ retcode appPlayerInit()
         ST_DETAILS_H,
         (struct guiWindow *) wndPlayer, 0);
 
+
+    stTitleBar = guiCreateWindow("statictext",
+        " Audio player",
+        WS_VISIBLE | SS_LEFT,
+        IDC_ST_TITLE_BAR, IDC_ST_TITLE_BAR, IDC_ST_TITLE_BAR,
+        IDC_ST_TITLE_BAR, IDC_ST_TITLE_BAR,
+        ST_TITLE_BAR_X,
+        ST_TITLE_BAR_Y,
+        ST_TITLE_BAR_W,
+        ST_TITLE_BAR_H,
+        (struct guiWindow *) wndPlayer, 0);
+
+    stTitleBar->colorStyle.shIdx = WSTL_TITLE_BAR;
+    stTitleBar->colorStyle.gryIdx = WSTL_TITLE_BAR;
     msgSend(stDetails, MSG_ENABLE, FALSE, 0);
 
     msgSend(stTitle, MSG_SETFONT, (UINT32)&g_DroidSans29, 0);
     msgSend(stDetails, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
+    msgSend(stTitleBar, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
 
     return SUCCESS;
 }

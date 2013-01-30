@@ -188,7 +188,7 @@ void guiDrawStyleFrameBorders(UINT8 pStyleIdx, struct guiRect *pRect)
     struct guiWinStyle *ws;
     ws = guiGetStyle(pStyleIdx);
 
-    if (ws->leftLineStyle == CS_SOLID)
+    if (ws->leftLineStyle == LS_SOLID)
     {
         guiSetColor(ws->leftLineColor);
         graphDrawRect(pRect->l,
@@ -197,7 +197,7 @@ void guiDrawStyleFrameBorders(UINT8 pStyleIdx, struct guiRect *pRect)
             pRect->t + pRect->h);
     }
 
-    if (ws->rightLineStyle == CS_SOLID)
+    if (ws->rightLineStyle == LS_SOLID)
     {
         guiSetColor(ws->leftLineColor);
         graphDrawRect(pRect->l + pRect->w - ws->rightLineWidth,
@@ -206,7 +206,7 @@ void guiDrawStyleFrameBorders(UINT8 pStyleIdx, struct guiRect *pRect)
             pRect->t + pRect->h);
     }
 
-    if (ws->topLineStyle == CS_SOLID)
+    if (ws->topLineStyle == LS_SOLID)
     {
         guiSetColor(ws->leftLineColor);
         graphDrawRect(pRect->l,
@@ -215,7 +215,7 @@ void guiDrawStyleFrameBorders(UINT8 pStyleIdx, struct guiRect *pRect)
             pRect->t + ws->topLineWidth);
     }
 
-    if (ws->bottomLineStyle == CS_SOLID)
+    if (ws->bottomLineStyle == LS_SOLID)
     {
         guiSetColor(ws->leftLineColor);
         graphDrawRect(pRect->l,

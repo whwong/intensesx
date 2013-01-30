@@ -12,19 +12,22 @@
           <itemPath>app/rsc/fonts/havelticaAA.c</itemPath>
           <itemPath>app/rsc/fonts/veramono.c</itemPath>
         </logicalFolder>
-        <logicalFolder name="f3" displayName="windows" projectFiles="true">
-          <itemPath>app/windows/player.c</itemPath>
-          <itemPath>app/windows/player.h</itemPath>
-        </logicalFolder>
         <logicalFolder name="f2" displayName="winstyle" projectFiles="true">
           <itemPath>app/rsc/winstyle/winstyle.h</itemPath>
+          <itemPath>app/rsc/winstyle/winstyleIdx.h</itemPath>
         </logicalFolder>
         <itemPath>app/rsc/rsc.h</itemPath>
+      </logicalFolder>
+      <logicalFolder name="f2" displayName="windows" projectFiles="true">
+        <itemPath>app/windows/player.c</itemPath>
+        <itemPath>app/windows/player.h</itemPath>
       </logicalFolder>
       <itemPath>app/main.c</itemPath>
       <itemPath>app/keymap.h</itemPath>
       <itemPath>app/init.c</itemPath>
       <itemPath>app/init.h</itemPath>
+      <itemPath>app/lcdInit.c</itemPath>
+      <itemPath>app/lcdInit.h</itemPath>
     </logicalFolder>
     <logicalFolder name="boards" displayName="boards" projectFiles="true">
       <logicalFolder name="PIC32MX7MMB" displayName="PIC32MX7MMB" projectFiles="true">
@@ -44,6 +47,7 @@
         <itemPath>hal/hld/ir.h</itemPath>
         <itemPath>hal/hld/audio.h</itemPath>
         <itemPath>hal/hld/disk.h</itemPath>
+        <itemPath>hal/hld/i2c.h</itemPath>
       </logicalFolder>
       <logicalFolder name="lld" displayName="lld" projectFiles="true">
         <logicalFolder name="platforms" displayName="platforms" projectFiles="true">
@@ -69,6 +73,10 @@
             <itemPath>hal/lld/platforms/microchip/wm8731ISR.S</itemPath>
             <itemPath>hal/lld/platforms/microchip/pic32SDMMC.c</itemPath>
             <itemPath>hal/lld/platforms/microchip/pic32SDMMC.h</itemPath>
+            <itemPath>hal/lld/platforms/microchip/pic32I2C.c</itemPath>
+            <itemPath>hal/lld/platforms/microchip/pic32I2C.h</itemPath>
+            <itemPath>hal/lld/platforms/microchip/fpgaGPU.c</itemPath>
+            <itemPath>hal/lld/platforms/microchip/fpgaGPU.h</itemPath>
           </logicalFolder>
         </logicalFolder>
         <itemPath>hal/lld/resistiveTouch.c</itemPath>

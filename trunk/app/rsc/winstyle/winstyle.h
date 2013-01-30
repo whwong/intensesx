@@ -4,24 +4,19 @@
 #define _WINSTYLE_H_
 
 #include "lib/gui/gui.h"
+#include "winstyleIdx.h"
 
 #define WINSTYLE_BLUE       {0x00, 0x84, 0xff, 0xff}
+#define WINSTYLE_LIME_GREEN {0x32, 0xcd, 0x32, 0xff}
 #define WINSTYLE_HL_BLUE    {0x59, 0xaf, 0xff, 0xff}
 #define WINSTYLE_BG_BLUE    {0x25, 0x3a, 0x47, 0xff}
 #define WINSTYLE_BLACK      {0x00, 0x00, 0x00, 0xff}
 #define WINSTYLE_WHITE      {0xff, 0xff, 0xff, 0xff}
 #define WINSTYLE_BTN_FRAME  {0x7f, 0x7f, 0x7f, 0xff}
 #define WINSTYLE_PB_FRAME   {0xcc, 0xcc, 0xcc, 0xff}
+#define WINSTYLE_DARK_GRAY  {0x40, 0x40, 0x40, 0xff}
 #define WINSTYLE_GRAY       {0x55, 0x55, 0x55, 0xff}
 #define WINSTYLE_GRAYHL     {0x55, 0x77, 0x99, 0xff}
-
-enum intenseWinstyleIndexes
-{
-    WSTL_USER = WSTL_LAST_DEFAULT,
-
-    // Do not change nothing above
-    // User styles defined below
-};
 
 const struct guiWinStyle intenseWinstyle[] =
 {
@@ -116,6 +111,17 @@ const struct guiWinStyle intenseWinstyle[] =
      LS_NOSHOW, 0, WINSTYLE_BTN_FRAME,   // Bottom line
      LS_NOSHOW, WINSTYLE_WHITE,    // FG Color
      CS_SOLID, WINSTYLE_BLUE},   // BG Color
+
+    // *************************************************************************
+    // * CUSTOM STYLES
+    // *************************************************************************
+    // Title bar
+    {LS_NOSHOW, 0, WINSTYLE_BLACK,   // Left line
+     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Top line
+     LS_NOSHOW, 0, WINSTYLE_BLACK,   // Right line
+     LS_SOLID, 2, WINSTYLE_BTN_FRAME,   // Bottom line
+     CS_SOLID, WINSTYLE_BTN_FRAME,    // FG Color
+     CS_SOLID, WINSTYLE_DARK_GRAY},   // BG Color
 };
 
 #endif

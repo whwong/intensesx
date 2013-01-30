@@ -37,12 +37,35 @@ static void drawInitScreen()
             FS_VALIGN_CENTER | FS_ALIGN_RIGHT);
 }
 
+void appInitScreenWait()
+{
+    UINT32 x, y, c = 0;
+    struct hldTouchDevice *touch = hldDeviceGetById(HLD_DEVICE_TYPE_TOUCH, 0);
+    struct hldLcdDevice *lcd = hldDeviceGetById(HLD_DEVICE_TYPE_LCD, 0);
+
+    graphSetDrawingColor(0xff, 0xff, 0xff, 0xff);
+    graphDrawText(0, lcd->getMaxY()/2, lcd->getMaxX(), 30,
+            "(Tap the screen to continue)", &g_DroidSans15,
+            FS_VALIGN_CENTER | FS_ALIGN_CENTER);
+
+    do
+    {
+        c++;
+        touch->read(touch, &x, &y);
+        vTaskDelay(5);
+
+        if (c == 600)
+            break;
+    } while (x == -1 && y == -1);
+}
+
 static retcode appHardwareInit()
 {
     retcode ret = SUCCESS;
     struct hldLcdDevice *lcd;
     struct hldUartConfig uartConfig;
     struct hldUartDevice *uart;
+    struct hldI2CDevice *i2c;
     struct hldAdcDevice *adc;
     struct hldAdcConfig adcConfig;
     struct hldTouchDevice *touch;
@@ -90,6 +113,21 @@ static retcode appHardwareInit()
         return ret;
     }
 
+    ret = lldPic32I2CAttach();
+    if (ret == SUCCESS)
+    {
+        i2c = hldDeviceGetById(HLD_DEVICE_TYPE_I2C, 0);
+        if (i2c != NULL)
+        {
+            i2c->open(i2c);
+        }
+    }
+    else
+    {
+        ERROR("Can not attach I2C device (#%d)", ret);
+        return ret;
+    }
+
     // 1kHz sample clock
     adcConfig.adcClockPeriod    = (3905);
     adcConfig.aquisitionTime    = (3905)*4;
@@ -111,7 +149,11 @@ static retcode appHardwareInit()
         return ret;
     }
 
+#ifdef LCD_FPGA
+    ret = lldFpgaGpuAttach();
+#else
     ret = lldHx8347Attach();
+#endif
     if (ret == SUCCESS)
     {
         lcd = hldDeviceGetById(HLD_DEVICE_TYPE_LCD, 0);
@@ -119,7 +161,9 @@ static retcode appHardwareInit()
         {
             lcd->open(lcd);
             graphSetLcdDevice(lcd);
+#ifndef LCD_FPGA_TEST
             drawInitScreen();
+#endif
         }
     }
     else

@@ -33,6 +33,7 @@ typedef enum
     // if ((type & HLD_DEVICE_TYPE_CHAR) != 0)
     HLD_DEVICE_TYPE_CHAR     = 0x0010,
     HLD_DEVICE_TYPE_UART     = 0x0010 | 0x0020,
+    HLD_DEVICE_TYPE_I2C     = 0x0010 | 0x0040,
 
     HLD_DEVICE_TYPE_ADC      = 0x0040,
     HLD_DEVICE_TYPE_TOUCH    = 0x0080,

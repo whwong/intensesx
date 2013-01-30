@@ -214,6 +214,9 @@ lldResTouchRead(struct hldTouchDevice *pTouchDev, INT32 *pX, INT32 *pY)
 {
     assert(pTouchDev != NULL);
 
+    assert(pX != NULL);
+    assert(pY != NULL);
+
     adcX = -1;
     adcY = -1;
 
@@ -230,9 +233,6 @@ lldResTouchRead(struct hldTouchDevice *pTouchDev, INT32 *pX, INT32 *pY)
     
     *pX = lldResTouchGetX(pTouchDev);
     *pY = lldResTouchGetY(pTouchDev);
-
-    assert(pX != NULL);
-    assert(pY != NULL);
     
     return SUCCESS;
 }

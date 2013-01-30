@@ -43,64 +43,7 @@
 #include "windows/player.h"
 
 static FATFS fat;
-
 int main(void);
-
-INT32 firstWindowProc(struct guiWindow *pWnd, UINT32 pMsg, UINT32 pParam1, UINT32 pParam2)
-{
-    struct hldLcdDevice *lcd;
-    static INT32 x = 100,y = 100, ox=100, oy=100;
-
-    lcd = hldDeviceGetById(HLD_DEVICE_TYPE_LCD, 0);
-
-    switch(pMsg)
-    {
-        case MSG_POINTERMOVE:
-            x = GET_X_PARAM2(pParam2);
-            y = GET_Y_PARAM2(pParam2);
-
-            lcd->setColor(lcd, 0, 255, 255, 255);
-            graphDrawLine(x,y,ox,oy);
-
-            lcd->setColor(lcd, 0, 30, 30, 255);
-            lcd->drawPixel(lcd, x,y);
-            lcd->drawPixel(lcd, ox,oy);
-
-            ox = x;
-            oy = y;
-            break;
-
-        case MSG_POINTERDOWN:
-            x = GET_X_PARAM2(pParam2);
-            y = GET_Y_PARAM2(pParam2);
-
-            lcd->setColor(lcd, 0, 100, 100, 100);
-            lcd->drawPixel(lcd, x,y);
-            graphDrawCircle(x, y, 3);
-
-            ox = x;
-            oy = y;
-            break;
-
-        case MSG_POINTERUP:
-            x = GET_X_PARAM2(pParam2);
-            y = GET_Y_PARAM2(pParam2);
-
-            lcd->setColor(lcd, 0, 100, 100, 100);
-            lcd->drawPixel(lcd, x,y);
-            graphDrawCircle(x, y, 3);
-
-            //spped
-            lcd->setColor(lcd, 0, 128, 0, 0);
-            graphDrawLine(x,y,x+GET_DX_PARAM1(pParam1),y+GET_DY_PARAM1(pParam1));
-
-            ox = x;
-            oy = y;
-            break;
-    }
-    
-    return guiDefWindowProc(pWnd, pMsg, pParam1, pParam2);
-}
 
 void overflowme()
 {
@@ -133,16 +76,38 @@ static void appMainTask( void *pvParameters )
 {
     struct msgListener *list;
     struct hldDiskDevice *disk;
+    struct hldLcdDevice *lcd;
     struct msg m;
 
     // Init HW and SW
     if (appInit() != SUCCESS)
         appInitErrHandler();
 
+#ifdef LCD_FPGA_TEST
+    lcd = hldDeviceGetByType(NULL, HLD_DEVICE_TYPE_LCD);
+
+    LOG("****************************");
+    LOG("* !THIS IS FPGA TEST MODE! *");
+    LOG("****************************");
+    LOG("Lcd dev: %p", lcd);
+
+    UINT8 r,g,b;
+    srand(xTaskGetTickCount());
+    while(1)
+    {
+        r = rand() % 255;
+        g = rand() % 255;
+        b = rand() % 255;
+        lcd->setColor(lcd, 0xff, r, g, b);
+        vTaskDelay(1000);
+    }
+#endif
     // Create windows
     if (appPlayerInit() != SUCCESS)
         appInitErrHandler();
-    
+
+    appInitScreenWait();
+
     // Show first window
     appPlayerShow();
     

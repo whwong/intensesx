@@ -46,16 +46,22 @@ void boardInit()
 
     //Setup ports directions
     //OUTPUT
+    PORTSetPinsDigitalOut(IOPORT_D, BIT_2);
+    
+#ifndef LCD_FPGA
+    LCD_BACKLIGHT_GPIO = 1;
+#endif
     PORTSetPinsDigitalOut(IOPORT_A, BIT_0 | BIT_1);
     PORTSetPinsDigitalOut(IOPORT_B, BIT_4 | BIT_5 | BIT_14 | BIT_15);
     PORTSetPinsDigitalOut(IOPORT_C, BIT_1);
-    PORTSetPinsDigitalOut(IOPORT_D, BIT_12 | BIT_13 | BIT_6 | BIT_7 | BIT_2);
+    PORTSetPinsDigitalOut(IOPORT_D, BIT_12 | BIT_13 | BIT_6 | BIT_7);
     PORTSetPinsDigitalOut(IOPORT_E, BIT_0 | BIT_1 | BIT_2 | BIT_3 |
             BIT_4 | BIT_5 | BIT_6 | BIT_7);
     PORTSetPinsDigitalOut(IOPORT_F, BIT_0 | BIT_1);
     PORTSetPinsDigitalOut(IOPORT_G, BIT_0 | BIT_1);
 
-    LCD_BACKLIGHT_GPIO = 0;
+    LED0 = 1;
+    LED1 = 1;
 
     //INPUT
     PORTSetPinsDigitalIn(IOPORT_A, BIT_10);
