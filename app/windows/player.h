@@ -15,6 +15,8 @@
 
 #include "app/rsc/rsc.h"
 
+#include "app/lcdInit.h"
+
 // Control indexes
 #define IDC_WND_PLAYER  1
 #define IDC_BTN_RPT     2
@@ -28,6 +30,7 @@
 #define IDC_PB_VOL      10
 #define IDC_ST_TITLE    11
 #define IDC_ST_DETAILS  12
+#define IDC_ST_TITLE_BAR 13
 
 // Size and position coeficients
 #define SS_COEF_X 1
@@ -94,6 +97,11 @@
 #define ST_DETAILS_Y (138 * SS_COEF_X)
 #define ST_DETAILS_W (215 * SS_COEF_X)
 #define ST_DETAILS_H (15 * SS_COEF_X)
+
+#define ST_TITLE_BAR_X (0 * SS_COEF_X)
+#define ST_TITLE_BAR_Y (0 * SS_COEF_X)
+#define ST_TITLE_BAR_W (320 * SS_COEF_X)
+#define ST_TITLE_BAR_H (20 * SS_COEF_X)
 
 void appPlayerShow();
 retcode appPlayerInit();

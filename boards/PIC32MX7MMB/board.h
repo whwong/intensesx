@@ -11,16 +11,25 @@
 // BOARD Configuration
 //******************************************************************************
 #define LCD_ORIENTATION 90
+#define LCD_FPGA
+#define LCD_FPGA_TEST
 
 //******************************************************************************
 // GPIO Definitions
 //******************************************************************************
 
 // LCD
+#ifdef LCD_FPGA
+#define LCD_BACKLIGHT_GPIO LATDbits.LATD2 // not used
+#define LCD_RESET_GPIO LATCbits.LATC1 // not used
+#define LCD_RS_GPIO LATBbits.LATB15
+#define LCD_CS_GPIO LATBbits.LATB5
+#else
 #define LCD_BACKLIGHT_GPIO LATDbits.LATD2
 #define LCD_RESET_GPIO LATCbits.LATC1
 #define LCD_RS_GPIO LATBbits.LATB15
 #define LCD_CS_GPIO LATBbits.LATB14
+#endif
 
 // TOUCH SCREEN
 // Required if you would like to use lld/resistiveTouch.c driver

@@ -8,6 +8,7 @@
 #define _RSC_RSC_H_
  
 #include "lib/graphics/graphics.h"
+#include "winstyle/winstyleIdx.h"
 
 // Fonts
 extern const struct graphFont g_DroidSans15;

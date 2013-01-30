@@ -220,11 +220,11 @@ static void lldHx8347PMPOpen()
 
 static retcode lldHx8347Open(struct hldLcdDevice *pLcdDev)
 {
+    lldHx8347SetBacklight(0);
     lldHx8347Reset();
 
     lldHx8347Off();
     lldHx8347RstCS();
-    lldHx8347SetBacklight(0);
 
     lldHx8347PMPOpen();
     lldHx8347On();
