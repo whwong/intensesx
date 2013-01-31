@@ -141,7 +141,11 @@ lldFpgaGpuSetColor(struct hldLcdDevice *pLcdDev, UINT8 pA, UINT8 pR, UINT8 pG, U
     lldFpgaGpuSetCS();
     lldFpgaGpuSetCommand();
     lldFpgaGpuWrite(0x1111);
-    lldFpgaGpuSetData(pLcdDev->drawingColor);
+    lldFpgaGpuSetData();
+    lldFpgaGpuWrite(pLcdDev->drawingColor);
+    lldFpgaGpuRstCS();
+
+    LOG("FPGA: Set color RGB888 (%d,%d,%d) RGB565 (0x%x)", pR, pG, pB, pLcdDev->drawingColor);
 
     return SUCCESS;
 }

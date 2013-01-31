@@ -22,8 +22,8 @@
 #ifdef LCD_FPGA
 #define LCD_BACKLIGHT_GPIO LATDbits.LATD2 // not used
 #define LCD_RESET_GPIO LATCbits.LATC1 // not used
-#define LCD_RS_GPIO LATBbits.LATB15
-#define LCD_CS_GPIO LATBbits.LATB5
+#define LCD_RS_GPIO LATBbits.LATB5
+#define LCD_CS_GPIO LATAbits.LATA10
 #else
 #define LCD_BACKLIGHT_GPIO LATDbits.LATD2
 #define LCD_RESET_GPIO LATCbits.LATC1

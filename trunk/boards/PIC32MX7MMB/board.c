@@ -51,7 +51,7 @@ void boardInit()
 #ifndef LCD_FPGA
     LCD_BACKLIGHT_GPIO = 1;
 #endif
-    PORTSetPinsDigitalOut(IOPORT_A, BIT_0 | BIT_1);
+    PORTSetPinsDigitalOut(IOPORT_A, BIT_0 | BIT_1 | BIT_10);
     PORTSetPinsDigitalOut(IOPORT_B, BIT_4 | BIT_5 | BIT_14 | BIT_15);
     PORTSetPinsDigitalOut(IOPORT_C, BIT_1);
     PORTSetPinsDigitalOut(IOPORT_D, BIT_12 | BIT_13 | BIT_6 | BIT_7);
@@ -64,7 +64,7 @@ void boardInit()
     LED1 = 1;
 
     //INPUT
-    PORTSetPinsDigitalIn(IOPORT_A, BIT_10);
+    //PORTSetPinsDigitalIn(IOPORT_A, BIT_10);
     PORTSetPinsDigitalIn(IOPORT_B, BIT_0 | BIT_1 | BIT_2 | BIT_3);
     PORTSetPinsDigitalIn(IOPORT_D, BIT_15 | BIT_9);
     PORTSetPinsDigitalIn(IOPORT_G, BIT_7);
