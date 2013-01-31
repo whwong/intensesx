@@ -92,7 +92,7 @@ static void appMainTask( void *pvParameters )
     LOG("Lcd dev: %p", lcd);
 
     UINT8 r,g,b;
-    srand(xTaskGetTickCount());
+    //srand(xTaskGetTickCount());
     while(1)
     {
         r = rand() % 255;
