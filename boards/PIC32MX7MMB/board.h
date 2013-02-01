@@ -14,6 +14,14 @@
 #define LCD_FPGA
 #define LCD_FPGA_TEST
 
+// TOUCH SCREEN
+// Required if you would like to use lld/resistiveTouch.c driver
+#define TOUCH_ADC_CH_XPOS     12
+#define TOUCH_ADC_CH_YPOS     13
+#define TOUCH_ADC_CH_YNEG     10
+// Define as MAX + 1 (2^resolution_in_bits)
+#define TOUCH_ADC_MAX         1024
+
 //******************************************************************************
 // GPIO Definitions
 //******************************************************************************
@@ -31,13 +39,6 @@
 #define LCD_CS_GPIO LATBbits.LATB14
 #endif
 
-// TOUCH SCREEN
-// Required if you would like to use lld/resistiveTouch.c driver
-#define TOUCH_ADC_CH_XPOS     12
-#define TOUCH_ADC_CH_YPOS     13
-#define TOUCH_ADC_CH_YNEG     10
-// Define as MAX + 1 (2^resolution_in_bits)
-#define TOUCH_ADC_MAX         1024
 // X port definitions
 #define TOUCH_LAT_XNEG        LATBbits.LATB11
 #define TOUCH_LAT_XPOS        LATBbits.LATB13
