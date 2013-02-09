@@ -509,12 +509,12 @@ static void appBtnNextClicked()
 
 static void appBtnListClicked()
 {
-
+    
 }
 
 static void appBtnSetClicked()
 {
-    bigScreenInit();
+
 }
 
 static void appBtnVolClicked()

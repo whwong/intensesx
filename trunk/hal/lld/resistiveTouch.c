@@ -332,7 +332,7 @@ static void lldResTouchTask(void *pvParameters)
                 break;
                 
             case GET_X:
-                touchAdcDev->read(touchAdcDev, TOUCH_ADC_CH_XPOS, &tempX);
+                touchAdcDev->read(touchAdcDev, TOUCH_ADC_CH_YPOS, &tempX);
                 if ((tempX >= dev->config.xMinCal) && (tempX <= dev->config.xMaxCal))
                 {
                     taskState = SET_Y;
@@ -361,7 +361,7 @@ static void lldResTouchTask(void *pvParameters)
                 break;
 
             case GET_Y:
-                touchAdcDev->read(touchAdcDev, TOUCH_ADC_CH_YPOS, &tempY);
+                touchAdcDev->read(touchAdcDev, TOUCH_ADC_CH_XPOS, &tempY);
                 if ((tempY >= dev->config.yMinCal) && (tempY <= dev->config.yMaxCal))
                 {
                     taskState = SET_VALUES;

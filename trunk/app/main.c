@@ -47,14 +47,14 @@ int main(void);
 
 void overflowme()
 {
-    UINT32 t[100];
-    UINT32 tab[1024];
+    volatile UINT32 t[100];
+    volatile UINT32 tab[1024];
 
     taskYIELD();
 
-    for (t[0] = 1; t[0] = 60; t[0]++)
+    for (t[0] = 1; t[0] < 100; t[0]++)
     {
-        t[t[0]] = t[0];
+        tab[t[0]] = t[0];
     }
 
     tab[10] = 0;
@@ -91,15 +91,31 @@ static void appMainTask( void *pvParameters )
     LOG("****************************");
     LOG("Lcd dev: %p", lcd);
 
-    UINT8 r,g,b;
+    UINT8 r = 0,g = 0,b = 0;
+    UINT16 x,y;
+    UINT8 counter = 0;
     //srand(xTaskGetTickCount());
     while(1)
     {
-        r = rand() % 255;
-        g = rand() % 255;
-        b = rand() % 255;
-        lcd->setColor(lcd, 0xff, r, g, b);
-        vTaskDelay(1000);
+        if (counter < 10)
+        {
+            counter++;
+        }
+        else
+        {
+            counter = 0;
+            r = rand() % 255;
+            g = rand() % 255;
+            b = rand() % 255;
+            lcd->setColor(lcd, 0xff, r, g, b);
+        }
+
+        x = rand() % lcd->getMaxX();
+        y = rand() % lcd->getMaxY();
+
+        lcd->drawPixel(lcd, x, y);
+
+        vTaskDelay(100);
     }
 #endif
     // Create windows
@@ -159,31 +175,30 @@ void vApplicationStackOverflowHook( void )
     char taskNameBuf[10];
     
     graphSetDrawingColor(255, 255, 0, 0);
-    graphDrawRect(0, 0, 240, 320);
+    graphDrawRect(0, 0, 320, 240);
 
     graphSetDrawingColor(255, 255, 255, 255);
-    graphDrawRect(10, 10, 220, 30);
+    graphDrawRect(10, 10, 300, 30);
 
     graphSetDrawingColor(255, 255, 0, 0);
-    graphDrawText(10, 10, 220, 30, "IntenseOS", guiGetDefaultFont(),
+    graphDrawText(10, 10, 300, 30, "IntenseOS", guiGetDefaultFont(),
             FS_ALIGN_CENTER | FS_VALIGN_TOP);
 
     graphSetDrawingColor(255, 255, 255, 255);
 
     graphDrawText(10, 50, 220, 30, "Stack overflow detected",
             guiGetDefaultFont(), FS_ALIGN_LEFT);
-    graphDrawText(10, 100, 220, 30, "Details:", guiGetDefaultFont(), FS_ALIGN_LEFT);
 
     vTaskGetName(taskNameBuf);
 
     sprintf(buf, "Task name = \"%s\"", taskNameBuf);
-    graphDrawText(10, 130, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    graphDrawText(10, 80, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
     sprintf(buf, "Stack = 0x%08x", uxTaskGetStackAddr());
-    graphDrawText(10, 160, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    graphDrawText(10, 110, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
     sprintf(buf, "Stack top = 0x%08x", uxTaskGetStackTopAddr());
-    graphDrawText(10, 190, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    graphDrawText(10, 140, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
 
-    graphDrawText(10, 240, 220, 30, "Dev. need to be restarted",
+    graphDrawText(10, 200, 220, 30, "Dev. need to be restarted",
             guiGetDefaultFont(), FS_ALIGN_LEFT);
 
     for (;;);
@@ -194,29 +209,28 @@ void _general_exception_handler( unsigned long ulCause, unsigned long ulStatus )
     char buf[20];
     
     graphSetDrawingColor(255, 0, 0, 255);
-    graphDrawRect(0, 0, 240, 320);
+    graphDrawRect(0, 0, 320, 240);
 
     graphSetDrawingColor(255, 255, 255, 255);
-    graphDrawRect(10, 10, 220, 30);
+    graphDrawRect(10, 10, 300, 30);
 
     graphSetDrawingColor(255, 0, 0, 255);
-    graphDrawText(10, 10, 220, 30, "IntenseOS", guiGetDefaultFont(),
+    graphDrawText(10, 10, 300, 30, "IntenseOS", guiGetDefaultFont(),
             FS_ALIGN_CENTER | FS_VALIGN_TOP);
 
     graphSetDrawingColor(255, 255, 255, 255);
 
     graphDrawText(10, 50, 220, 30, "Fatal exception occured",
             guiGetDefaultFont(), FS_ALIGN_LEFT);
-    graphDrawText(10, 100, 220, 30, "Details:", guiGetDefaultFont(), FS_ALIGN_LEFT);
 
     sprintf(buf, "CAUSE = 0x%08x", ulCause);
-    graphDrawText(10, 130, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    graphDrawText(10, 80, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
     sprintf(buf, "STATUS = 0x%08x", ulStatus);
-    graphDrawText(10, 160, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    graphDrawText(10, 110, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
     sprintf(buf, "EPC = 0x%08x", _CP0_GET_EPC());
-    graphDrawText(10, 190, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
+    graphDrawText(10, 140, 220, 30, buf, guiGetDefaultFont(), FS_ALIGN_LEFT);
 
-    graphDrawText(10, 240, 220, 30, "Dev. need to be restarted",
+    graphDrawText(10, 200, 220, 30, "Dev. need to be restarted",
             guiGetDefaultFont(), FS_ALIGN_LEFT);
 
     for (;;);
