@@ -19,6 +19,8 @@ struct msg
 	UINT16 ptY;
 };
 
+#define MSG_NULL    (0)
+
 #define MSG_THREAD  (0x0001 << 16)
 #define MSG_WINDOW  (0x0002 << 16)
 #define MSG_INPUT   (0x0004 << 16)

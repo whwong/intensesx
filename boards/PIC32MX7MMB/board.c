@@ -29,6 +29,7 @@
 #pragma config ICESEL   = ICS_PGx2      // ICE/ICD Comm Channel Select
 #pragma config DEBUG    = OFF           // Background Debugger Enable
 #pragma config FSRSSEL  = PRIORITY_7
+
 /**
  * @brief Board initialization
  */

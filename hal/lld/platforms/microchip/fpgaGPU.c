@@ -140,7 +140,7 @@ lldFpgaGpuSetColor(struct hldLcdDevice *pLcdDev, UINT8 pA, UINT8 pR, UINT8 pG, U
 
     lldFpgaGpuSetCS();
     lldFpgaGpuSetCommand();
-    lldFpgaGpuWrite(0x1111);
+    lldFpgaGpuWrite(0x7363);
     lldFpgaGpuSetData();
     lldFpgaGpuWrite(pLcdDev->drawingColor);
     lldFpgaGpuRstCS();
@@ -278,6 +278,15 @@ static retcode lldFpgaGpuClose(struct hldLcdDevice *pLcdDev)
 
 static retcode lldFpgaGpuDrawPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY)
 {
+    lldFpgaGpuSetCS();
+    lldFpgaGpuSetCommand();
+    lldFpgaGpuWrite(0x7370);
+    lldFpgaGpuSetData();
+    lldFpgaGpuWrite(pX);
+    lldFpgaGpuWrite(pY);
+    lldFpgaGpuRstCS();
+
+    LOG("FPGA: Set Pixel (x: %d, y: %d)", pX, pY);
     return SUCCESS;
 }
 
