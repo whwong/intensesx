@@ -22,6 +22,7 @@ struct hldLcdDevice
 
     retcode (*setColor)(struct hldLcdDevice *pLcdDev, UINT8 pA, UINT8 pR,
         UINT8 pG, UINT8 pB);
+    retcode (*setColorRaw)(struct hldLcdDevice *pLcdDev, UINT32 pColor);
     retcode (*drawPixel)(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY);
     UINT16 (*getPixel)(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY);
     retcode (*fill)(struct hldLcdDevice *pLcdDev,

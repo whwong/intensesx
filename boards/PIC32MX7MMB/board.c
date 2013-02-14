@@ -49,9 +49,8 @@ void boardInit()
     //OUTPUT
     PORTSetPinsDigitalOut(IOPORT_D, BIT_2);
     
-#ifndef LCD_FPGA
-    LCD_BACKLIGHT_GPIO = 1;
-#endif
+    LCD_BACKLIGHT_GPIO = 0;
+
     PORTSetPinsDigitalOut(IOPORT_A, BIT_0 | BIT_1 | BIT_10);
     PORTSetPinsDigitalOut(IOPORT_B, BIT_4 | BIT_5 | BIT_14 | BIT_15);
     PORTSetPinsDigitalOut(IOPORT_C, BIT_1);

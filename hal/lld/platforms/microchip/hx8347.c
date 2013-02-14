@@ -110,6 +110,12 @@ lldHx8347SetColor(struct hldLcdDevice *pLcdDev, UINT8 pA, UINT8 pR, UINT8 pG, UI
     return SUCCESS;
 }
 
+static inline retcode __attribute__ ((always_inline))
+lldHx8347SetColorRaw(struct hldLcdDevice *pLcdDev, UINT32 pColor)
+{
+    pLcdDev->drawingColor = pColor;
+    return SUCCESS;
+}
 
 static inline UINT32 __attribute__ ((always_inline))
 lldHx8347GetMaxX(struct hldLcdDevice *pLcdDev)
@@ -171,6 +177,7 @@ retcode lldHx8347Attach()
     dev->drawPixel =    lldHx8347DrawPixel;
     dev->getPixel =     lldHx8347GetPixel;
     dev->setColor =     lldHx8347SetColor;
+    dev->setColorRaw =  lldHx8347SetColorRaw;
     dev->fill =         lldHx8347Fill;
     dev->getMaxX =      lldHx8347GetMaxX;
     dev->getMaxY =      lldHx8347GetMaxY;

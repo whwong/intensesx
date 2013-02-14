@@ -22,12 +22,14 @@ static void drawInitScreen()
     x2 = lcd->getMaxX();
     y2 = lcd->getMaxY()-22;
 
+    graphSetDrawingColor(0xff, 0x00, 0x00, 0x00);
+    graphDrawRect(0, 0, lcd->getMaxX(), lcd->getMaxY());
+    
     graphSetDrawingColor(0xff, 0xff, 0xff, 0xff);
 
     //graphDrawRect(x1, y1, x2, y2);
     graphDrawText(x1, y1, x2, y2, "IntenseOS", &g_FontHaveltica26AA,
             FS_VALIGN_CENTER | FS_ALIGN_CENTER);
-
 
     graphSetDrawingColor(0xff, 0xaa, 0xaa, 0xaa);
     graphDrawRect(0, y2, lcd->getMaxX(), lcd->getMaxY());

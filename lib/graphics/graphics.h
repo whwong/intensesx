@@ -59,6 +59,7 @@ void graphTestDrawEdgeMesh();
 void graphTestDrawRand1kLines();
 void graphTestDrawRand10kLines();
 void graphTestDrawRand30Circles();
+void graphTestDrawRand300Circles();
 #endif
 
 enum graphFontType

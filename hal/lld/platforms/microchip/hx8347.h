@@ -46,6 +46,8 @@ static retcode lldHx8347Close(struct hldLcdDevice *pLcdDev);
 
 static inline retcode __attribute__ ((always_inline))
 lldHx8347SetColor(struct hldLcdDevice *pLcdDev, UINT8 pA, UINT8 pR, UINT8 pG, UINT8 pB);
+static inline retcode __attribute__ ((always_inline))
+lldHx8347SetColorRaw(struct hldLcdDevice *pLcdDev, UINT32 pColor);
 
 static retcode lldHx8347DrawPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY);
 static UINT16 lldHx8347GetPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY);

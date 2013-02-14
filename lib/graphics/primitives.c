@@ -364,13 +364,13 @@ static retcode graphCharRender(UINT16 pX, UINT16 pY,
 #endif
                         switch (val)
                         {
-                            case 1: graphLcdDev->drawingColor = _fgcolor25;
+                            case 1: graphLcdDev->setColorRaw(graphLcdDev, _fgcolor25);
                                 break;
 
-                            case 2: graphLcdDev->drawingColor = _fgcolor75;
+                            case 2: graphLcdDev->setColorRaw(graphLcdDev, _fgcolor75);
                                 break;
 
-                            case 3: graphLcdDev->drawingColor = _fgcolor100;
+                            case 3: graphLcdDev->setColorRaw(graphLcdDev, _fgcolor100);
                         }
 
                         graphLcdDev->drawPixel(graphLcdDev, x, y);
@@ -429,13 +429,13 @@ static retcode graphCharRender(UINT16 pX, UINT16 pY,
 
                         switch (val)
                         {
-                            case 1: graphLcdDev->drawingColor = _fgcolor25;
+                            case 1: graphLcdDev->setColorRaw(graphLcdDev, _fgcolor25);
                                 break;
 
-                            case 2: graphLcdDev->drawingColor = _fgcolor75;
+                            case 2: graphLcdDev->setColorRaw(graphLcdDev, _fgcolor75);
                                 break;
 
-                            case 3: graphLcdDev->drawingColor = _fgcolor100;
+                            case 3: graphLcdDev->setColorRaw(graphLcdDev, _fgcolor100);
                         }
 
                         graphLcdDev->drawPixel(graphLcdDev, x, y);

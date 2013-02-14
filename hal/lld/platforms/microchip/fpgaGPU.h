@@ -52,6 +52,9 @@ static retcode lldFpgaGpuClose(struct hldLcdDevice *pLcdDev);
 static inline retcode __attribute__ ((always_inline))
 lldFpgaGpuSetColor(struct hldLcdDevice *pLcdDev, UINT8 pA, UINT8 pR, UINT8 pG, UINT8 pB);
 
+static inline retcode __attribute__ ((always_inline))
+lldFpgaGpuSetColorRaw(struct hldLcdDevice *pLcdDev, UINT32 pColor);
+
 static retcode lldFpgaGpuDrawPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY);
 static UINT16 lldFpgaGpuGetPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY);
 

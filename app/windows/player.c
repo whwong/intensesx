@@ -10,7 +10,7 @@
 #define PWD_MAX_LEN 64
 
 /* Timer period - should be smth about 100-2000ms */
-#define TIMER_PERIOD_MS 500
+#define TIMER_PERIOD_MS 100
 /* Just random value :) */
 #define TIMER_ID 122
 /* RTOS timeout to add/del timer from timer queue */
@@ -440,9 +440,10 @@ void appPlayerShow()
         // message listener for this (guiShowWindow executes msgPost)
         wndPlayer->head.windowStyle |= WS_VISIBLE;
         guiSetCurrentMainWindow((struct guiMainWindow *)wndPlayer);
+        msgSend(stDetails, MSG_ENABLE, FALSE, 0);
         msgSend((struct guiWindow *)wndPlayer, MSG_NCPAINT, 0 ,0);
         msgSend((struct guiWindow *)wndPlayer, MSG_PAINT, 0 ,0);
-        msgSend(btnPlay, MSG_SETFOCUS, 0, 0);
+        //msgSend(btnPlay, MSG_SETFOCUS, 0, 0);
         audioSetPlayingEndCallback(&appPlayingEndCallback);
     }
 }
@@ -514,7 +515,7 @@ static void appBtnListClicked()
 
 static void appBtnSetClicked()
 {
-
+    
 }
 
 static void appBtnVolClicked()
@@ -565,6 +566,7 @@ static void appPbPosChanged()
     LOG("Pos: %d", pos);
 }
 #include "app/lcdInit.h"
+#include "lib/input/keyCodes.h"
 static void appPbVolChanged()
 {
     struct hldAudioDevice *audio;
@@ -575,6 +577,22 @@ static void appPbVolChanged()
     sprintf(buf, "%d", pos);
     msgSend(btnVol, MSG_SETTEXT, 0, (UINT32)buf);
     msgSend(btnVol, MSG_PAINT, 0, 0);
+
+    // Set volume with zero crossing detection
+    audio = hldDeviceGetByType(NULL, HLD_DEVICE_TYPE_AUDIO);
+    audio->ioctl(audio, AC_SET_VOLUME_SOFT, pos);
+}
+
+static void appPbVolSetDelta(INT32 delta)
+{
+    struct hldAudioDevice *audio;
+    UINT32 pos;
+    char buf[5];
+
+    msgSend(pbVol, PBM_DELTAPOS, (UINT32)delta, 0);
+    sprintf(buf, "%d", pos);
+    msgSend(btnVol, MSG_SETTEXT, 0, (UINT32)buf);
+    msgSend(pbVol, PBM_GETPOS, (UINT32)&pos, 0);
 
     // Set volume with zero crossing detection
     audio = hldDeviceGetByType(NULL, HLD_DEVICE_TYPE_AUDIO);
@@ -599,6 +617,19 @@ static INT32 appPlayerWndProc(struct guiWindow *pWnd, UINT32 pMsg, UINT32 pParam
             else
                 playNext();
             break;
+
+/*        case MSG_KEYDOWN:
+            switch(pParam1)
+            {
+                case V_KEY_FF: playNext(); break;
+                case V_KEY_FB: playPrev(); break;
+                case V_KEY_V_DOWN: appPbVolSetDelta(-10); break;
+                case V_KEY_V_UP: appPbVolSetDelta(10); break;
+                case V_KEY_PLAY: appBtnPlayClicked(); break;
+                case V_KEY_PAUSE: appBtnPlayClicked(); break;
+                case V_KEY_STOP: appBtnPlayClicked(); break;
+            }
+            break;*/
 
         case MSG_COMMAND:
             
@@ -661,6 +692,12 @@ static INT32 appPlayerWndProc(struct guiWindow *pWnd, UINT32 pMsg, UINT32 pParam
 retcode appPlayerInit()
 {
     struct guiWndClassInfo wci;
+#ifdef LCD_FPGA
+    struct graphFont *defFont = &g_DroidSans22;
+#else
+    struct graphFont *defFont = &g_DroidSans15;
+#endif
+
     wci.className = "wndplayer";
     wci.windowStyle = WS_BORDER;
     wci.colorStyle.shIdx = WSTL_WINDOW_SH;
@@ -764,13 +801,13 @@ retcode appPlayerInit()
         BTN_VOL_H,
         (struct guiWindow *)wndPlayer, 0);
     
-    msgSend(btnRpt, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
-    msgSend(btnPrev, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
-    msgSend(btnPlay, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
-    msgSend(btnNext, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
-    msgSend(btnList, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
-    msgSend(btnSet, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
-    msgSend(btnVol, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
+    msgSend(btnRpt, MSG_SETFONT, (UINT32)defFont, 0);
+    msgSend(btnPrev, MSG_SETFONT, (UINT32)defFont, 0);
+    msgSend(btnPlay, MSG_SETFONT, (UINT32)defFont, 0);
+    msgSend(btnNext, MSG_SETFONT, (UINT32)defFont, 0);
+    msgSend(btnList, MSG_SETFONT, (UINT32)defFont, 0);
+    msgSend(btnSet, MSG_SETFONT, (UINT32)defFont, 0);
+    msgSend(btnVol, MSG_SETFONT, (UINT32)defFont, 0);
 
     pbPos = guiCreateWindow("progressbar",
         "0:00",
@@ -833,11 +870,10 @@ retcode appPlayerInit()
 
     stTitleBar->colorStyle.shIdx = WSTL_TITLE_BAR;
     stTitleBar->colorStyle.gryIdx = WSTL_TITLE_BAR;
-    msgSend(stDetails, MSG_ENABLE, FALSE, 0);
 
     msgSend(stTitle, MSG_SETFONT, (UINT32)&g_DroidSans29, 0);
-    msgSend(stDetails, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
-    msgSend(stTitleBar, MSG_SETFONT, (UINT32)&g_DroidSans15, 0);
+    msgSend(stDetails, MSG_SETFONT, (UINT32)defFont, 0);
+    msgSend(stTitleBar, MSG_SETFONT, (UINT32)defFont, 0);
 
     return SUCCESS;
 }

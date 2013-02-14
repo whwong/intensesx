@@ -11,7 +11,7 @@
 // BOARD Configuration
 //******************************************************************************
 #define LCD_ORIENTATION 90
-//#define LCD_FPGA
+#define LCD_FPGA
 //#define LCD_FPGA_TEST
 
 // TOUCH SCREEN
