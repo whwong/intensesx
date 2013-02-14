@@ -33,8 +33,13 @@
 #define IDC_ST_TITLE_BAR 13
 
 // Size and position coeficients
-#define SS_COEF_X 1
-#define SS_COEF_Y 1
+#ifdef LCD_FPGA
+#define SS_COEF_X (2.5f)
+#define SS_COEF_Y (2)
+#else
+#define SS_COEF_X (1)
+#define SS_COEF_Y (1)
+#endif
 
 // Window position and size
 #define WND_PLAYER_X (0 * SS_COEF_X)
@@ -79,29 +84,29 @@
 #define BTN_SET_H (23 * SS_COEF_Y)
 
 #define PB_POS_X (12 * SS_COEF_X)
-#define PB_POS_Y (112 * SS_COEF_X)
+#define PB_POS_Y (112 * SS_COEF_Y)
 #define PB_POS_W (297 * SS_COEF_X)
-#define PB_POS_H (23 * SS_COEF_X)
+#define PB_POS_H (23 * SS_COEF_Y)
 
 #define PB_VOL_X (291 * SS_COEF_X)
-#define PB_VOL_Y (12 * SS_COEF_X)
+#define PB_VOL_Y (12 * SS_COEF_Y)
 #define PB_VOL_W (18 * SS_COEF_X)
-#define PB_VOL_H (71 * SS_COEF_X)
+#define PB_VOL_H (71 * SS_COEF_Y)
 
 #define ST_TITLE_X (56 * SS_COEF_X)
-#define ST_TITLE_Y (48 * SS_COEF_X)
+#define ST_TITLE_Y (48 * SS_COEF_Y)
 #define ST_TITLE_W (209 * SS_COEF_X)
-#define ST_TITLE_H (35 * SS_COEF_X)
+#define ST_TITLE_H (35 * SS_COEF_Y)
 
 #define ST_DETAILS_X (94 * SS_COEF_X)
-#define ST_DETAILS_Y (138 * SS_COEF_X)
+#define ST_DETAILS_Y (138 * SS_COEF_Y)
 #define ST_DETAILS_W (215 * SS_COEF_X)
-#define ST_DETAILS_H (15 * SS_COEF_X)
+#define ST_DETAILS_H (15 * SS_COEF_Y)
 
 #define ST_TITLE_BAR_X (0 * SS_COEF_X)
-#define ST_TITLE_BAR_Y (0 * SS_COEF_X)
+#define ST_TITLE_BAR_Y (0 * SS_COEF_Y)
 #define ST_TITLE_BAR_W (320 * SS_COEF_X)
-#define ST_TITLE_BAR_H (20 * SS_COEF_X)
+#define ST_TITLE_BAR_H (20 * SS_COEF_Y)
 
 void appPlayerShow();
 retcode appPlayerInit();

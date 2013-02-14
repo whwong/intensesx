@@ -76,7 +76,7 @@ static inline void __attribute__ ((always_inline))
 lldFpgaGpuSetBacklight(BOOL pState)
 {
     if (pState == TRUE)
-        pca9532WriteReg(i2c, PWM0, 200);
+        pca9532WriteReg(i2c, PWM0, 240);
     else
         pca9532WriteReg(i2c, PWM0, 255);
 }
@@ -145,11 +145,27 @@ lldFpgaGpuSetColor(struct hldLcdDevice *pLcdDev, UINT8 pA, UINT8 pR, UINT8 pG, U
     lldFpgaGpuWrite(pLcdDev->drawingColor);
     lldFpgaGpuRstCS();
 
-    LOG("FPGA: Set color RGB888 (%d,%d,%d) RGB565 (0x%x)", pR, pG, pB, pLcdDev->drawingColor);
+   // LOG("FPGA: Set color RGB888 (%d,%d,%d) RGB565 (0x%x)", pR, pG, pB, pLcdDev->drawingColor);
 
     return SUCCESS;
 }
 
+static inline retcode __attribute__ ((always_inline))
+lldFpgaGpuSetColorRaw(struct hldLcdDevice *pLcdDev, UINT32 pColor)
+{
+    pLcdDev->drawingColor = pColor;
+
+    /*lldFpgaGpuSetCS();
+    lldFpgaGpuSetCommand();
+    lldFpgaGpuWrite(0x7363);
+    lldFpgaGpuSetData();
+    lldFpgaGpuWrite(pLcdDev->drawingColor);
+    lldFpgaGpuRstCS();*/
+
+   // LOG("FPGA: Set color RGB888 (%d,%d,%d) RGB565 (0x%x)", pR, pG, pB, pLcdDev->drawingColor);
+
+    return SUCCESS;
+}
 
 static inline UINT32 __attribute__ ((always_inline))
 lldFpgaGpuGetMaxX(struct hldLcdDevice *pLcdDev)
@@ -193,6 +209,7 @@ retcode lldFpgaGpuAttach()
     dev->drawPixel =    lldFpgaGpuDrawPixel;
     dev->getPixel =     lldFpgaGpuGetPixel;
     dev->setColor =     lldFpgaGpuSetColor;
+    dev->setColorRaw =  lldFpgaGpuSetColorRaw;
     dev->fill =         lldFpgaGpuFill;
     dev->getMaxX =      lldFpgaGpuGetMaxX;
     dev->getMaxY =      lldFpgaGpuGetMaxY;
@@ -243,15 +260,16 @@ static retcode lldFpgaGpuOpen(struct hldLcdDevice *pLcdDev)
     lldFpgaGpuPMPOpen();
     lldFpgaGpuOn();
 
-    vTaskDelay(1);
+    vTaskDelay(100);
 
-    //pLcdDev->drawingColor = 0x00000000;
-    //lldFpgaGpuFill(pLcdDev, 0, 0, pLcdDev->getMaxX(), pLcdDev->getMaxY());
+    pLcdDev->drawingColor = 0x00000000;
+    lldFpgaGpuFill(pLcdDev, 0, 0, pLcdDev->getMaxX(), pLcdDev->getMaxY());
     //vTaskDelay(10);
 
 
     vTaskDelay(200);
     lldFpgaGpuSetBacklight(1);
+    vTaskDelay(500);
 
     pLcdDev->head.state |= HLD_DEVICE_STATE_RUNNING;
     return SUCCESS;
@@ -260,6 +278,17 @@ static retcode lldFpgaGpuOpen(struct hldLcdDevice *pLcdDev)
 static retcode lldFpgaGpuFill(struct hldLcdDevice *pLcdDev,
     UINT16 pX1, UINT16 pY1, UINT16 pX2, UINT16 pY2)
 {
+    lldFpgaGpuSetCS();
+    lldFpgaGpuSetCommand();
+    lldFpgaGpuWrite(0x6672);
+    lldFpgaGpuSetData();
+    lldFpgaGpuWrite(pX1);
+    lldFpgaGpuWrite(pY1);
+    lldFpgaGpuWrite(pX2);
+    lldFpgaGpuWrite(pY2);
+    lldFpgaGpuRstCS();
+
+   // LOG("FPGA: Fill Rect (x1: %d, y1: %d, x2: %d, y2: %d)", pX1, pY1, pX2, pY2);
     return SUCCESS;
 }
 
@@ -286,13 +315,13 @@ static retcode lldFpgaGpuDrawPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT
     lldFpgaGpuWrite(pY);
     lldFpgaGpuRstCS();
 
-    LOG("FPGA: Set Pixel (x: %d, y: %d)", pX, pY);
+    //LOG("FPGA: Set Pixel (x: %d, y: %d)", pX, pY);
     return SUCCESS;
 }
 
 static UINT16 lldFpgaGpuGetPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY)
 {
-    return  (WORD)RGB888TORGB565(0,0,0);
+    return  (WORD)RGB888TORGB565(0x20,0x20,0x20);
 }
 
 static retcode lldFpgaGpuFlush(struct hldLcdDevice *pLcdDev)
