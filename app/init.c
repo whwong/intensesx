@@ -163,6 +163,7 @@ static retcode appHardwareInit()
         {
             lcd->open(lcd);
             graphSetLcdDevice(lcd);
+            lcd->enableCursor(lcd, TRUE);
 #ifndef LCD_FPGA_TEST
             drawInitScreen();
 #endif

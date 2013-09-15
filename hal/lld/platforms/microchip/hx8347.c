@@ -160,6 +160,27 @@ static void lldHx8347SetAddress(INT16 x, INT16 y)
     lldHx8347Write(0x22);
 }
 
+static retcode
+lldHx8347UpdateCursorPos(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY)
+{
+    return ERR_NOT_SUPPORTED;
+}
+
+static retcode lldHx8347EnableCursor(struct hldLcdDevice *pLcdDev, BOOL pEnable)
+{
+    return ERR_NOT_SUPPORTED;
+}
+
+static retcode lldHx8347Flush(struct hldLcdDevice *pLcdDev)
+{
+    return ERR_NOT_SUPPORTED;
+}
+
+retcode lldHx8347Ioctl(struct hldLcdDevice *pLcdDev, UINT32 pCmd, UINT32 pParam)
+{
+    return ERR_NOT_SUPPORTED;
+}
+
 retcode lldHx8347Attach()
 {
     struct hldLcdDevice *dev;
@@ -181,6 +202,10 @@ retcode lldHx8347Attach()
     dev->fill =         lldHx8347Fill;
     dev->getMaxX =      lldHx8347GetMaxX;
     dev->getMaxY =      lldHx8347GetMaxY;
+    dev->enableCursor = lldHx8347EnableCursor;
+    dev->updateCursorPos = lldHx8347UpdateCursorPos;
+    dev->flush =        lldHx8347Flush;
+    dev->ioctl =        lldHx8347Ioctl;
 
     retcode result = hldDeviceRegister(dev);
     if (result != SUCCESS)
@@ -444,9 +469,4 @@ static UINT16 lldHx8347GetPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 
     g = (BYTE)((val >> 0) & 0xFF);
     lldHx8347RstCS();
     return  (WORD)RGB888TORGB565(r,g,b);
-}
-
-static retcode lldHx8347Flush(struct hldLcdDevice *pLcdDev)
-{
-    return SUCCESS;
 }

@@ -241,8 +241,15 @@ static void lldResTouchNotifyEvent(struct hldTouchDevice *pDev)
 {
     static UINT16 isTouch = 0, lastIsTouch = 0;
     static struct inputTouchEvent event;
+    static UINT16 lastAbsX = 0, lastAbsY = 0;
     event.type = EVENT_TOUCH;
     event.timestamp = time();
+
+    static BOOL dragging = FALSE;
+    static UINT32 downTime = 0;
+    static UINT32 clickTime = 0;
+    static UINT16 downX, downY;
+    INT32 tmpPosX, tmpPosY;
 
     if (xSemaphoreTake(touchMutex, portMAX_DELAY))
     {
@@ -263,34 +270,94 @@ static void lldResTouchNotifyEvent(struct hldTouchDevice *pDev)
         // There was a change so we have a touch down or up event
         if (isTouch == 1)
         {
-            //down
-            event.action = EVENT_TOUCH_DOWN;
-            event.positionX = lldResTouchGetX(pDev);
-            event.positionY = lldResTouchGetY(pDev);
+            if ((time() - clickTime) < 200)
+            {
+                // COS TEN DRAGGING TAK NIE DO KONCA HULA
+                dragging = TRUE;
+                event.action = EVENT_TOUCH_DOWN;
+                event.speedX = 0;
+                event.speedY = 0;
+                inputEventNotify((struct inputEvent*)&event);
+            }
+            else
+            {
+                downTime = time();
+                downX = event.positionX;
+                downY = event.positionY;
+                /*//down
+                event.action = EVENT_TOUCH_DOWN;
+                //event.positionX = lldResTouchGetX(pDev);
+                //event.positionY = lldResTouchGetY(pDev);
 
-            event.speedX = 0;
-            event.speedY = 0;
-            inputEventNotify((struct inputEvent*)&event);
+                event.speedX = 0;
+                event.speedY = 0;
+                inputEventNotify((struct inputEvent*)&event);*/
+            }
+
+            lastAbsX = lldResTouchGetX(pDev);
+            lastAbsY = lldResTouchGetY(pDev);
         }
         else
         {
             //up
-            event.action = EVENT_TOUCH_UP;
-            inputEventNotify((struct inputEvent*)&event);
+
+            dragging = FALSE;
+            if ((((time() - downTime) < 200) || (dragging == TRUE)) &&
+                    (abs(downX - event.positionX) < 6) &&
+                    (abs(downY - event.positionY) < 6))
+            {
+                event.action = EVENT_TOUCH_DOWN;
+                event.speedX = 0;
+                event.speedY = 0;
+                inputEventNotify((struct inputEvent*)&event);
+
+                vTaskDelay(100);
+
+                event.action = EVENT_TOUCH_UP;
+                inputEventNotify((struct inputEvent*)&event);
+
+                clickTime = time();
+            }
         }
     }
     else if (isTouch == 1)
     {
         // We have a touch and we are moving
         event.action = EVENT_TOUCH_MOVE;
-        event.speedX = event.positionX;
-        event.speedY = event.positionY;
+        event.speedX = lastAbsX;
+        event.speedY = lastAbsY;
 
-        event.positionX = lldResTouchGetX(pDev);
-        event.positionY = lldResTouchGetY(pDev);
+        lastAbsX = lldResTouchGetX(pDev);
+        lastAbsY = lldResTouchGetY(pDev);
 
-        event.speedX = (INT32)event.positionX - event.speedX;
-        event.speedY = (INT32)event.positionY - event.speedY;
+        // NOrmal TOUCH screen
+        //event.positionX = lldResTouchGetX(pDev);
+        //event.positionY = lldResTouchGetY(pDev);
+
+        //event.speedX = (INT32)event.positionX - event.speedX;
+        //event.speedY = (INT32)event.positionY - event.speedY;
+
+        // Touch pad like
+        event.speedX = ((INT32)lastAbsX - event.speedX);
+        event.speedY = ((INT32)lastAbsY - event.speedY);
+
+        tmpPosX = (INT32)event.positionX + event.speedX;
+        tmpPosY = (INT32)event.positionY + event.speedY;
+
+        if (tmpPosX < 0)
+            tmpPosX = 0;
+        if (tmpPosX > pDev->config.screenResolutionX)
+            tmpPosX = pDev->config.screenResolutionX;
+
+        if (tmpPosY < 0)
+            tmpPosY = 0;
+        if (tmpPosY > pDev->config.screenResolutionY)
+            tmpPosY = pDev->config.screenResolutionY;
+
+        event.positionX = tmpPosX;
+        event.positionY = tmpPosY;
+
+        //LOG("spd: %d, %d", event.speedX, event.speedY);
 
         // If we multiply speed by 10/dev->config.sampleTime
         // we will get speed in pixels in 10ms

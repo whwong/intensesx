@@ -66,4 +66,10 @@ lldFpgaGpuGetMaxX(struct hldLcdDevice *pLcdDev);
 static inline UINT32 __attribute__ ((always_inline))
 lldFpgaGpuGetMaxY(struct hldLcdDevice *pLcdDev);
 
+static retcode
+lldFpgaGpuUpdateCursorPos(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY);
+
+static retcode
+lldFpgaGpuEnableCursor(struct hldLcdDevice *pLcdDev, BOOL pEnable);
+
 #endif
