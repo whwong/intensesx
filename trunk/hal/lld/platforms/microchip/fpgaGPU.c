@@ -76,7 +76,7 @@ static inline void __attribute__ ((always_inline))
 lldFpgaGpuSetBacklight(BOOL pState)
 {
     if (pState == TRUE)
-        pca9532WriteReg(i2c, PWM0, 240);
+        pca9532WriteReg(i2c, PWM0, 150);
     else
         pca9532WriteReg(i2c, PWM0, 255);
 }
@@ -110,12 +110,6 @@ lldFpgaGpuWrite(UINT16 pData)
 {
     PMDIN1 = pData;
     PMPWaitBusy();
-}
-
-static inline void __attribute__ ((always_inline))
-lldFpgaGpuWritePixel(UINT16 pData)
-{
-
 }
 
 static inline UINT16 __attribute__ ((always_inline))
@@ -179,10 +173,42 @@ lldFpgaGpuGetMaxY(struct hldLcdDevice *pLcdDev)
     return 480;
 }
 
-
-static void lldFpgaGpuSetAddress(INT16 x, INT16 y)
+retcode lldFpgaGpuIoctl(struct hldLcdDevice *pLcdDev, UINT32 pCmd, UINT32 pParam)
 {
+    switch(pCmd)
+    {
+        case LC_ENABLE_DOUBLE_BUFFER:
+            if (pParam == TRUE)
+            {
+                // Enable double buffering
+                lldFpgaGpuSetCS();
+                lldFpgaGpuSetCommand();
+                lldFpgaGpuWrite(0x6666);
+                lldFpgaGpuRstCS();
+                return SUCCESS;
+            }
+            else
+            {
+                // Disable double buffering
+                lldFpgaGpuSetCS();
+                lldFpgaGpuSetCommand();
+                lldFpgaGpuWrite(0x666F);
+                lldFpgaGpuRstCS();
+                return SUCCESS;
+                
+            }
+            break;
 
+        case LC_CLEAR_SCREEN:
+            lldFpgaGpuSetCS();
+            lldFpgaGpuSetCommand();
+            lldFpgaGpuWrite(0x6373);
+            lldFpgaGpuRstCS();
+            break;
+
+        default:
+            return ERR_NOT_SUPPORTED;
+    }
 }
 
 retcode lldFpgaGpuAttach()
@@ -213,7 +239,11 @@ retcode lldFpgaGpuAttach()
     dev->fill =         lldFpgaGpuFill;
     dev->getMaxX =      lldFpgaGpuGetMaxX;
     dev->getMaxY =      lldFpgaGpuGetMaxY;
-
+    dev->enableCursor = lldFpgaGpuEnableCursor;
+    dev->updateCursorPos = lldFpgaGpuUpdateCursorPos;
+    dev->flush =        lldFpgaGpuFlush;
+    dev->ioctl =        lldFpgaGpuIoctl;
+    
     retcode result = hldDeviceRegister(dev);
     if (result != SUCCESS)
     {
@@ -225,11 +255,6 @@ retcode lldFpgaGpuAttach()
     }
 
     return result;
-}
-
-static void lldFpgaGpuSetReg(BYTE index, BYTE value)
-{
-    
 }
 
 static void lldFpgaGpuPMPOpen()
@@ -326,5 +351,46 @@ static UINT16 lldFpgaGpuGetPixel(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16
 
 static retcode lldFpgaGpuFlush(struct hldLcdDevice *pLcdDev)
 {
+    lldFpgaGpuSetCS();
+    lldFpgaGpuSetCommand();
+    lldFpgaGpuWrite(0x6666);
+    lldFpgaGpuRstCS();
+    return SUCCESS;
+}
+
+static BOOL cursorVisible = FALSE;
+static UINT16 cursorPosX = 0;
+static UINT16 cursorPosY = 0;
+
+static void lldFpgaGpuUpdateCursor()
+{
+    lldFpgaGpuSetCS();
+    lldFpgaGpuSetCommand();
+    lldFpgaGpuWrite(0x6472);
+    lldFpgaGpuSetData();
+    lldFpgaGpuWrite(cursorPosX);
+    lldFpgaGpuWrite(cursorPosY);
+    lldFpgaGpuWrite((UINT16)cursorVisible);
+    lldFpgaGpuRstCS();
+
+    LOG("FPGA: dc: %d, %d, %x", cursorPosX, cursorPosY, cursorVisible);
+}
+
+retcode lldFpgaGpuUpdateCursorPos(struct hldLcdDevice *pLcdDev, UINT16 pX, UINT16 pY)
+{
+    cursorPosX = pX;
+    cursorPosY = pY;
+    lldFpgaGpuUpdateCursor();
+
+    LOG("FPGA: Update Cursor Pos (x: %d, y: %d)", pX, pY);
+    return SUCCESS;
+}
+
+retcode lldFpgaGpuEnableCursor(struct hldLcdDevice *pLcdDev, BOOL pEnable)
+{
+    cursorVisible = pEnable;
+    lldFpgaGpuUpdateCursor();
+
+    LOG("FPGA: Enable Cursor (en: %d)", pEnable);
     return SUCCESS;
 }

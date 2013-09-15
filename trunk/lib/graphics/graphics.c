@@ -36,3 +36,13 @@ retcode graphClearScreen()
     else
         return DEVICE_NOT_SET;
 }
+
+retcode graphSetCursorPos(UINT16 pX, UINT16 pY)
+{
+    if (graphLcdDev != NULL)
+    {
+        graphLcdDev->updateCursorPos(graphLcdDev, pX, pY);
+    }
+    else
+        return DEVICE_NOT_SET;
+}

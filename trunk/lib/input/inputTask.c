@@ -150,6 +150,7 @@ static void inputTask(void *pvParameters)
     struct guiWindow *targetWnd = NULL;
     struct guiWindow *pointerWnd = NULL;
     struct guiWindow *oldFocusedWnd = NULL;
+    struct guiWindow *hoveredWnd = NULL;
     UINT32 cursorAtTargetWnd = FALSE;
 
     UINT32 lastKey = 0, lastKeyRepeated = 0, lastKeyEventTime = 0;
@@ -212,9 +213,10 @@ static void inputTask(void *pvParameters)
                             tevn->speedY, tevn->timestamp);
 
                     pointerWnd = guiWindowAtXY(tevn->positionX, tevn->positionY);
+                    graphSetCursorPos(tevn->positionX, tevn->positionY);
                     oldFocusedWnd = guiWindowGetFocused();
                     
-                    if ((pointerWnd != NULL) && (targetWnd == NULL) && (pointerWnd != oldFocusedWnd))
+                    if ((pointerWnd != NULL) && (targetWnd == NULL) && (pointerWnd != hoveredWnd))
                     {
                         if (oldFocusedWnd != NULL)
                         {
@@ -231,7 +233,11 @@ static void inputTask(void *pvParameters)
 
                             if (guiWindowSetFocused(pointerWnd))
                                 msgPost(pointerWnd, MSG_SETFOCUS, (UINT32)oldFocusedWnd, 0);
+
                         }
+
+                        // Do touchpada cos tu jest nie tak
+                        hoveredWnd = pointerWnd;
                     }
 
                     if (targetWnd != NULL)

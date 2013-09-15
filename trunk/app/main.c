@@ -76,23 +76,23 @@ static void appInitErrHandler()
 
 void showCursorProc(struct msg *m)
 {
-struct hldLcdDevice *lcd;
-    static INT32 x = 100,y = 100, ox=100, oy=100;
+    struct hldLcdDevice *lcd;
+    static INT32 x = 100, y = 100, ox = 100, oy = 100;
 
     lcd = hldDeviceGetById(HLD_DEVICE_TYPE_LCD, 0);
 
-    switch(m->message)
+    switch (m->message)
     {
         case MSG_POINTERMOVE:
             x = GET_X_PARAM2(m->param2);
             y = GET_Y_PARAM2(m->param2);
 
             lcd->setColor(lcd, 0, 255, 255, 255);
-            graphDrawLine(x,y,ox,oy);
+            graphDrawLine(x, y, ox, oy);
 
             lcd->setColor(lcd, 0, 30, 30, 255);
-            lcd->drawPixel(lcd, x,y);
-            lcd->drawPixel(lcd, ox,oy);
+            lcd->drawPixel(lcd, x, y);
+            lcd->drawPixel(lcd, ox, oy);
 
             ox = x;
             oy = y;
@@ -103,7 +103,7 @@ struct hldLcdDevice *lcd;
             y = GET_Y_PARAM2(m->param2);
 
             lcd->setColor(lcd, 0, 100, 100, 100);
-            lcd->drawPixel(lcd, x,y);
+            lcd->drawPixel(lcd, x, y);
             graphDrawCircle(x, y, 3);
 
             ox = x;
@@ -115,12 +115,12 @@ struct hldLcdDevice *lcd;
             y = GET_Y_PARAM2(m->param2);
 
             lcd->setColor(lcd, 0, 100, 100, 100);
-            lcd->drawPixel(lcd, x,y);
+            lcd->drawPixel(lcd, x, y);
             graphDrawCircle(x, y, 3);
 
             //spped
             lcd->setColor(lcd, 0, 128, 0, 0);
-            graphDrawLine(x,y,x+GET_DX_PARAM1(m->param1),y+GET_DY_PARAM1(m->param1));
+            graphDrawLine(x, y, x + GET_DX_PARAM1(m->param1), y + GET_DY_PARAM1(m->param1));
 
             ox = x;
             oy = y;
@@ -156,6 +156,46 @@ static void appMainTask( void *pvParameters )
     
     graphSetDrawingColor(0xff, 0x00, 0x00, 0x00);
     graphDrawRect(0, 0, lcd->getMaxX(), lcd->getMaxY());
+    vTaskDelay(100);
+    UINT32 i=100;
+        lcd->updateCursorPos(lcd, i+100, 100);
+    lcd->enableCursor(lcd, TRUE);
+
+    LOG("Step 1. Fill rect");
+    graphSetDrawingColor(0xff, 0xff, 0x00, 0x00);
+    lcd->fill(lcd, 200, 200, 400, 400);
+
+    vTaskDelay(1000);
+    LOG("Step 2. Flush");
+    //lcd->flush(lcd);
+
+    vTaskDelay(1000);
+    LOG("Step 3. Fill rect");
+    graphSetDrawingColor(0xff, 0x00, 0xff, 0x00);
+    lcd->fill(lcd, 400, 200, 600, 400);
+
+    vTaskDelay(1000);
+    LOG("Step 4. Flush");
+    //lcd->flush(lcd);
+
+    for( i = 1; i < 100; i++)
+    {
+        LOG("Step %d. Flush", i+4);
+        //lcd->flush(lcd);
+        
+        vTaskDelay(100);
+    }
+
+
+    for( i = 100; i < 200; i++)
+    {
+        lcd->updateCursorPos(lcd, i+100, 100);
+        vTaskDelay(100);
+
+    graphSetDrawingColor(0xff, i-100, 0x55, 0x55);
+        lcd->fill(lcd, i+100, 300, i+120, 320);
+        vTaskDelay(100);
+    }
 
     UINT32 startMs = xTaskGetTickCount();
     while(1)
@@ -179,7 +219,7 @@ static void appMainTask( void *pvParameters )
 
         lcd->fill(lcd, x, y, x+100, y+100);
 
-        //vTaskDelay(100);
+        vTaskDelay(100);
     }
 
     LOG("%d 100x100 rects in %dms",counter, xTaskGetTickCount()-startMs);
@@ -222,11 +262,14 @@ static void appMainTask( void *pvParameters )
             case MSG_KEYUP:
                 switch(m.param1)
                 {
+                    case V_KEY_7:
+                        graphTestDraw1kRects();
+                        break;
                     case V_KEY_5:
-                        m.param2 = *fugi;
+                        graphTestDraw100VLines();
                         break;
                     case V_KEY_6:
-                        vApplicationStackOverflowHook();
+                        graphTestDraw100HLines();
                         break;
                     case V_KEY_1:
                         showCursor = 1 - showCursor;
@@ -245,6 +288,14 @@ static void appMainTask( void *pvParameters )
                         break;
                     case V_KEY_0:   
                         appPlayerShow();
+                        break;
+                    case V_KEY_9:
+                        graphClearScreen();
+                        graphTestDooubleBuffer(TRUE);
+                        break;
+                    case V_KEY_8:
+                        graphClearScreen();
+                        graphTestDooubleBuffer(FALSE);
                         break;
 
 
@@ -276,7 +327,7 @@ int main(void)
 #define SCALE_Y 2
 #else
 #define SCALE_X 1
-#define SCALE_Y 1s
+#define SCALE_Y 1
 #endif
 
 void fpgaDelay()

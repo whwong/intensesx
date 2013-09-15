@@ -443,7 +443,8 @@ void appPlayerShow()
         msgSend(stDetails, MSG_ENABLE, FALSE, 0);
         msgSend((struct guiWindow *)wndPlayer, MSG_NCPAINT, 0 ,0);
         msgSend((struct guiWindow *)wndPlayer, MSG_PAINT, 0 ,0);
-        //msgSend(btnPlay, MSG_SETFOCUS, 0, 0);
+        vTaskDelay(100);
+        msgSend(btnPlay, MSG_SETFOCUS, 0, 0);
         audioSetPlayingEndCallback(&appPlayingEndCallback);
     }
 }
@@ -510,7 +511,7 @@ static void appBtnNextClicked()
 
 static void appBtnListClicked()
 {
-    
+
 }
 
 static void appBtnSetClicked()
@@ -563,7 +564,6 @@ static void appPbPosChanged()
 {
     UINT32 pos;
     msgSend(pbPos, PBM_GETPOS, (UINT32)&pos, 0);
-    LOG("Pos: %d", pos);
 }
 #include "app/lcdInit.h"
 #include "lib/input/keyCodes.h"

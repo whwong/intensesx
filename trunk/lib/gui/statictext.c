@@ -60,8 +60,6 @@ INT32 guiDefStaticTextProc(struct guiWindow *pWnd, UINT32 pMsg,
                 else
                     idx = pWnd->colorStyle.shIdx;
 
-                LOG("color style id: %d", idx);
-
                 guiDrawStyleFrame(idx, &pWnd->clientFrame);
 
                 ws = guiGetStyle(idx);
